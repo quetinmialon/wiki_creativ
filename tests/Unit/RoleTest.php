@@ -18,7 +18,7 @@ class RoleTest extends TestCase
     public function test_create_role()
     {
         $data = [
-            'name' => 'Admin',
+            'name' => 'test',
         ];
 
         // Sending creation data to the database
@@ -26,7 +26,7 @@ class RoleTest extends TestCase
 
         // check if the data is in the database
         $this->assertDatabaseHas('roles', [
-            'name' => 'Admin',
+            'name' => 'test',
         ]);
 
         // check if response is correct
@@ -85,7 +85,7 @@ class RoleTest extends TestCase
     public function test_list_roles()
     {
         // Creating some roles
-        Role::create(['name' => 'Admin']);
+        Role::create(['name' => 'test']);
         Role::create(['name' => 'User']);
 
         // sending get request to get the data from database
@@ -93,7 +93,35 @@ class RoleTest extends TestCase
 
         // check if response has the data
         $response->assertStatus(200);
-        $response->assertSee('Admin');
+        $response->assertSee('test');
         $response->assertSee('User');
     }
+
+    public function test_admin_and_default_roles_can_not_be_deleted()
+    {
+        // Creating admin and default roles
+        $role_admin = Role::create(['name' => 'admin']);
+        $role_default = Role::create(['name' => 'default']);
+
+        // try to delete roles admin and default
+        $response_admin = $this->delete(route('roles.destroy', $role_admin->id));
+        $response_default = $this->delete(route('roles.destroy', $role_default->id));
+
+        // check if datas are in databases
+        $this->assertDatabaseHas('roles', [
+            'name' => 'admin',
+        ]);
+        $this->assertDatabaseHas('roles', [
+            'name' => 'default',
+        ]);
+
+        // check rdirection on each session
+        $response_admin->assertRedirect('/');
+        $response_default->assertRedirect('/');
+
+        // check if error message is present
+        $response_admin->assertSessionHas('error');
+        $response_default->assertSessionHas('error');
+    }
+
 }

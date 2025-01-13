@@ -45,6 +45,10 @@ class RoleController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $role = Role::findOrFail($request->id);
+        if($role->name == 'admin'|| $role->name == 'default')
+        {
+            return redirect(to: '/')->with(key: 'error', value: 'Vous ne pouvez pas supprimer ce rôle.');
+        }
         $role->delete();
         return redirect(to: '/')->with(key: 'success', value: 'Rôle supprimé avec succès.');
     }
