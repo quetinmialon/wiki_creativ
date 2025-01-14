@@ -15,5 +15,6 @@
     </head>
     <body class="font-sans antialiased dark:bg-black dark:text-white/50">
         <x-role-list/>
+        <a href="/subscribe">s'inscrire</a>
     </body>
 </html>

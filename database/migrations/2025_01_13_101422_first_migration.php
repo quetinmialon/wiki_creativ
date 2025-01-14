@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->timestamp('last_login')->nullable();
             $table->timestamp('confirmed_at')->nullable();
-            $table->string('validation_mail_token');
+            $table->string('validation_mail_token')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
