@@ -7,5 +7,6 @@
     <input type="password" name="password" required>
 
     <button type="submit">Login</button>
+    <a href="{{route('password.request')}}">mot de passe oublié</a>
 </form>
 

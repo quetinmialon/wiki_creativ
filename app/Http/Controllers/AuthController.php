@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 
@@ -59,5 +60,29 @@ class AuthController extends Controller
             ? back()->with(['status' => __($status)])
             : back()->withErrors(['email' => __($status)]);
     }
+
+    public function showResetForm(Request $request, $token)
+    {
+        $email = $request->query('email'); // Optionnel si vous souhaitez pré-remplir l'email
+
+        return view('auth.reset-password', [
+            'token' => $token,
+            'email' => $email,
+        ]);
+    }
+
+
+    public function reset(Request $request){
+        $request->validate(['email'=> ['required','email'],'password'=> ['required','min:8']]);
+        $credentials = $request->only('email', 'password', 'token');
+        $status = Password::reset($credentials, function ($user, $password) {
+            $user->password =  Hash::make($password);
+            $user->save();
+        });
+        return $status == Password::PASSWORD_RESET
+        ? redirect()->route('login')->with('status', 'Password reset successful.')
+        : back()->withErrors(['email' => 'Reset token expired or invalid.']);
+    }
 }
+
 
