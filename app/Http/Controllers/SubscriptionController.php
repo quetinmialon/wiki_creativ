@@ -29,9 +29,6 @@ class SubscriptionController extends Controller
             'status' => 'pending',
         ]);
 
-        // Optionnel : Notifier un administrateur
-        // Notification::send(Admin::all(), new NewUserRequestNotification($request->name));
-
         return redirect()->back()->with('success', 'Votre demande a été envoyée.');
     }
 
@@ -94,6 +91,6 @@ class SubscriptionController extends Controller
 
     }
 
-
+    
 
 }
