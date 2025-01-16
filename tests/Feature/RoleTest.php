@@ -100,8 +100,8 @@ class RoleTest extends TestCase
     public function test_admin_and_default_roles_can_not_be_deleted()
     {
         // Creating admin and default roles
-        $role_admin = Role::create(['name' => 'admin']);
-        $role_default = Role::create(['name' => 'default']);
+        $role_admin = Role::create(['name' => 'Admin']);
+        $role_default = Role::create(['name' => 'Default']);
 
         // try to delete roles admin and default
         $response_admin = $this->delete(route('roles.destroy', $role_admin->id));
@@ -109,10 +109,10 @@ class RoleTest extends TestCase
 
         // check if datas are in databases
         $this->assertDatabaseHas('roles', [
-            'name' => 'admin',
+            'name' => 'Admin',
         ]);
         $this->assertDatabaseHas('roles', [
-            'name' => 'default',
+            'name' => 'Default',
         ]);
 
         // check rdirection on each session

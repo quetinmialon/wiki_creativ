@@ -2,6 +2,7 @@
 
 namespace App\View\Components;
 
+use App\Models\Role;
 use App\Models\User\UserRequest;
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -14,10 +15,12 @@ class UserRequestList extends Component
      */
 
     public $userRequests;
+    public $roles;
 
     public function __construct()
     {
-        $this->userRequests = UserRequest::all();
+        $this->userRequests = UserRequest::where('status','pending')->get();
+        $this->roles = Role::all();
     }
 
     /**
@@ -26,6 +29,6 @@ class UserRequestList extends Component
     public function render(): View|Closure|string
     {
 
-        return view(view: 'components.user_request_list', data : [$this->userRequests]);
+        return view(view: 'components.user_request_list', data : [$this->userRequests,$this->roles]);
     }
 }

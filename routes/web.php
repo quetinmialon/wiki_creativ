@@ -31,6 +31,8 @@ Route::post('/register',[SubscriptionController::class,'completeRegistration'])-
 // admin routes
 
 Route::get('/admin', [AdminController::class,'index'])->name(name:'admin');
+Route::get('/admin/register', [SubscriptionController::class,'createUserInvitationForm'])->name('admin.register');
+Route::post('/admin/register', [SubscriptionController::class, 'createUserInvitation'])->name('admin.create-user');
 
 
 // Auth routes
