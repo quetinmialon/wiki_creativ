@@ -21,4 +21,9 @@ class Role extends Model
     {
         return $this->hasMany(UserInvitation::class,'user_id');
     }
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class);
+    }
 }

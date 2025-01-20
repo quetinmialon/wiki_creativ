@@ -26,4 +26,16 @@ class Document extends Model
     public function updator(){
         return $this->belongsTo(User::class,'updated_by');
     }
+
+    public function permissions(){
+        return $this->hasMany(Permission::class);
+    }
+
+    public function favorites(){
+        return $this->hasMany(Favorite::class);
+    }
+
+    public function logs(){
+        return $this->hasMany(Log::class);
+    }
 }
