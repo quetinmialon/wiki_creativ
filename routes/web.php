@@ -6,6 +6,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 
 Route::get(uri: '/', action: function () {
     return view(view: 'welcome');
@@ -51,3 +52,15 @@ Route::post('/credentials', [CredentialController::class, 'store'])->name('crede
 Route::get('/credentials/{id}/edit', [CredentialController::class, 'edit'])->name('credentials.edit');
 Route::put('/credentials/{id}', [CredentialController::class, 'update'])->name('credentials.update');
 Route::delete('/credentials/{id}', [CredentialController::class, 'destroy'])->name('credentials.destroy');
+
+
+
+// Routes pour les catégories
+Route::prefix('categories')->name('categories.')->group(function () {
+    Route::get('/', [CategoryController::class, 'index'])->name('index'); // Liste des catégories
+    Route::get('/create', [CategoryController::class, 'create'])->name('create'); // Formulaire de création
+    Route::post('/', [CategoryController::class, 'store'])->name('store'); // Création d'une catégorie
+    Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('edit'); // Formulaire de modification
+    Route::put('/{id}', [CategoryController::class, 'update'])->name('update'); // Mise à jour d'une catégorie
+    Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('destroy'); // Suppression d'une catégorie
+});
