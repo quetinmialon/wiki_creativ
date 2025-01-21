@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <form method="POST" action="{{ route('password.email') }}">
     @csrf
     <label for="email">Email</label>
@@ -5,6 +8,4 @@
 
     <button type="submit">Send Password Reset Link</button>
 </form>
-
-
-
+@endsection

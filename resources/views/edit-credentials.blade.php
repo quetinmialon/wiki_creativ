@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <div class="container mx-auto mt-10 px-6">
     <h1 class="text-3xl font-bold mb-6">Modifier le log</h1>
     <form action="{{ route('credentials.update', $credential->id) }}" method="POST" class="space-y-6 bg-white p-8 shadow-md rounded-md">
@@ -31,3 +34,4 @@
         </button>
     </form>
 </div>
+@endsection

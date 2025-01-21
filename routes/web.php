@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CredentialController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
@@ -55,7 +56,7 @@ Route::delete('/credentials/{id}', [CredentialController::class, 'destroy'])->na
 
 
 
-// Routes pour les catégories
+// categories routes
 Route::prefix('categories')->name('categories.')->group(function () {
     Route::get('/', [CategoryController::class, 'index'])->name('index'); // Liste des catégories
     Route::get('/create', [CategoryController::class, 'create'])->name('create'); // Formulaire de création
@@ -63,4 +64,16 @@ Route::prefix('categories')->name('categories.')->group(function () {
     Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('edit'); // Formulaire de modification
     Route::put('/{id}', [CategoryController::class, 'update'])->name('update'); // Mise à jour d'une catégorie
     Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('destroy'); // Suppression d'une catégorie
+});
+
+
+// documents routes
+
+Route::prefix('documents')->name('documents.')->group(function () {
+
+    Route::get('/', [DocumentController::class, 'index'])->name('index'); // Liste des document
+    Route::get('/create', [DocumentController::class, 'create'])->name('create'); // Formulaire de création
+    Route::post('/', [DocumentController::class,'store'])->name('store'); // Création d'un document
+    Route::get('/byCategory/{id}/', [DocumentController::class, 'byCategory'])->name('byCategory'); // Formulaire de modification
+    Route::get('/{id}', [DocumentController::class,'show'])->name('show'); // Affichage d'un document
 });

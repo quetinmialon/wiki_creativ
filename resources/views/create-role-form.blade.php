@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <div class="max-w-md mx-auto bg-white shadow-md rounded-md p-6 mt-10">
     <h2 class="text-2xl font-bold text-gray-800 mb-4">Créer un Nouveau Rôle</h2>
 
@@ -23,5 +26,5 @@
         </button>
     </form>
 </div>
-
+@endsection
 

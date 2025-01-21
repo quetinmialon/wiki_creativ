@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <form method="POST" action="{{ route('subscribe.store') }}">
     @csrf
     <label for="name">Nom :</label>
@@ -8,4 +11,4 @@
 
     <button type="submit">Envoyer la demande</button>
 </form>
-
+@endsection

@@ -15,8 +15,9 @@ class Document extends Model
         'updated_by',
     ];
 
-    public function categories(){
-        return $this->belongsToMany(Category::class);
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_document', 'document_id', 'category_id');
     }
 
     public function author(){

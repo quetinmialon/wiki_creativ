@@ -10,7 +10,6 @@
     <table class="table-auto w-full border-collapse border border-gray-300">
         <thead>
             <tr class="bg-gray-100">
-                <th class="border border-gray-300 px-4 py-2">#</th>
                 <th class="border border-gray-300 px-4 py-2">Nom</th>
                 <th class="border border-gray-300 px-4 py-2">Rôle Associé</th>
                 <th class="border border-gray-300 px-4 py-2">Actions</th>
@@ -19,10 +18,10 @@
         <tbody>
             @forelse($categories as $category)
                 <tr class="text-center">
-                    <td class="border border-gray-300 px-4 py-2">{{ $category->id }}</td>
                     <td class="border border-gray-300 px-4 py-2">{{ $category->name }}</td>
                     <td class="border border-gray-300 px-4 py-2">{{ $category->role->name ?? 'N/A' }}</td>
                     <td class="border border-gray-300 px-4 py-2">
+                        <a href="{{ route('documents.byCategory', ['id' => $category->id]) }}" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">documents associés</a>
                         <a href="{{ route('categories.edit', $category->id) }}" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Modifier</a>
                         <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="inline-block">
                             @csrf
