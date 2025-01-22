@@ -11,7 +11,7 @@ use App\Http\Controllers\CategoryController;
 
 Route::get(uri: '/', action: function () {
     return view(view: 'welcome');
-});
+})->name('home');
 
 //Role CRUD (may add some middlewares later)
 Route::get(uri: '/roles',action: [RoleController::class,'create'])->name(name: 'roles.create');

@@ -99,4 +99,18 @@ class DocumentController extends Controller
         return redirect()->route('documents.show', $document->id)->with('success','modifié avec succès');
     }
 
+    public function addToFavorite(Request $request, $document)
+    {
+        $user = Auth::user();
+        if(!$user){
+            return redirect()->route('home')->with('error', 'vous devez être connecté pour pouvoir ajouter un document en favoris');
+        }
+
+        $document = Document::find($document->id);
+        if(!$document){
+            return redirect()->back()->with('error', 'Document introuvable');
+        }
+        
+        $user->favorites()->sync($request->favorites_id);
+    }
 }
