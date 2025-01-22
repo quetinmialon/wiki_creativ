@@ -16,7 +16,7 @@
                 <a href="/documents">Documents</a>
                 <a href="/categories">Catégories</a>
                 <a href="/admin">Admin</a>
-                
+
                 <form action="{{route('logout')}}" method="POST">
                     @csrf
                     <button type="submit">Déconnexion</button>
@@ -31,5 +31,8 @@
     <div class="container mx-auto py-6">
         @yield('content')
     </div>
+    <footer class="bg-gray-800 text-white p-4 text-center align-self-end">
+        &copy; 2025 Wiki Creative. Tous droits réservés.
+    </footer>
 </body>
 </html>

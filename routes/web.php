@@ -75,5 +75,8 @@ Route::prefix('documents')->name('documents.')->group(function () {
     Route::get('/create', [DocumentController::class, 'create'])->name('create'); // Formulaire de création
     Route::post('/', [DocumentController::class,'store'])->name('store'); // Création d'un document
     Route::get('/byCategory/{id}/', [DocumentController::class, 'byCategory'])->name('byCategory'); // Formulaire de modification
-    Route::get('/{id}', [DocumentController::class,'show'])->name('show'); // Affichage d'un document
+    Route::get('/documents/{document}', [DocumentController::class, 'show'])->name('show');
+    Route::get('/{id}/edit', [DocumentController::class, 'edit'])->name('edit'); // Formulaire d'édition
+    Route::put('/{id}', [DocumentController::class, 'update'])->name('update'); // Mise à jour d'un document
+
 });
