@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CredentialController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
@@ -78,5 +79,29 @@ Route::prefix('documents')->name('documents.')->group(function () {
     Route::get('/documents/{document}', [DocumentController::class, 'show'])->name('show');
     Route::get('/{id}/edit', [DocumentController::class, 'edit'])->name('edit'); // Formulaire d'édition
     Route::put('/{id}', [DocumentController::class, 'update'])->name('update'); // Mise à jour d'un document
+    Route::delete('/{id}', [DocumentController::class, 'destroy'])->name('destroy'); // Suppression d'un document
 
+    //favorites
+    Route::post('/{document}/favorite', [DocumentController::class, 'addToFavorite'])->name('favorite'); //TODO: use this route asynchronously with a DOM update to avoir refresh page
+    Route::get('/favorites', [DocumentController::class, 'favorites'])->name('favorites'); // Affichage de la liste des favoris
+    Route::delete('/{document}/favorite', [DocumentController::class, 'removeFromFavorite'])->name('removeFavorite'); //TODO: use this route asynchronously with a DOM update to avoir refresh page
+
+    //opened logs route
+    Route::get('/{document}/logs', [DocumentController::class, 'logs'])->name('logs'); // Affichage des logs d'ouverture du document
+    Route::post('/{document}/logs', [DocumentController::class, 'addLog'])->name('newLog'); // Création d'un log d'ouverture du document //TODO : change this route into an event that happen when a document is open.
+    Route::get('/logs', [DocumentController::class, 'everyLogs'])->name('everyLogs');// récrupération de tout les logs d'ouvertures
+    Route::get('/{user}/userLogs', [DocumentController::class, 'userLogs'])->name('userLogs');
+    Route::get('/lastOpened', [DocumentController::class, 'lastOpenedDocuments'])->name('lastOpened');
 });
+
+//permissions routes
+
+Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
+Route::get('/permissions/pending', [PermissionController::class, 'pendingPermissions'])->name('pending-permissions');
+Route::get('/permissions/request/{documentId}', [PermissionController::class, 'requestForm'])->name('permissions.requestForm');
+Route::post('/permissions/create', [PermissionController::class, 'createRequest'])->name('permissions.create');
+Route::post('/permissions/handle/{id}', [PermissionController::class, 'handleRequest'])->name('permissions.handle');
+Route::delete('/permissions/cancel/{id}', [PermissionController::class, 'cancelRequest'])->name('permissions.cancel');
+Route::delete('/permissions/delete/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+Route::get('/permissions/user/{id}', [PermissionController::class, 'userRequest'])->name('permissions.user');
+Route::get('/permissions/document/{id}', [PermissionController::class, 'documentRequest'])->name('permissions.document');

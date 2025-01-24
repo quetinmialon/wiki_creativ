@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Document;
+use App\Models\Favorite;
+use App\Models\Log;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -98,19 +101,136 @@ class DocumentController extends Controller
 
         return redirect()->route('documents.show', $document->id)->with('success','modifié avec succès');
     }
+    public function destroy($id)
+    {
+        $document = Document::find($id);
+        if (!$document) {
+            return redirect()->route('documents.index')->with('error', 'Document introuvable');
+        }
+        $document->delete();
+        return redirect()->route('documents.index')->with('success','supprimé avec succès');
+    }
 
-    public function addToFavorite(Request $request, $document)
+    public function addToFavorite($documentId)
     {
         $user = Auth::user();
-        if(!$user){
-            return redirect()->route('home')->with('error', 'vous devez être connecté pour pouvoir ajouter un document en favoris');
+        if (!$user) {
+            return redirect()->route('home')->with('error', 'Vous devez être connecté pour ajouter un document en favoris.');
         }
 
-        $document = Document::find($document->id);
-        if(!$document){
-            return redirect()->back()->with('error', 'Document introuvable');
+        $document = Document::find($documentId);
+        if (!$document) {
+            return redirect()->back()->with('error', 'Document introuvable.');
         }
-        
-        $user->favorites()->sync($request->favorites_id);
+
+        // Vérifie si le document est déjà en favori
+        $alreadyFavorite = Favorite::where('user_id', $user->id)
+                                   ->where('document_id', $documentId)
+                                   ->exists();
+        if (!$alreadyFavorite) {
+            // Crée une nouvelle instance de Favorite
+            Favorite::create([
+                'user_id' => $user->id,
+                'document_id' => $documentId,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Document ajouté à vos favoris avec succès.');
     }
+
+
+    public function favorites()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('home')->with('error', 'Vous devez être connecté pour consulter vos documents favoris.');
+        }
+
+        // Récupérer les documents favoris de l'utilisateur
+        $favorites = Document::whereIn('id', $user->favorites->pluck('document_id'))->get();
+
+        return view('documents.favorites', compact('favorites'));
+    }
+
+
+    public function removeFromFavorite($documentId)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('home')->with('error', 'Vous devez être connecté pour retirer un document de vos favoris.');
+        }
+
+        $document = Document::find($documentId);
+        if (!$document) {
+            return redirect()->back()->with('error', 'Document introuvable.');
+        }
+
+        // Trouver l'entrée favorite correspondante et la supprimer
+        $favorite = Favorite::where('user_id', $user->id)
+                            ->where('document_id', $documentId)
+                            ->first();
+
+        if ($favorite) {
+            $favorite->delete();
+        }
+
+        return redirect()->back()->with('success', 'Document retiré de vos favoris avec succès.');
+    }
+
+
+    public function logs($documentId)
+    {
+        $document = Document::find($documentId);
+        if (!$document) {
+            return redirect()->route('documents.index')->with('error', 'Document introuvable');
+        }
+        $logs = $document->logs;
+        return view('documents.logs', compact('document', 'logs'));
+    }
+
+    public function addLog($documentId)
+    {
+        $document = Document::find($documentId);
+        if (!$document) {
+            return redirect()->route('documents.index')->with('error', 'Document introuvable');
+        }
+        $user = Auth::user();
+        $log = new Log([
+            'user_id' => $user->id,
+            'document_id' => $document->id,
+        ]);
+        $log->save();
+    }
+
+    public function everyLogs()
+    {
+        $logs = Log::all();
+        return view('documents.all-logs', compact('logs'));
+    }
+
+    public function userLogs($userId)
+    {
+        $user = User::find($userId);
+        if (!$user) {
+            return redirect()->route('home')->with('error', 'Utilisateur introuvable');
+        }
+        $logs = $user->logs;
+        return view('documents.user-logs', compact('user', 'logs'));
+    }
+
+    public function lastOpenedDocuments()
+    {
+        $userId = Auth::id();
+
+        // Récupérer les 5 derniers logs avec les documents associés
+        $logs = Log::with('document')
+            ->where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // Passer les logs à la vue
+        return view('documents.last-opened', compact('logs'));
+    }
+
 }
