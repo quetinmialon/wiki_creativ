@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AuthService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    protected AuthService $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
     public function showLoginForm()
     {
         return view('auth.login');
@@ -22,24 +28,18 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended('/admin');
+        try {
+            if ($this->authService->login($credentials)) {
+                return redirect()->intended('/admin');
+            }
+        } catch (ValidationException $e) {
+            throw $e;
         }
-
-        throw ValidationException::withMessages([
-            'email' => __('auth.failed'),
-        ]);
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
+        $this->authService->logout($request);
         return redirect('/');
     }
 
@@ -52,9 +52,7 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $status = $this->authService->sendResetLink($request->email);
 
         return $status === Password::RESET_LINK_SENT
             ? back()->with(['status' => __($status)])
@@ -63,26 +61,24 @@ class AuthController extends Controller
 
     public function showResetForm(Request $request, $token)
     {
-        $email = $request->query('email'); // Optionnel si vous souhaitez pré-remplir l'email
-
         return view('auth.reset-password', [
             'token' => $token,
-            'email' => $email,
+            'email' => $request->query('email'),
         ]);
     }
 
+    public function reset(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'min:8'],
+            'token' => ['required'],
+        ]);
 
-    public function reset(Request $request){
-        $request->validate(['email'=> ['required','email'],'password'=> ['required','min:8']]);
-        $credentials = $request->only('email', 'password', 'token');
-        $status = Password::reset($credentials, function ($user, $password) {
-            $user->password =  Hash::make($password);
-            $user->save();
-        });
+        $status = $this->authService->resetPassword($request->only('email', 'password', 'token'));
+
         return $status == Password::PASSWORD_RESET
-        ? redirect()->route('login')->with('status', 'Password reset successful.')
-        : back()->withErrors(['email' => 'Reset token expired or invalid.']);
+            ? redirect()->route('login')->with('status', 'Password reset successful.')
+            : back()->withErrors(['email' => 'Reset token expired or invalid.']);
     }
 }
-
-

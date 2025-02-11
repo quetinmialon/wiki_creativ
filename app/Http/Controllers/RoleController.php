@@ -2,55 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\RoleService;
 use Illuminate\Http\Request;
-use App\Models\Role;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
 class RoleController extends Controller
 {
-    public function index()
+    protected RoleService $roleService;
+
+    public function __construct(RoleService $roleService)
     {
-        $roles = Role::all();
-        return view(view: 'role.role-list', data: ['roles' => $roles]);
+        $this->roleService = $roleService;
     }
 
-    public function create():View
+    public function index(): View
     {
-        return view(view: 'create-role-form');
+        $roles = $this->roleService->getAllRoles();
+        return view('role.role-list', ['roles' => $roles]);
+    }
+
+    public function create(): View
+    {
+        return view('create-role-form');
     }
 
     public function insert(Request $request): RedirectResponse
     {
-        $role = Role::create(attributes: $request->all());
-        return redirect(to: '/');
+        $this->roleService->createRole($request->all());
+        return redirect('/')->with('success', 'Rôle créé avec succès.');
     }
 
     public function edit(Request $request): View
     {
-        $role = Role::findOrFail($request->id);
-        return view(view: 'update-role-form', data: ['role' => $role]);
+        $role = $this->roleService->getRoleById($request->id);
+        return view('update-role-form', ['role' => $role]);
     }
 
     public function update(Request $request): RedirectResponse
     {
-        $role = Role::findOrFail($request->id);
         $request->validate([
-            'name' => "required|string|max:255|unique:roles,name,{$role->id}",
+            'name' => "required|string|max:255|unique:roles,name,{$request->id}",
         ]);
-        $role->update(attributes: $request->all());
-        return redirect(to: '/')->with(key:'success', value: 'Rôle modifié avec succès.');
+
+        $this->roleService->updateRole($request->id, $request->all());
+        return redirect('/')->with('success', 'Rôle modifié avec succès.');
     }
 
     public function destroy(Request $request): RedirectResponse
     {
-        $role = Role::findOrFail($request->id);
-        if($role->name == 'Admin'|| $role->name == 'Default' || $role->name == 'Qualité')
-        {
-            return redirect(to: '/')->with(key: 'error', value: 'Vous ne pouvez pas supprimer ce rôle.');
-        }
-        $role->delete();
-        return redirect(to: '/')->with(key: 'success', value: 'Rôle supprimé avec succès.');
+        $response = $this->roleService->deleteRole($request->id);
+        return redirect('/')->with(key($response), reset($response));
     }
-
 }
