@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Log;
+use App\Models\Document;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+class LogService
+{
+    public function getDocumentLogs($documentId)
+    {
+        return Document::with('logs')->find($documentId) ?? null;
+    }
+
+    public function addLog($documentId)
+    {
+        $document = Document::find($documentId);
+
+        if (!$document) {
+            return null; // Retourne null si le document n'existe pas
+        }
+
+        $user = Auth::user();
+
+        return Log::create([
+            'user_id' => $user->id,
+            'document_id' => $document->id,
+        ]);
+    }
+
+    public function logDocumentAccess($documentId)
+    {
+        Log::create([
+            'user_id' => Auth::id(),
+            'document_id' => $documentId,
+        ]);
+    }
+
+    public function getAllLogs()
+    {
+        return Log::all();
+    }
+
+    public function getUserLogs($userId)
+    {
+        return User::with('logs')->find($userId) ?? null;
+    }
+
+    public function getLastOpenedDocuments()
+    {
+        return Log::with('document')
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+    }
+}

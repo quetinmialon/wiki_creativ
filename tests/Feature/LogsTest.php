@@ -26,7 +26,7 @@ class LogsTest extends TestCase
             'name' => 'Document 1',
             'content' => 'Content 1',
             'excerpt' => 'Excerpt 1',
-            'created_by' => 1,
+            'created_by' => $user->id,
         ]);
 
         $log = Log::create([
@@ -76,7 +76,7 @@ class LogsTest extends TestCase
         $response = $this->post(route('documents.newLog', $document->id));
 
         // Assert
-        $response->assertStatus(200); // Assuming there's no redirect
+        $response->assertStatus(302); //redirect after creating logs, might change
         $this->assertDatabaseHas('logs', [
             'user_id' => $user->id,
             'document_id' => $document->id,
@@ -182,7 +182,7 @@ class LogsTest extends TestCase
         $response = $this->get(route('documents.userLogs', 999)); // ID inexistant
 
         // Assert
-        $response->assertRedirect(route('home'));
+        $response->assertRedirect(route('documents.index'));
         $response->assertSessionHas('error', 'Utilisateur introuvable');
     }
 

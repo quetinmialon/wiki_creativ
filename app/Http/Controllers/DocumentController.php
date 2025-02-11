@@ -2,29 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\Document;
-use App\Models\Favorite;
-use App\Models\Log;
-use App\Models\User;
+use App\Services\DocumentService;
+use App\Services\FavoriteService;
+use App\Services\LogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DocumentController extends Controller
 {
+    protected $documentService;
+    protected $favoriteService;
+    protected $logService;
+
+    public function __construct(DocumentService $documentService, FavoriteService $favoriteService, LogService $logService)
+    {
+        $this->documentService = $documentService;
+        $this->favoriteService = $favoriteService;
+        $this->logService = $logService;
+    }
+
     public function index()
     {
-        // Charger toutes les catégories avec leurs documents et les auteurs des documents
-        $categories = Category::with(['documents.author'])->get();
-
+        $categories = $this->documentService->getAllCategoriesWithDocuments();
         return view('documents.document-list', compact('categories'));
     }
 
-
-
     public function create()
     {
-        // Récupérer tous les rôles et leurs catégories associées
         $user = Auth::user();
         $roles = $user->roles()->with('categories')->get();
 
@@ -41,44 +45,21 @@ class DocumentController extends Controller
             'categories_id.*'=> 'exists:categories,id',
         ]);
 
-        $request['created_by'] = Auth::user()->id;
+        $this->documentService->createDocument($request->all());
 
-        $document = Document::create($request->all());
-
-        if ($request->has('categories_id') && count($request->categories_id)) {
-            $document->categories()->attach($request->categories_id);
-        }
-        return redirect()->route('documents.index')->with('success','créé avec succès');
+        return redirect()->route('documents.index')->with('success','Créé avec succès');
     }
 
     public function byCategory($categoryId)
     {
-        $category = Category::find($categoryId);
-        if (!$category) {
-            return redirect()->route('categories.index')->with('error', 'Catégorie introuvable');
-        }
-        $documents = $category->documents()->get();
-        return view('documents.by-category', compact('category', 'documents'));
+        $documents = $this->documentService->getDocumentsByCategory($categoryId);
+        return view('documents.by-category', compact('documents'));
     }
 
     public function show($id)
     {
-        $document = Document::find($id);
-        if (!$document) {
-            return redirect()->route('document.index')->with('error', 'Document introuvable');
-        }
+        $document = $this->documentService->findDocument($id);
         return view('documents.document', compact('document'));
-    }
-
-    public function edit($id)
-    {
-        $document = Document::find($id);
-        if (!$document) {
-            return redirect()->route('documents.index')->with('error', 'Document introuvable');
-        }
-        $user = Auth::user();
-        $roles = $user->roles()->with('categories')->get();
-        return view('documents.edit-form', compact('document', 'roles'));
     }
 
     public function update(Request $request, $id)
@@ -91,146 +72,89 @@ class DocumentController extends Controller
             'categories_id.*'=> 'exists:categories,id',
         ]);
 
-        $document = Document::find($id);
-        if (!$document) {
-            return redirect()->route('documents.index')->with('error', 'Document introuvable');
-        }
-        $document->update($request->all());
+        $document = $this->documentService->findDocument($id);
+        $this->documentService->updateDocument($document, $request->all());
 
-        $document->categories()->sync($request->categories_id);
-
-        return redirect()->route('documents.show', $document->id)->with('success','modifié avec succès');
+        return redirect()->route('documents.show', $document->id)->with('success', 'Modifié avec succès');
     }
+
     public function destroy($id)
     {
-        $document = Document::find($id);
-        if (!$document) {
-            return redirect()->route('documents.index')->with('error', 'Document introuvable');
-        }
-        $document->delete();
-        return redirect()->route('documents.index')->with('success','supprimé avec succès');
+        $document = $this->documentService->findDocument($id);
+        $this->documentService->deleteDocument($document);
+
+        return redirect()->route('documents.index')->with('success', 'Supprimé avec succès');
     }
 
     public function addToFavorite($documentId)
     {
-        $user = Auth::user();
-        if (!$user) {
-            return redirect()->route('home')->with('error', 'Vous devez être connecté pour ajouter un document en favoris.');
+        if ($this->favoriteService->addToFavorites($documentId)) {
+            return redirect()->back()->with('success', 'Ajouté aux favoris.');
         }
-
-        $document = Document::find($documentId);
-        if (!$document) {
-            return redirect()->back()->with('error', 'Document introuvable.');
-        }
-
-        // Vérifie si le document est déjà en favori
-        $alreadyFavorite = Favorite::where('user_id', $user->id)
-                                   ->where('document_id', $documentId)
-                                   ->exists();
-        if (!$alreadyFavorite) {
-            // Crée une nouvelle instance de Favorite
-            Favorite::create([
-                'user_id' => $user->id,
-                'document_id' => $documentId,
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Document ajouté à vos favoris avec succès.');
+        return redirect()->back()->with('error', 'Document introuvable.');
     }
-
 
     public function favorites()
     {
-        $user = Auth::user();
-        if (!$user) {
-            return redirect()->route('home')->with('error', 'Vous devez être connecté pour consulter vos documents favoris.');
-        }
-
-        // Récupérer les documents favoris de l'utilisateur
-        $favorites = Document::whereIn('id', $user->favorites->pluck('document_id'))->get();
-
+        $favorites = $this->favoriteService->getUserFavorites();
         return view('documents.favorites', compact('favorites'));
     }
 
-
     public function removeFromFavorite($documentId)
     {
-        $user = Auth::user();
-        if (!$user) {
-            return redirect()->route('home')->with('error', 'Vous devez être connecté pour retirer un document de vos favoris.');
-        }
-
-        $document = Document::find($documentId);
-        if (!$document) {
+        $response = $this->favoriteService->removeFromFavorites($documentId);
+        if(!$response){
             return redirect()->back()->with('error', 'Document introuvable.');
         }
-
-        // Trouver l'entrée favorite correspondante et la supprimer
-        $favorite = Favorite::where('user_id', $user->id)
-                            ->where('document_id', $documentId)
-                            ->first();
-
-        if ($favorite) {
-            $favorite->delete();
-        }
-
-        return redirect()->back()->with('success', 'Document retiré de vos favoris avec succès.');
+        return redirect()->back()->with('success', 'Retiré des favoris.');
     }
-
 
     public function logs($documentId)
     {
-        $document = Document::find($documentId);
+        $document = $this->logService->getDocumentLogs($documentId);
+
         if (!$document) {
             return redirect()->route('documents.index')->with('error', 'Document introuvable');
         }
-        $logs = $document->logs;
-        return view('documents.logs', compact('document', 'logs'));
+
+        return view('documents.logs', [
+            'document' => $document,
+            'logs' => $document->logs
+        ]);
     }
 
     public function addLog($documentId)
     {
-        $document = Document::find($documentId);
-        if (!$document) {
+        $log = $this->logService->addLog($documentId);
+
+        if (!$log) {
             return redirect()->route('documents.index')->with('error', 'Document introuvable');
         }
-        $user = Auth::user();
-        $log = new Log([
-            'user_id' => $user->id,
-            'document_id' => $document->id,
-        ]);
-        $log->save();
+
+        return redirect()->back()->with('success', 'Log ajouté avec succès.');
     }
 
     public function everyLogs()
     {
-        $logs = Log::all();
+        $logs = $this->logService->getAllLogs();
         return view('documents.all-logs', compact('logs'));
     }
 
     public function userLogs($userId)
     {
-        $user = User::find($userId);
+        $user = $this->logService->getUserLogs($userId);
         if (!$user) {
-            return redirect()->route('home')->with('error', 'Utilisateur introuvable');
+            return redirect()->route('documents.index')->with('error', 'Utilisateur introuvable');
         }
-        $logs = $user->logs;
-        return view('documents.user-logs', compact('user', 'logs'));
+        return view('documents.user-logs', [
+            'user' => $user,
+            'logs' => $user->logs
+        ]);
     }
 
     public function lastOpenedDocuments()
     {
-        $userId = Auth::id();
-
-        // Récupérer les 5 derniers logs avec les documents associés
-        $logs = Log::with('document')
-            ->where('user_id', $userId)
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-
-        // Passer les logs à la vue
+        $logs = $this->logService->getLastOpenedDocuments();
         return view('documents.last-opened', compact('logs'));
     }
-
 }
