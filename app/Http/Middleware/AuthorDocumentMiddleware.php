@@ -23,7 +23,8 @@ class AuthorDocumentMiddleware
             return redirect()->route('login');
         }
         $document = Document::findOrFail($request->documentId);
-        if ($document->user_id != $user->id ) {
+        if ($document->user_id != $user->id )//TODO : adapt this method if wants more or less entity access further
+        {
             return redirect()->back()->with(403, 'Accès à la modification de ce document interdite.');
         }
         return $next($request);

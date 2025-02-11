@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use App\Services\AuthService;
 use App\Services\CredentialService;
+use App\Services\DocumentService;
+use App\Services\FavoriteService;
+use App\Services\LogService;
 use App\Services\RoleService;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +28,15 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton(RoleService::class, function ($app) {
             return new RoleService();
+        });
+        $this->app->singleton(DocumentService::class, function ($app) {
+            return new DocumentService();
+        });
+        $this->app->singleton(FavoriteService::class, function ($app) {
+            return new FavoriteService();
+        });
+        $this->app->singleton(LogService::class, function ($app) {
+            return new LogService();
         });
     }
 

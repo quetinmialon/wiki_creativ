@@ -2,22 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Permission;
-use App\Models\Document;
+use App\Services\PermissionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PermissionController extends Controller
 {
+    protected $permissionService;
+
+    public function __construct(PermissionService $permissionService)
+    {
+        $this->permissionService = $permissionService;
+    }
+
     public function index()
     {
-        $permissions = Permission::with('document')->get();
+        $permissions = $this->permissionService->getAllPermissions();
         return view('permission.permission-list', compact('permissions'));
     }
 
     public function pendingPermissions()
     {
-        $permissions = Permission::with('document')->where('status', 'pending')->get();
+        $permissions = $this->permissionService->getPendingPermissions();
         return view('permission.pending-permission-list', compact('permissions'));
     }
 
@@ -29,20 +35,14 @@ class PermissionController extends Controller
             'comment' => 'nullable|string'
         ]);
 
-        Permission::create([
-            'document_id' => $request->document_id,
-            'expired_at' => $request->expired_at,
-            'comment' => $request->comment,
-            'status' => 'pending',
-            'author' => Auth::id(),
-        ]);
+        $this->permissionService->createPermissionRequest($request->all());
 
         return redirect()->route('pending-permissions')->with('success', 'Demande de permission créée avec succès.');
     }
 
     public function requestForm($documentId)
     {
-        $document = Document::find($documentId);
+        $document = $this->permissionService->getDocumentById($documentId);
         if (!$document) {
             return redirect()->route('documents.index')->with('error', 'Document introuvable');
         }
@@ -55,55 +55,43 @@ class PermissionController extends Controller
             'status' => 'required|in:approved,denied',
         ]);
 
-        $permission = Permission::find($id);
+        $permission = $this->permissionService->handlePermissionRequest($id, $request->status);
         if (!$permission) {
             return redirect()->route('pending-permissions')->with('error', 'Demande de permission introuvable.');
         }
-
-        // TODO: Envoyer une notification par email
-        $permission->status = $request->status;
-        $permission->handled_by = Auth::id();
-        $permission->save();
 
         return redirect()->route('pending-permissions')->with('success', 'Demande de permission modifiée avec succès.');
     }
 
     public function destroy($id)
     {
-        // TODO: Convertir cette méthode pour qu’elle soit gérée via un événement Chronus
-        $permission = Permission::find($id);
+        $permission = $this->permissionService->deletePermission($id);
         if (!$permission) {
             return redirect()->route('pending-permissions')->with('error', 'Demande de permission introuvable.');
         }
-        $permission->delete();
 
         return redirect()->route('pending-permissions')->with('success', 'Demande de permission supprimée avec succès.');
     }
 
     public function cancelRequest($id)
     {
-        $permission = Permission::find($id);
+        $permission = $this->permissionService->deletePermission($id);
         if (!$permission) {
             return redirect()->route('pending-permissions')->with('error', 'Demande de permission introuvable.');
         }
 
-        if ($permission->status != 'pending') {
-            return redirect()->route('pending-permissions')->with('error', 'Impossible d\'annuler une demande de permission déjà traitée.');
-        }
-
-        $permission->delete();
         return redirect()->route('pending-permissions')->with('success', 'Demande de permission annulée avec succès.');
     }
 
     public function userRequest($id)
     {
-        $permissions = Permission::with('document')->where('author', $id)->get();
+        $permissions = $this->permissionService->getUserPermissions($id);
         return view('permission.user-request-list', compact('permissions'));
     }
 
     public function documentRequest($id)
     {
-        $permissions = Permission::with('document')->where('document_id', $id)->get();
+        $permissions = $this->permissionService->getDocumentPermissions($id);
         return view('permission.document-request-list', compact('permissions'));
     }
 }

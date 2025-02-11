@@ -25,7 +25,7 @@ Route::put(uri: '/roles/{id}', action: [RoleController::class, 'update'])->name(
 //subscription routes
 Route::get('/subscribe', [SubscriptionController::class,'subscribe'])->name(name: 'subscribe');
 Route::post('/subscribe', [SubscriptionController::class,'store'])->name(name: 'subscribe.store');
-Route::post('/subscribe/{id}',[SubscriptionController::class,'process'])->name('subscribe.process');
+Route::post('/admin/subscribe/{id}',[SubscriptionController::class,'process'])->name('subscribe.process');
 Route::get('/register/{token}',[SubscriptionController::class,'choosePassword'])->name('register.complete');
 Route::post('/register',[SubscriptionController::class,'completeRegistration'])->name('register.finalization');
 

@@ -18,7 +18,7 @@ class ReadDocumentMiddleware
      */
     public function handle(Request $request, Closure $next):Response
     {
-        $user = Auth::user()->loadRoles();//TODO : try to handle the ide error
+        $user = Auth::user()->loadRoles();
         if (!$user) {
             return redirect()->route('login');
         }
@@ -28,8 +28,9 @@ class ReadDocumentMiddleware
 
         foreach ($user->roles as $role) {
             foreach ($categoriesOfDocument as $category) {
-                if ($category->role && $category->role->id == $role->id) {
-                    return $next($request); 
+                if ($category->role && $category->role->id == $role->id)//TODO : maybe add also qualité, admin and superadmin roles an access to read documnts
+                {
+                    return $next($request);
                 }
             }
         }

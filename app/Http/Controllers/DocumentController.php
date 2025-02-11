@@ -72,7 +72,7 @@ class DocumentController extends Controller
             'categories_id.*'=> 'exists:categories,id',
         ]);
 
-        $document = $this->documentService->findDocument($id);
+        $document = $this->documentService->findDocument($id)->first();
         $this->documentService->updateDocument($document, $request->all());
 
         return redirect()->route('documents.show', $document->id)->with('success', 'Modifié avec succès');
@@ -80,7 +80,7 @@ class DocumentController extends Controller
 
     public function destroy($id)
     {
-        $document = $this->documentService->findDocument($id);
+        $document = $this->documentService->findDocument($id)->first();
         $this->documentService->deleteDocument($document);
 
         return redirect()->route('documents.index')->with('success', 'Supprimé avec succès');

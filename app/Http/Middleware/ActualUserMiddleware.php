@@ -20,7 +20,7 @@ class ActualUserMiddleware
 
         $autorizedRoles = [
             'admin',
-               'superadmin',
+            'superadmin',
         ];
 
         if (!$user || $user->id != $request->route('user')->id || !in_array($user->role, $autorizedRoles)) {
