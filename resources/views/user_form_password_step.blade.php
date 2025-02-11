@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <form method="POST" action="{{ route('register.finalization') }}">
     @csrf
     <input type="hidden" name="email" value="{{ $email }}">
@@ -7,3 +10,4 @@
 
     <button type="submit">Finaliser l'inscription</button>
 </form>
+@endsection

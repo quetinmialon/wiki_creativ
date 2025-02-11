@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <form method="POST" action="{{ route('admin.create-user') }}">
     @csrf
     <label for="name">Nom :</label>
@@ -18,4 +21,4 @@
 
     <button type="submit">Créer l'utilisateur</button>
 </form>
-
+@endsection

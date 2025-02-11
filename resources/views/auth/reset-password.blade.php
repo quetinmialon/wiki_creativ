@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <div>
     <h2>Reset Your Password</h2>
 
@@ -30,3 +33,4 @@
         <button type="submit" class="btn btn-primary">Reset Password</button>
     </form>
 </div>
+@endsection
