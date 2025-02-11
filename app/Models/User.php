@@ -70,6 +70,11 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class, 'user_role');
     }
+
+    public function loadRoles()
+    {
+        return $this->load('roles');
+    }
     public function permissions()
     {
         return $this->hasMany(Permission::class,'author');
@@ -92,5 +97,6 @@ class User extends Authenticatable
 
     public function updated_documents(){
         return $this->hasMany(Document::class, 'updated_by');
+
     }
 }
