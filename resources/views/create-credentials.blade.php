@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <div class="container mx-auto mt-10 px-6">
     <h1 class="text-3xl font-bold mb-6">Créer un nouveau log</h1>
     <form action="{{ route('credentials.store') }}" method="POST" class="space-y-6 bg-white p-8 shadow-md rounded-md">
@@ -28,3 +31,4 @@
         </button>
     </form>
 </div>
+@endsection

@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <div class="container mx-auto mt-10 px-6">
     <h1 class="text-3xl font-bold mb-6">Vos Credentials</h1>
 
@@ -47,4 +50,5 @@
     <a href="{{ route('credentials.create') }}" class="mt-8 inline-block px-6 py-2 bg-blue-500 text-white font-semibold rounded-md shadow hover:bg-blue-600">
         Ajouter un log
     </a>
-</div>
+</di>
+@endsection
