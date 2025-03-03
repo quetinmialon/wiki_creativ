@@ -15,60 +15,68 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Récupère l'input caché
+    //get hidden input
     const hiddenInput = document.getElementById("content");
 
-    // Met à jour le champ caché en temps réel (optionnel)
+    //update hidden input dynamically
     quill.on("text-change", function () {
         hiddenInput.value = quill.root.innerHTML;
     });
 
-    // Met à jour le champ caché juste avant soumission
-    document.querySelector("form").addEventListener("submit", function (event) {
-        hiddenInput.value = quill.root.innerHTML;
+    //handle paste image event
+    quill.root.addEventListener("paste", async (event) => {
+        const clipboardData = event.clipboardData || window.clipboardData;
+        if (clipboardData) {
+            const items = clipboardData.items;
+            for (const item of items) {
+                if (item.type.startsWith("image/")) {
+                    const file = item.getAsFile();
+                    if (file) {
+                        const range = quill.getSelection();
+                        const reader = new FileReader();
 
-        console.log("Contenu envoyé :", hiddenInput.value); // Vérifie dans la console
-
-        if (!hiddenInput.value.trim()) {
-            event.preventDefault(); // Empêche l'envoi si le champ est vide
-            alert("Le contenu ne peut pas être vide !");
+                        reader.onload = function (e) {
+                            const base64Image = e.target.result;
+                            uploadPastedImage(file, base64Image, quill);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
         }
     });
 });
 
-
-
 /**
- * function that create an new hidden form in html view to handle the storage of images and give back an url to access it.
+ * upload paste image to store it properly and render the url
  */
-function uploadImage(quill) {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = async function () {
-        const file = input.files[0];
-        if (!file) return;
+async function uploadPastedImage(file, base64Image, quill) {
+    const formData = new FormData();
+    formData.append("image", file);
 
-        const formData = new FormData();
-        formData.append("image", file);
+    try {
+        const response = await fetch("/upload-image", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+            }
+        });
 
-        try {
-            const response = await fetch("/upload-image", {
-                method: "POST",
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+        const data = await response.json();
+        if (data.url) {
+            //find every 64bit images in quill container
+            const images = quill.root.querySelectorAll("img");
+            images.forEach((img) => {
+                if (img.src === base64Image) {
+                    img.src = data.url; //change 64bit string to url link
                 }
             });
 
-            const data = await response.json();
-            if (data.url) {
-                const range = quill.getSelection();
-                quill.insertEmbed(range.index, "image", data.url);
-            }
-        } catch (error) {
-            console.error("Erreur d'upload :", error);
+            // update inner html properly
+            document.getElementById("content").value = quill.root.innerHTML;
         }
-    };
-    input.click();
+    } catch (error) {
+        console.error("Erreur d'upload :", error);
+    }
 }

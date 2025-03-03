@@ -16,7 +16,7 @@
 
     <div class="mb-6">
         <h2 class="text-xl font-semibold text-gray-700">Contenu :</h2>
-        <p class="text-gray-600 whitespace-pre-line">{{ $document->content }}</p>
+        <p class="text-gray-600 whitespace-pre-line">{!! $document->content !!}</p>
     </div>
 
     <div class="mb-6">
