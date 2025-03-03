@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Gestion des catégories')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal">
     <nav class="bg-blue-500 p-4 flex flex-raw">
@@ -29,6 +29,8 @@
         </div>
     </nav>
     <div class="container mx-auto py-6">
+        @include('flash-messages')
+        @include('errors')
         @yield('content')
     </div>
     <footer class="bg-gray-800 text-white p-4 text-center align-self-end">

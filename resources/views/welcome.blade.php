@@ -4,6 +4,7 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
+    @section('content')
     <body class="font-sans antialiased dark:bg-black dark:text-white/50">
         <div class="max-w-2xl mx-auto mt-8 bg-white shadow-md rounded-md p-6">
             @guest
@@ -29,4 +30,5 @@
     <x-role-list/>
     <x-user-request-list/>
     </body>
+    @endsection
 </html>

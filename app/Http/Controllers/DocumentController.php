@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\ValidMarkdown;
 use App\Services\DocumentService;
 use App\Services\FavoriteService;
 use App\Services\LogService;
@@ -38,17 +39,17 @@ class DocumentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'=> 'string|required',
-            'content'=> 'string|required',
-            'excerpt'=> 'string|required',
-            'categories_id' => 'array',
-            'categories_id.*'=> 'exists:categories,id',
+            'name' => 'string|required',
+            'content' => ['string', 'required', 'min:10', 'max:500000', new ValidMarkdown()],
+            'excerpt' => 'string|nullable',
+            'categories_id' => 'array|nullable',
+            'categories_id.*' => 'exists:categories,id',
         ]);
-
         $this->documentService->createDocument($request->all());
 
-        return redirect()->route('documents.index')->with('success','Créé avec succès');
+        return redirect()->route('documents.index')->with('success', 'Créé avec succès');
     }
+
 
     public function byCategory($categoryId)
     {
@@ -59,15 +60,23 @@ class DocumentController extends Controller
     public function show($id)
     {
         $document = $this->documentService->findDocument($id);
+        $document->content = $this->documentService->convertMarkdownToHtml($document->content);
         return view('documents.document', compact('document'));
+    }
+
+    public function edit($id)
+    {
+        $document = $this->documentService->findDocument($id);
+        $roles = $document->author->roles()->with('categories')->get();
+        return view('documents.edit-form', compact('document', 'roles'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'name'=> 'string|required',
-            'content'=> 'string|required',
-            'excerpt'=> 'string|required',
+            'content'=> ['string', 'required', 'min:10', 'max:500000', new ValidMarkdown()],
+            'excerpt'=> 'string',
             'categories_id' => 'array',
             'categories_id.*'=> 'exists:categories,id',
         ]);

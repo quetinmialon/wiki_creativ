@@ -4,13 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Document;
-use App\Models\Favorite;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class DocumentTest extends TestCase
@@ -93,7 +90,7 @@ class DocumentTest extends TestCase
         $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
         $data = [
             'name' => 'Document 1',
-            'content' => 'Content 1',
+            'content' => 'Content 1 that could be markdown file',
             'excerpt' => 'Excerpt 1',
             'categories_id' => [$category->id],
         ];

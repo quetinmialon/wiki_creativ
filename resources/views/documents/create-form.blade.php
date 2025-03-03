@@ -36,16 +36,20 @@
                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
-
-        <!-- Champ 'content' -->
-        <div class="mb-4">
-            <label for="content" class="block text-sm font-medium text-gray-700">Contenu</label>
-            <textarea id="content" name="content" rows="6" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required></textarea>
-            @error('content')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
+        <!-- WYSIWYG -->
+        <div id="toolbar">
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+            <button class="ql-header" value="1"></button>
+            <button class="ql-header" value="2"></button>
+            <button class="ql-list" value="ordered"></button>
+            <button class="ql-list" value="bullet"></button>
         </div>
-
+        <!-- Éditeur de texte -->
+        <div id="editor" class="border rounded p-2"></div>
+        <!-- Champ caché qui stocke le HTML -->
+        <input type="hidden" name="content" id="content">
         <!-- Rôles et catégories -->
         <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">Rôles et Catégories</label>

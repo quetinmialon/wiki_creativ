@@ -28,11 +28,11 @@
             @enderror
         </div>
 
-        <!-- Contenu -->
+        <!-- Contenu (WYSIWYG) -->
         <div>
-            <label for="content" class="block text-sm font-medium text-gray-700">Contenu</label>
-            <textarea name="content" id="content" rows="5"
-                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>{{ old('content', $document->content) }}</textarea>
+            <label class="block text-sm font-medium text-gray-700">Contenu</label>
+            <div id="quill-editor" class="mt-1 h-48 border border-gray-300 rounded-md"></div>
+            <input type="hidden" name="content" id="content" value="{{ old('content', $document->content) }}">
             @error('content')
                 <p class="text-sm text-red-600">{{ $message }}</p>
             @enderror
@@ -73,4 +73,5 @@
         </div>
     </form>
 </div>
+
 @endsection

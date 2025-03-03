@@ -9,6 +9,7 @@ use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ImageUploadController;
 
 Route::get(uri: '/', action: function () {
     return view(view: 'welcome');
@@ -105,3 +106,6 @@ Route::delete('/permissions/cancel/{id}', [PermissionController::class, 'cancelR
 Route::delete('/permissions/delete/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
 Route::get('/permissions/user/{id}', [PermissionController::class, 'userRequest'])->name('permissions.user');
 Route::get('/permissions/document/{id}', [PermissionController::class, 'documentRequest'])->name('permissions.document');
+
+// storage image route
+Route::post('/upload-image', [ImageUploadController::class, 'store']);
