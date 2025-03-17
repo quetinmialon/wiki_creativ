@@ -8,6 +8,8 @@ use App\Services\FavoriteService;
 use App\Services\LogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Events\DocumentOpened;
+use App\Models\Document;
 
 class DocumentController extends Controller
 {
@@ -57,12 +59,17 @@ class DocumentController extends Controller
         return view('documents.by-category', compact('documents'));
     }
 
+
     public function show($id)
     {
-        $document = $this->documentService->findDocument($id);
-        $document->content = $this->documentService->convertMarkdownToHtml($document->content);
+        $document = Document::findOrFail($id);
+        $userId = Auth::user()->id; // Récupère l'utilisateur connecté
+
+        event(new DocumentOpened($document->id, $userId));
+
         return view('documents.document', compact('document'));
     }
+
 
     public function edit($id)
     {
@@ -130,17 +137,6 @@ class DocumentController extends Controller
             'document' => $document,
             'logs' => $document->logs
         ]);
-    }
-
-    public function addLog($documentId)
-    {
-        $log = $this->logService->addLog($documentId);
-
-        if (!$log) {
-            return redirect()->route('documents.index')->with('error', 'Document introuvable');
-        }
-
-        return redirect()->back()->with('success', 'Log ajouté avec succès.');
     }
 
     public function everyLogs()

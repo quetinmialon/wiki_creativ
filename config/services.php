@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'python_service' => [
+        'host' => env('PYTHON_SERVICE_HOST', 'http://python_embeddings:5000'),
+    ],
 
 ];
