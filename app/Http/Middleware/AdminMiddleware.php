@@ -4,8 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class AdminMiddleware
 {
@@ -14,19 +15,17 @@ class AdminMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next)
     {
-        $user = Auth::user();
-
-        $autorizedRoles =
-        [
-            'admin',
-            'superadmin',
-
-        ];
-        if (!$user || !in_array($user->role, $autorizedRoles)) {
-            return redirect()->back()->with(403, 'Vous n\'avez pas les droits pour accéder à cette page.');
+        if (!Auth::check()){
+            abort(401); // not connected
         }
+        $user = Auth::user();
+        $roles = $user->roles()->pluck('name')->toArray();
+        if (!in_array('admin', $roles) &&!in_array('superadmin', $roles)){
+            abort(403); // Accès interdit
+        }
+
         return $next($request);
     }
 }

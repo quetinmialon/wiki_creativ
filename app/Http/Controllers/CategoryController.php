@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class CategoryController extends Controller
 {
@@ -57,5 +58,11 @@ class CategoryController extends Controller
         $category = Category::find($id);
         $category->delete();
         return redirect()->route('categories.index');
+    }
+
+    public function getUserCategories(){
+        // Fetch all categories associated with a user
+        $categories = Category::where('role_id',User::auth()->role_id)->get();
+        return view('category.category-list',compact('categories'));
     }
 }

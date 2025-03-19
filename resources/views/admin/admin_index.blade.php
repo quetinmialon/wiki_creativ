@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('content')
+@section('admin-contet')
 <div>
     <x-user_request_list/>
     <a href="{{route('admin.register')}}">inviter un nouvel utilisateur</a>

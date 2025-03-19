@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('content')
+@section('admin-content')
 <form method="POST" action="{{ route('admin.create-user') }}">
     @csrf
     <label for="name">Nom :</label>

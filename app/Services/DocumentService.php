@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use League\CommonMark\CommonMarkConverter;
 use League\HTMLToMarkdown\HtmlConverter;
+use App\Models\User;
 use League\CommonMark\Extension\DisallowedRawHtml\DisallowedRawHtmlExtension;
 
 class DocumentService
@@ -49,7 +50,15 @@ class DocumentService
 
     public function getAllCategoriesWithDocuments()
     {
-        return Category::with(['documents.author'])->get();
+        $user = Auth::user();
+
+        // Récupérer tous les IDs des rôles de l'utilisateur
+        $roleIds = $user->roles->pluck('id');
+
+        // Chercher les catégories qui correspondent à ces rôles
+        return Category::whereIn('role_id', $roleIds)
+                       ->with('documents')
+                       ->get();
     }
 
     public function createDocument(array $data)

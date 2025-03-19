@@ -74,7 +74,7 @@ class SubscriptionController extends Controller
     public function createUserInvitationForm(): View
     {
         $roles = Role::all();
-        return view('admin_create_user_invitation', ['roles' => $roles]);
+        return view('admin.admin_create_user_invitation', ['roles' => $roles]);
     }
 
     public function createUserInvitation(Request $request): RedirectResponse

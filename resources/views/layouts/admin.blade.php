@@ -35,8 +35,37 @@
         </div>
     </nav>
 
+    <!-- Conteneur principal avec sidebar -->
+    <div class="flex flex-1">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white border-r border-gray-600 p-6 space-y-6 fixed top-16 bottom-16 left-0">
+            <div class="text-2xl font-bold">Admin Panel</div>
+            <ul class="space-y-4">
+                <li>
+                    <a href="{{ route('documents.index') }}" class="block px-4 py-2 rounded {{ request()->routeIs('documents.*') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
+                        📄 Documents
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('categories.index') }}" class="block px-4 py-2 rounded {{ request()->routeIs('categories.*') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
+                        📂 Catégories
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin') }}" class="block px-4 py-2 rounded {{ request()->routeIs('admin.*') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
+                        ⚙ Admin
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('logout') }}" class="block px-4 py-2 rounded text-gray-800 hover:bg-gray-200">
+                        🚪 Déconnexion
+                    </a>
+                </li>
+            </ul>
+        </div>
+
         <!-- Contenu principal -->
-        <div class="flex-1 m-6 p-6">
+        <div class="flex-1 ml-64 p-6">
             @include('flash-messages')
             @include('errors')
             @yield('content')
