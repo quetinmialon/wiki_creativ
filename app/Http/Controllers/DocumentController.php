@@ -33,6 +33,9 @@ class DocumentController extends Controller
     public function create()
     {
         $user = Auth::user();
+        if ($user->cannot('create', Document::class)) {
+            abort(403);
+        }
         $roles = $user->roles()->with('categories')->get();
 
         return view('documents.create-form', compact('roles'));
@@ -64,7 +67,9 @@ class DocumentController extends Controller
     {
         $document = Document::findOrFail($id);
         $userId = Auth::user()->id; // Récupère l'utilisateur connecté
-
+        if(Auth::user()->cannot('view', $document)){
+            abort(403);
+        }
         event(new DocumentOpened($document->id, $userId));
 
         return view('documents.document', compact('document'));
@@ -73,6 +78,10 @@ class DocumentController extends Controller
 
     public function edit($id)
     {
+        $user = Auth::user();
+        if ($user->cannot('update', $this->documentService->findDocument($id))) {
+            abort(403);
+        }
         $document = $this->documentService->findDocument($id);
         $roles = $document->author->roles()->with('categories')->get();
         return view('documents.edit-form', compact('document', 'roles'));
@@ -80,6 +89,10 @@ class DocumentController extends Controller
 
     public function update(Request $request, $id)
     {
+        $user = Auth::user();
+        if ($user->cannot('update', $this->documentService->findDocument($id))) {
+            abort(403);
+        }
         $request->validate([
             'name'=> 'string|required',
             'content'=> ['string', 'required', 'min:10', 'max:500000', new ValidMarkdown()],
@@ -96,6 +109,10 @@ class DocumentController extends Controller
 
     public function destroy($id)
     {
+        $user = Auth::user();
+        if ($user->cannot('delete', $this->documentService->findDocument($id))) {
+            abort(403);
+        }
         $document = $this->documentService->findDocument($id)->first();
         $this->documentService->deleteDocument($document);
 

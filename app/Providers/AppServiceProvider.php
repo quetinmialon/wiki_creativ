@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Document;
+use App\Policies\DocumentPolicy;
 use App\Services\AuthService;
 use App\Services\CredentialService;
 use App\Services\DocumentService;
@@ -9,6 +11,7 @@ use App\Services\FavoriteService;
 use App\Services\LogService;
 use App\Services\RoleService;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -45,6 +48,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::policy(Document::class, DocumentPolicy::class);
     }
 }

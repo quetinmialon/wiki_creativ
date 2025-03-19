@@ -106,8 +106,9 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/permissions/pending', [PermissionController::class, 'pendingPermissions'])->name('pending-permissions');
 
     //opened logs route
-    Route::get('/{document}/logs', [DocumentController::class, 'logs'])->name('logs'); // Affichage des logs d'ouverture du document
     Route::get('/logs', [DocumentController::class, 'everyLogs'])->name('everyLogs');// récrupération de tout les logs d'ouvertures
-    Route::get('/{user}/userLogs', [DocumentController::class, 'userLogs'])->name('userLogs');
-    Route::get('/lastOpened', [DocumentController::class, 'lastOpenedDocuments'])->name('lastOpened');
+    Route::get('/logs/{document}/logs', [DocumentController::class, 'logs'])->name('logs'); // Affichage des logs d'ouverture du document
+    Route::get('/logs/{user}/userLogs', [DocumentController::class, 'userLogs'])->name('userLogs');
+    Route::get('/logs/lastOpened', [DocumentController::class, 'lastOpenedDocuments'])->name('lastOpened');
 });
+

@@ -43,22 +43,27 @@
             <ul class="space-y-4">
                 <li>
                     <a href="{{ route('documents.index') }}" class="block px-4 py-2 rounded {{ request()->routeIs('documents.*') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
-                        📄 Documents
+                         Documents
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('everyLogs') }}" class="block px-4 py-2 rounded {{ request()->routeIs('logs','logs.*','everyLogs') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
+                         Logs
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('categories.index') }}" class="block px-4 py-2 rounded {{ request()->routeIs('categories.*') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
-                        📂 Catégories
+                         Catégories
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('admin') }}" class="block px-4 py-2 rounded {{ request()->routeIs('admin.*') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
-                        ⚙ Admin
+                         Utilisateurs
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('logout') }}" class="block px-4 py-2 rounded text-gray-800 hover:bg-gray-200">
-                        🚪 Déconnexion
+                         Déconnexion
                     </a>
                 </li>
             </ul>
