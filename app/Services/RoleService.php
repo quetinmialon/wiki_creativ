@@ -42,4 +42,8 @@ class RoleService
         $role->delete();
         return ['success' => 'Rôle supprimé avec succès.'];
     }
+
+    public function getRolesWhereCategoriesExist(){
+        return Role::whereHas('categories')->get();
+    }
 }

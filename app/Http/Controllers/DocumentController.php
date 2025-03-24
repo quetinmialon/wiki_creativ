@@ -4,24 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Rules\ValidMarkdown;
 use App\Services\DocumentService;
-
+use App\Services\RoleService;
 use App\Services\LogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Events\DocumentOpened;
 use App\Models\Document;
+use App\Models\Role;
 
 class DocumentController extends Controller
 {
     protected $documentService;
     protected $favoriteService;
     protected $logService;
+    protected $roleService;
 
-    public function __construct(DocumentService $documentService, LogService $logService)
+    public function __construct(DocumentService $documentService, LogService $logService, RoleService $roleService)
     {
         $this->documentService = $documentService;
         $this->logService = $logService;
+        $this->roleService = $roleService;
     }
 
     public function index()
@@ -33,7 +36,7 @@ class DocumentController extends Controller
     public function create()
     {
         $user = Auth::user();
-        if ($user->cannot('create', Document::class)) {
+        if (!$user) {
             abort(403);
         }
         $roles = $user->roles()->with('categories')->get();
@@ -67,7 +70,7 @@ class DocumentController extends Controller
     {
         $document = Document::findOrFail($id);
         $userId = Auth::user()->id; // Récupère l'utilisateur connecté
-        if(Auth::user()->cannot('view', $document)){
+        if (!Gate::allows('view-document', $document)) {
             abort(403);
         }
         event(new DocumentOpened($document->id, $userId));
@@ -79,19 +82,19 @@ class DocumentController extends Controller
     public function edit($id)
     {
         $user = Auth::user();
-        if ($user->cannot('update', $this->documentService->findDocument($id))) {
+        if(!Gate::allows('manage-document',$this->documentService->findDocument($id)) && !Gate::allows('is-superadmin') ){
             abort(403);
         }
         $document = $this->documentService->findDocument($id);
-        $roles = $document->author->roles()->with('categories')->get();
+        $roles = $this->roleService->getRolesWhereCategoriesExist();
         return view('documents.edit-form', compact('document', 'roles'));
     }
 
     public function update(Request $request, $id)
     {
         $document = $this->documentService->findDocument($id)->first();
-        if (!Gate::allows('update-document', $document)) {
-            abort(403, "Vous n'avez pas l'autorisation de modifier ce document.");
+        if(!Gate::allows('manage-document',$this->documentService->findDocument($id)->first()) && !Gate::allows('is-superadmin') ){
+            abort(403);
         }
 
         $request->validate([
@@ -110,8 +113,7 @@ class DocumentController extends Controller
 
     public function destroy($id)
     {
-        $user = Auth::user();
-        if ($user->cannot('delete', $this->documentService->findDocument($id))) {
+        if(!Gate::allows('manage-document',$this->documentService->findDocument($id)->first()) && !Gate::allows('is-superadmin') ){
             abort(403);
         }
         $document = $this->documentService->findDocument($id)->first();
@@ -137,6 +139,7 @@ class DocumentController extends Controller
     public function everyLogs()
     {
         $logs = $this->logService->getAllLogs();
+        
         return view('documents.all-logs', compact('logs'));
     }
 

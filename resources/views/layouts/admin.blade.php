@@ -73,7 +73,7 @@
                 </li>
                 <li>
                     <a href="{{ route('admin.permissions') }}" class="block px-4 py-2 rounded {{ request()->routeIs('admin.permissions', 'admin.permissions.*') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
-                         accès temporaires aux documents
+                         Accès temporaires aux documents
                     </a>
                 </li>
             </ul>

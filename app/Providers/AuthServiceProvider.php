@@ -4,13 +4,11 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\Credential;
 use App\Models\Document;
-use App\Policies\AdminPolicy;
-
+use App\Models\Role;
 class AuthServiceProvider extends ServiceProvider
 {
     public function register(): void
@@ -35,7 +33,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Vérifier si l'utilisateur est admin de son rôle
         Gate::define('is-admin', function (User $user, string $role) {
-            return $user->role === "$role admin";
+            return $user->roles->contains('name',"$role admin") || $user->roles->contains('name','superadmin');
         });
 
         // Gérer les autorisations pour les catégories
@@ -45,9 +43,25 @@ class AuthServiceProvider extends ServiceProvider
 
         // Gérer les autorisations pour les documents
         Gate::define('manage-document', function (User $user, Document $document) {
-            return $user->id === $document->user_id || $this->isAdmin($user, $document->category->role);
-        });
+            $userRoles = $user->roles->pluck('name')->toArray();
+            $categoryRoles = $document->categories->pluck('role.name')->toArray();
+            if ($user->id === $document->created_by) {
+                return true;
+            }
+            foreach ($categoryRoles as $categoryRole) {
+                $adminRole = 'Admin '.$categoryRole;
 
+                if (in_array($adminRole, $userRoles)) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        Gate::define('view-document',function(User $user, Document $document){
+            $userRoles = $user->roles->pluck('name')->toArray();
+            $categoriesRoles = $document->categories->pluck('role.name')->toArray();
+            return in_array('superadmin', $userRoles) || count(array_intersect($categoriesRoles, $userRoles)) > 0;
+        });
         Gate::define('manage-shared-credential', function (User $user, Credential $credential) {
             return $this->isAdmin($user, $credential->role); ;
         });

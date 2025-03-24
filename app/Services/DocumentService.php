@@ -92,7 +92,7 @@ class DocumentService
 
     public function findDocument($id)
     {
-        return Document::find($id);
+        return Document::where('id', $id)->first();
     }
 
     public function updateDocument(Document $document, array $data)

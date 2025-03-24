@@ -20,6 +20,22 @@
                                 <a href="{{ route('documents.show', $document->id) }}" class="inline-block mt-2 px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
                                     Voir le document
                                 </a>
+                                <!-- Actions sur le document -->
+                                <div class="flex gap-2 mt-2">
+                                    <a href="{{ route('documents.edit', $document->id) }}"
+                                       class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                                        Modifier le document
+                                    </a>
+                                    <form action="{{ route('documents.destroy', $document->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 ml-2">
+                                            Supprimer le document
+                                        </button>
+                                    </form>
+                                </div>
+
                             </div>
                         </div>
                 </div>

@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Document;
-use App\Policies\DocumentPolicy;
 use App\Services\AuthService;
 use App\Services\CredentialService;
 use App\Services\DocumentService;
@@ -14,7 +12,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 use App\Policies\SuperAdminPolicy;
-
+use App\Services\PermissionService;
+use App\Services\SubscriptionService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,6 +43,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(LogService::class, function ($app) {
             return new LogService();
         });
+        $this->app->singleton(PermissionService::class, function ($app) {
+            return new PermissionService();
+        });
+        $this->app->singleton(SubscriptionService::class, function ($app) {
+            return new SubscriptionService();
+        });
     }
 
 
@@ -52,7 +57,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::policy(Document::class, DocumentPolicy::class);
         Gate::policy(User::class, SuperAdminPolicy::class);
     }
 }

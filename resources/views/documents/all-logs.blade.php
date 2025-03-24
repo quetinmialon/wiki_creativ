@@ -18,8 +18,8 @@
                 <tbody>
                     @foreach ($logs as $log)
                         <tr>
-                            <td class="border border-gray-200 px-4 py-2">{{ $log->user->name }}</td>
-                            <td class="border border-gray-200 px-4 py-2">{{ $log->document->name }}</td>
+                            <td class="border border-gray-200 px-4 py-2">{{ $log->user->name ?? 'anonyme' }}</td>
+                            <td class="border border-gray-200 px-4 py-2">{{ $log->document->name ?? 'document supprimé'}}</td>
                             <td class="border border-gray-200 px-4 py-2">{{ $log->created_at->format('d/m/Y H:i') }}</td>
                         </tr>
                     @endforeach

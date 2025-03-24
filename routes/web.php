@@ -61,26 +61,22 @@ Route::middleware(AuthMiddleware::class)->group(function(){
     });
 });
 
-/*************************************************************************************************/
-/*************************************************************************************************/
 // -----------------------------------------admin routes ----------------------------------------/
-/*************************************************************************************************/
-/*************************************************************************************************/
+
 Route::middleware(AdminMiddleware::class)->group(function () {
     //INDEX AND USER REGISTRATION
     Route::get('/admin', [AdminController::class, 'index'])->name('admin');
     Route::get('/admin/register', [SubscriptionController::class,'createUserInvitationForm'])->name('admin.register');
     Route::post('/admin/register', [SubscriptionController::class, 'createUserInvitation'])->name('admin.create-user');
     Route::post('/admin/subscribe/{id}',[SubscriptionController::class,'process'])->name('subscribe.process');
-    // CATEGORIES
+    //CATEGORIES
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index'); // Liste des catégories
     Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create'); // Formulaire de création
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store'); // Création d'une catégorie
     Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit'); // Formulaire de modification
     Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update'); // Mise à jour d'une catégorie
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy'); // Suppression d'une catégorie
-
-    // PERMISSIONS
+    //PERMISSIONS
     Route::post('/admin/permissions/handle/{id}', [PermissionController::class, 'handleRequest'])->name('permissions.handle');
     Route::delete('/admin/permissions/cancel/{id}', [PermissionController::class, 'cancelRequest'])->name('permissions.cancel');
     Route::delete('/admin/permissions/delete/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
@@ -88,21 +84,17 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/permissions/document/{id}', [PermissionController::class, 'documentRequest'])->name('permissions.document');
     Route::get('/admin/permissions', [PermissionController::class, 'index'])->name('admin.permissions');
     Route::get('/admin/permissions/pending', [PermissionController::class, 'pendingPermissions'])->name('admin.permissions.pendings');
-
     //opened logs route
     Route::get('/logs', [DocumentController::class, 'everyLogs'])->name('everyLogs');// récrupération de tout les logs d'ouvertures
     Route::get('/logs/{document}/logs', [DocumentController::class, 'logs'])->name('logs'); // Affichage des logs d'ouverture du document
     Route::get('/logs/{user}/userLogs', [DocumentController::class, 'userLogs'])->name('userLogs');
-
     //documents
     Route::get('/admin/documents', [DocumentController::class, 'getAllDocuments'])->name('admin.documents.index');
-
     //users
     Route::get('/admin/users', [AdminController::class, 'UserList'])->name('admin.users');
     Route::get('/admin/users/{id}/edit', [AdminController::class, 'EditUsersRole'])->name('admin.edit-users-role');
     Route::delete('/admin/users/{id}', [AdminController::class,'revokeUser'])->name('admin.delete-user');
     Route::put('/admin/users/{id}', [AdminController::class, 'updateUserRole'])->name('admin.update-user-roles');
-
     //roles
     Route::get('/admin/roles', [AdminController::class, 'RoleList'])->name('admin.roles');
     Route::get(uri: '/admin/roles/{id}/edit', action: [RoleController::class, 'edit'])->name(name: 'roles.edit');
@@ -110,7 +102,6 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::post(uri: '/admin/roles',action: [RoleController::class,'insert'])->name(name: 'roles.insert');
     Route::put(uri: '/admin/roles/{id}', action: [RoleController::class, 'update'])->name(name: 'roles.update');
     Route::get(uri: '/admin/roles/create',action: [RoleController::class,'create'])->name(name: 'roles.create');
-
     //usersRequests
     Route::get('/admin/requests', [AdminController::class, 'UserRequests'])->name('admin.users-requests');
 });
