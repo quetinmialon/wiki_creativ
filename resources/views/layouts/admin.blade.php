@@ -21,7 +21,7 @@
                 <a href="{{ route('documents.index') }}" class="{{ request()->routeIs('documents','documents.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Documents</a>
                 <a href="{{ route('create-documents') }}" class="{{ request()->routeIs('create-documents') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Nouveau Document</a>
                 <a href="{{ route('credentials.index') }}" class="{{ request()->routeIs('credentials','credentials.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Identifiants</a>
-                @can('isAdmin')
+                @can('SuperAdmin', Auth::user())
                     <a href="{{ route('admin') }}" class="{{ request()->routeIs('admin','admin.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Admin</a>
                 @endcan
                 <form action="{{route('logout')}}" method="POST" class="inline">
@@ -39,10 +39,10 @@
     <div class="flex flex-1">
         <!-- Sidebar -->
         <div class="w-64 bg-white border-r border-gray-600 p-6 space-y-6 fixed top-16 bottom-16 left-0">
-            <div class="text-2xl font-bold">Admin Panel</div>
+            <a href="{{ route('admin') }}"><div class="text-2xl font-bold">Admin Panel</div></a>
             <ul class="space-y-4">
                 <li>
-                    <a href="{{ route('documents.index') }}" class="block px-4 py-2 rounded {{ request()->routeIs('documents.*') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
+                    <a href="{{ route('admin.documents.index') }}" class="block px-4 py-2 rounded {{ request()->routeIs('admin.documents.*','admin.documents') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
                          Documents
                     </a>
                 </li>
@@ -57,13 +57,23 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin') }}" class="block px-4 py-2 rounded {{ request()->routeIs('admin.*') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
+                    <a href="{{ route('admin.users') }}" class="block px-4 py-2 rounded {{ request()->routeIs('admin.users') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
                          Utilisateurs
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('logout') }}" class="block px-4 py-2 rounded text-gray-800 hover:bg-gray-200">
-                         Déconnexion
+                    <a href="{{ route('admin.roles') }}" class="block px-4 py-2 rounded {{ request()->routeIs('admin.roles') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
+                         Rôles
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.users-requests') }}" class="block px-4 py-2 rounded {{ request()->routeIs('admin.users-requests') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
+                         Demandes d'inscriptions
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.permissions') }}" class="block px-4 py-2 rounded {{ request()->routeIs('admin.permissions', 'admin.permissions.*') ? 'bg-blue-100 text-blue-500 font-bold border-l-4 border-blue-400' : 'text-gray-800' }} hover:bg-gray-200">
+                         accès temporaires aux documents
                     </a>
                 </li>
             </ul>

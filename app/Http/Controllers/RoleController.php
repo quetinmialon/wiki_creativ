@@ -16,12 +16,6 @@ class RoleController extends Controller
         $this->roleService = $roleService;
     }
 
-    public function index(): View
-    {
-        $roles = $this->roleService->getAllRoles();
-        return view('role.role-list', ['roles' => $roles]);
-    }
-
     public function create(): View
     {
         return view('create-role-form');
@@ -30,7 +24,7 @@ class RoleController extends Controller
     public function insert(Request $request): RedirectResponse
     {
         $this->roleService->createRole($request->all());
-        return redirect('/')->with('success', 'Rôle créé avec succès.');
+        return redirect('/admin/roles')->with('success', 'Rôle créé avec succès.');
     }
 
     public function edit(Request $request): View
@@ -46,12 +40,12 @@ class RoleController extends Controller
         ]);
 
         $this->roleService->updateRole($request->id, $request->all());
-        return redirect('/')->with('success', 'Rôle modifié avec succès.');
+        return redirect('/admin/roles')->with('success', 'Rôle modifié avec succès.');
     }
 
     public function destroy(Request $request): RedirectResponse
     {
         $response = $this->roleService->deleteRole($request->id);
-        return redirect('/')->with(key($response), reset($response));
+        return redirect('/admin/roles')->with(key($response), reset($response));
     }
 }

@@ -30,7 +30,7 @@ class AuthController extends Controller
 
         try {
             if ($this->authService->login($credentials)) {
-                return redirect()->intended('/admin');
+                return redirect()->intended('/');
             }
         } catch (ValidationException $e) {
             throw $e;

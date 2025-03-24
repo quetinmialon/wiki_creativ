@@ -2,4 +2,6 @@
 
 @section('content')
 
+<x-user-request-list/>
+
 @endsection

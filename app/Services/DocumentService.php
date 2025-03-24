@@ -61,6 +61,11 @@ class DocumentService
                        ->get();
     }
 
+    public function getEveryDocuments()
+    {
+        return Category::with('documents')->get();
+    }
+
     public function createDocument(array $data)
     {
         $data['created_by'] = Auth::id();

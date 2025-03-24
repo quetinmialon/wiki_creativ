@@ -12,6 +12,9 @@ use App\Services\LogService;
 use App\Services\RoleService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use App\Models\User;
+use App\Policies\SuperAdminPolicy;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,11 +46,13 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
+
     /**
      * Bootstrap any application services.
      */
     public function boot(): void
     {
         Gate::policy(Document::class, DocumentPolicy::class);
+        Gate::policy(User::class, SuperAdminPolicy::class);
     }
 }

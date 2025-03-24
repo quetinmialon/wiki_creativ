@@ -22,10 +22,9 @@ class AdminMiddleware
         }
         $user = Auth::user();
         $roles = $user->roles()->pluck('name')->toArray();
-        if (!in_array('admin', $roles) &&!in_array('superadmin', $roles)){
+        if (!in_array('superadmin', $roles)){
             abort(403); // Accès interdit
         }
-
         return $next($request);
     }
 }

@@ -37,17 +37,14 @@ class LogService
             'document_id' => $documentId,
         ]);
     }
-
     public function getAllLogs()
     {
         return Log::all();
     }
-
     public function getUserLogs($userId)
     {
         return User::with('logs')->find($userId) ?? null;
     }
-
     public function getLastOpenedDocuments()
     {
         return Log::with('document')

@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Rules\ValidMarkdown;
 use App\Services\DocumentService;
-use App\Services\FavoriteService;
+
 use App\Services\LogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use App\Events\DocumentOpened;
 use App\Models\Document;
 
@@ -17,10 +18,9 @@ class DocumentController extends Controller
     protected $favoriteService;
     protected $logService;
 
-    public function __construct(DocumentService $documentService, FavoriteService $favoriteService, LogService $logService)
+    public function __construct(DocumentService $documentService, LogService $logService)
     {
         $this->documentService = $documentService;
-        $this->favoriteService = $favoriteService;
         $this->logService = $logService;
     }
 
@@ -89,10 +89,11 @@ class DocumentController extends Controller
 
     public function update(Request $request, $id)
     {
-        $user = Auth::user();
-        if ($user->cannot('update', $this->documentService->findDocument($id))) {
-            abort(403);
+        $document = $this->documentService->findDocument($id)->first();
+        if (!Gate::allows('update-document', $document)) {
+            abort(403, "Vous n'avez pas l'autorisation de modifier ce document.");
         }
+
         $request->validate([
             'name'=> 'string|required',
             'content'=> ['string', 'required', 'min:10', 'max:500000', new ValidMarkdown()],
@@ -117,29 +118,6 @@ class DocumentController extends Controller
         $this->documentService->deleteDocument($document);
 
         return redirect()->route('documents.index')->with('success', 'Supprimé avec succès');
-    }
-
-    public function addToFavorite($documentId)
-    {
-        if ($this->favoriteService->addToFavorites($documentId)) {
-            return redirect()->back()->with('success', 'Ajouté aux favoris.');
-        }
-        return redirect()->back()->with('error', 'Document introuvable.');
-    }
-
-    public function favorites()
-    {
-        $favorites = $this->favoriteService->getUserFavorites();
-        return view('documents.favorites', compact('favorites'));
-    }
-
-    public function removeFromFavorite($documentId)
-    {
-        $response = $this->favoriteService->removeFromFavorites($documentId);
-        if(!$response){
-            return redirect()->back()->with('error', 'Document introuvable.');
-        }
-        return redirect()->back()->with('success', 'Retiré des favoris.');
     }
 
     public function logs($documentId)
@@ -173,10 +151,8 @@ class DocumentController extends Controller
             'logs' => $user->logs
         ]);
     }
-
-    public function lastOpenedDocuments()
-    {
-        $logs = $this->logService->getLastOpenedDocuments();
-        return view('documents.last-opened', compact('logs'));
+    public function getAllDocuments(){
+        $categories = $this->documentService->getEveryDocuments();
+        return view('documents.all-documents', compact('categories'));
     }
 }

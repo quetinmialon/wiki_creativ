@@ -9,7 +9,6 @@ use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ImageUploadController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
@@ -51,9 +50,6 @@ Route::middleware(AuthMiddleware::class)->group(function(){
     //permissions routes
     Route::get('/permissions/request/{documentId}', [PermissionController::class, 'requestForm'])->name('permissions.requestForm');
     Route::post('/permissions/create', [PermissionController::class, 'createRequest'])->name('permissions.create');
-    // storage image route
-    Route::post('/upload-image', [ImageUploadController::class, 'store']);
-
     Route::prefix('documents')->name('documents.')->group(function () {
         Route::get('/', [DocumentController::class, 'index'])->name('index'); // Liste des document
         Route::post('/', [DocumentController::class,'store'])->name('store'); // Création d'un document
@@ -62,14 +58,7 @@ Route::middleware(AuthMiddleware::class)->group(function(){
         Route::get('/{id}/edit', [DocumentController::class, 'edit'])->name('edit'); // Formulaire d'édition
         Route::put('/{id}', [DocumentController::class, 'update'])->name('update'); // Mise à jour d'un document
         Route::delete('/{id}', [DocumentController::class, 'destroy'])->name('destroy'); // Suppression d'un document
-        //favorites
-        Route::post('/{document}/favorite', [DocumentController::class, 'addToFavorite'])->name('favorite'); //TODO: use this route asynchronously with a DOM update to avoir refresh page
-        Route::get('/favorites', [DocumentController::class, 'favorites'])->name('favorites'); // Affichage de la liste des favoris
-        Route::delete('/{document}/favorite', [DocumentController::class, 'removeFromFavorite'])->name('removeFavorite'); //TODO: use this route asynchronously with a DOM update to avoir refresh page
     });
-
-
-
 });
 
 /*************************************************************************************************/
@@ -90,25 +79,38 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit'); // Formulaire de modification
     Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update'); // Mise à jour d'une catégorie
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy'); // Suppression d'une catégorie
-    //ROLES
-    Route::get(uri: '/roles',action: [RoleController::class,'create'])->name(name: 'roles.create');
-    Route::get(uri: '/roles/{id}/edit', action: [RoleController::class, 'edit'])->name(name: 'roles.edit');
-    Route::delete(uri: '/roles/{id}', action: [RoleController::class, 'destroy'])->name(name: 'roles.destroy');
-    Route::post(uri: '/roles',action: [RoleController::class,'insert'])->name(name: 'roles.insert');
-    Route::put(uri: '/roles/{id}', action: [RoleController::class, 'update'])->name(name: 'roles.update');
+
     // PERMISSIONS
-    Route::post('/permissions/handle/{id}', [PermissionController::class, 'handleRequest'])->name('permissions.handle');
-    Route::delete('/permissions/cancel/{id}', [PermissionController::class, 'cancelRequest'])->name('permissions.cancel');
-    Route::delete('/permissions/delete/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
-    Route::get('/permissions/user/{id}', [PermissionController::class, 'userRequest'])->name('permissions.user');
-    Route::get('/permissions/document/{id}', [PermissionController::class, 'documentRequest'])->name('permissions.document');
-    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
-    Route::get('/permissions/pending', [PermissionController::class, 'pendingPermissions'])->name('pending-permissions');
+    Route::post('/admin/permissions/handle/{id}', [PermissionController::class, 'handleRequest'])->name('permissions.handle');
+    Route::delete('/admin/permissions/cancel/{id}', [PermissionController::class, 'cancelRequest'])->name('permissions.cancel');
+    Route::delete('/admin/permissions/delete/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+    Route::get('/admin/permissions/user/{id}', [PermissionController::class, 'userRequest'])->name('permissions.user');
+    Route::get('/admin/permissions/document/{id}', [PermissionController::class, 'documentRequest'])->name('permissions.document');
+    Route::get('/admin/permissions', [PermissionController::class, 'index'])->name('admin.permissions');
+    Route::get('/admin/permissions/pending', [PermissionController::class, 'pendingPermissions'])->name('admin.permissions.pendings');
 
     //opened logs route
     Route::get('/logs', [DocumentController::class, 'everyLogs'])->name('everyLogs');// récrupération de tout les logs d'ouvertures
     Route::get('/logs/{document}/logs', [DocumentController::class, 'logs'])->name('logs'); // Affichage des logs d'ouverture du document
     Route::get('/logs/{user}/userLogs', [DocumentController::class, 'userLogs'])->name('userLogs');
-    Route::get('/logs/lastOpened', [DocumentController::class, 'lastOpenedDocuments'])->name('lastOpened');
-});
 
+    //documents
+    Route::get('/admin/documents', [DocumentController::class, 'getAllDocuments'])->name('admin.documents.index');
+
+    //users
+    Route::get('/admin/users', [AdminController::class, 'UserList'])->name('admin.users');
+    Route::get('/admin/users/{id}/edit', [AdminController::class, 'EditUsersRole'])->name('admin.edit-users-role');
+    Route::delete('/admin/users/{id}', [AdminController::class,'revokeUser'])->name('admin.delete-user');
+    Route::put('/admin/users/{id}', [AdminController::class, 'updateUserRole'])->name('admin.update-user-roles');
+
+    //roles
+    Route::get('/admin/roles', [AdminController::class, 'RoleList'])->name('admin.roles');
+    Route::get(uri: '/admin/roles/{id}/edit', action: [RoleController::class, 'edit'])->name(name: 'roles.edit');
+    Route::delete(uri: '/admin/roles/{id}', action: [RoleController::class, 'destroy'])->name(name: 'roles.destroy');
+    Route::post(uri: '/admin/roles',action: [RoleController::class,'insert'])->name(name: 'roles.insert');
+    Route::put(uri: '/admin/roles/{id}', action: [RoleController::class, 'update'])->name(name: 'roles.update');
+    Route::get(uri: '/admin/roles/create',action: [RoleController::class,'create'])->name(name: 'roles.create');
+
+    //usersRequests
+    Route::get('/admin/requests', [AdminController::class, 'UserRequests'])->name('admin.users-requests');
+});

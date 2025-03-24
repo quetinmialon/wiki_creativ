@@ -1,8 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
     <div class="container mx-auto">
         <h1 class="text-2xl font-bold mb-4">Liste des permissions</h1>
+        <a href="{{ route('admin.permissions.pendings') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Permissions en attente</a>
         <table class="table-auto w-full border-collapse border border-gray-300">
             <thead>
                 <tr class="bg-gray-100">

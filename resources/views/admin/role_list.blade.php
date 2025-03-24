@@ -2,4 +2,7 @@
 
 @section('content')
 
+<x-role-list/>
+
 @endsection
+

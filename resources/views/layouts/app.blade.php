@@ -21,7 +21,7 @@
                 <a href="{{ route('documents.index') }}" class="{{ request()->routeIs('documents','documents.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Documents</a>
                 <a href="{{ route('create-documents') }}" class="{{ request()->routeIs('create-documents') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Nouveau Document</a>
                 <a href="{{ route('credentials.index') }}" class="{{ request()->routeIs('credentials','credentials.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Identifiants</a>
-                @can('isAdmin')
+                @can('SuperAdmin', Auth::user())
                     <a href="{{ route('admin') }}" class="{{ request()->routeIs('admin','admin.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Admin</a>
                 @endcan
                 <form action="{{route('logout')}}" method="POST" class="inline">
