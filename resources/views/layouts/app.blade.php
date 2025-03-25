@@ -10,7 +10,7 @@
 <body class="flex flex-col min-h-screen bg-gray-100 font-sans leading-normal tracking-normal text-gray-800">
 
     <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-600 p-4 w-full flex justify-between items-center">
+    <nav class="bg-white border-b border-gray-600 p-4 w-full flex justify-between items-center fixed">
         <div>
             <a href="{{ url('/') }}" class="text-xl font-bold {{ request()->routeIs('home') ? 'text-blue-400' : 'text-gray-800' }}">
                 Wiki creative
