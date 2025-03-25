@@ -10,7 +10,7 @@
 <body class="flex flex-col min-h-screen bg-gray-100 font-sans leading-normal tracking-normal text-gray-800">
 
     <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-600 p-4 w-full flex justify-between items-center fixed">
+    <nav class="bg-white border-b border-gray-600 p-2 w-full flex justify-between items-center fixed top-0">
         <div>
             <a href="{{ url('/') }}" class="text-xl font-bold {{ request()->routeIs('home') ? 'text-blue-400' : 'text-gray-800' }}">
                 Wiki creative
@@ -38,7 +38,7 @@
     <!-- Conteneur principal avec sidebar -->
     <div class="flex flex-1">
         <!-- Sidebar -->
-        <div class="w-64 bg-white border-r border-b border-gray-600 p-6 space-y-6 fixed top-16 bottom-16 left-0">
+        <div class="w-64 bg-white border-r border-b border-gray-600 p-6 space-y-6 fixed top-12 bottom-16 left-0">
             <a href="{{ route('admin') }}"><div class="text-2xl font-bold">Admin Panel</div></a>
             <ul class="space-y-4">
                 <li>
@@ -80,7 +80,7 @@
         </div>
 
         <!-- Contenu principal -->
-        <div class="flex-1 ml-64 p-6">
+        <div class="flex-1 ml-64 mt-12 p-6">
             @include('flash-messages')
             @include('errors')
             @yield('content')

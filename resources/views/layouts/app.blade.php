@@ -10,7 +10,7 @@
 <body class="flex flex-col min-h-screen bg-gray-100 font-sans leading-normal tracking-normal text-gray-800">
 
     <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-600 p-4 w-full flex justify-between items-center fixed">
+    <nav class="bg-white border-b border-gray-600 p-2 w-full flex justify-between items-center fixed">
         <div>
             <a href="{{ url('/') }}" class="text-xl font-bold {{ request()->routeIs('home') ? 'text-blue-400' : 'text-gray-800' }}">
                 Wiki creative
@@ -36,7 +36,7 @@
     </nav>
 
         <!-- Contenu principal -->
-        <div class="flex-1 m-6 p-6">
+        <div class="flex-1 m-6 mt-12 p-6">
             @include('flash-messages')
             @include('errors')
             @yield('content')
