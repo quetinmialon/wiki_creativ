@@ -37,7 +37,7 @@ class PermissionController extends Controller
 
         $this->permissionService->createPermissionRequest($request->all());
 
-        return redirect()->route('pending-permissions')->with('success', 'Demande de permission créée avec succès.');
+        return redirect()->route('documents.allDocumentsInfo')->with('success', 'Demande de permission créée avec succès.');
     }
 
     public function requestForm($documentId)
@@ -57,30 +57,30 @@ class PermissionController extends Controller
 
         $permission = $this->permissionService->handlePermissionRequest($id, $request->status);
         if (!$permission) {
-            return redirect()->route('pending-permissions')->with('error', 'Demande de permission introuvable.');
+            return redirect()->route('admin.permissions')->with('error', 'Demande de permission introuvable.');
         }
 
-        return redirect()->route('pending-permissions')->with('success', 'Demande de permission modifiée avec succès.');
+        return redirect()->route('admin.permissions')->with('success', 'Demande de permission modifiée avec succès.');
     }
 
     public function destroy($id)
     {
         $permission = $this->permissionService->deletePermission($id);
         if (!$permission) {
-            return redirect()->route('pending-permissions')->with('error', 'Demande de permission introuvable.');
+            return redirect()->route('admin.permissions')->with('error', 'Demande de permission introuvable.');
         }
 
-        return redirect()->route('pending-permissions')->with('success', 'Demande de permission supprimée avec succès.');
+        return redirect()->route('admin.permissions')->with('success', 'Demande de permission supprimée avec succès.');
     }
 
     public function cancelRequest($id)
     {
         $permission = $this->permissionService->deletePermission($id);
         if (!$permission) {
-            return redirect()->route('pending-permissions')->with('error', 'Demande de permission introuvable.');
+            return redirect()->route('admin.permissions')->with('error', 'Demande de permission introuvable.');
         }
 
-        return redirect()->route('pending-permissions')->with('success', 'Demande de permission annulée avec succès.');
+        return redirect()->route('admin.permissions')->with('success', 'Demande de permission annulée avec succès.');
     }
 
     public function userRequest($id)

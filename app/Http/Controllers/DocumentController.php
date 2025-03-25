@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Events\DocumentOpened;
 use App\Models\Document;
-use App\Models\Role;
 
 class DocumentController extends Controller
 {
@@ -70,7 +69,7 @@ class DocumentController extends Controller
     {
         $document = Document::findOrFail($id);
         $userId = Auth::user()->id; // Récupère l'utilisateur connecté
-        if (!Gate::allows('view-document', $document)) {
+        if (!Gate::allows('view-document', $document) && !Gate::allows('access-document', $document)) {
             abort(403);
         }
         event(new DocumentOpened($document->id, $userId));
@@ -139,7 +138,7 @@ class DocumentController extends Controller
     public function everyLogs()
     {
         $logs = $this->logService->getAllLogs();
-        
+
         return view('documents.all-logs', compact('logs'));
     }
 
@@ -157,5 +156,11 @@ class DocumentController extends Controller
     public function getAllDocuments(){
         $categories = $this->documentService->getEveryDocuments();
         return view('documents.all-documents', compact('categories'));
+    }
+
+    public function AllDocumentsInfo()
+    {
+        $categories = $this->documentService->getEveryDocuments()->except('content');
+        return view ('documents.all-documents-info', compact('categories'));
     }
 }

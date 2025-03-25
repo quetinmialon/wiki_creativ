@@ -58,6 +58,7 @@ Route::middleware(AuthMiddleware::class)->group(function(){
         Route::get('/{id}/edit', [DocumentController::class, 'edit'])->name('edit'); // Formulaire d'édition
         Route::put('/{id}', [DocumentController::class, 'update'])->name('update'); // Mise à jour d'un document
         Route::delete('/{id}', [DocumentController::class, 'destroy'])->name('destroy'); // Suppression d'un document
+        Route::get('/allDocumentsInfo', [DocumentController::class, 'allDocumentsInfo'])->name('allDocumentsInfo');
     });
 });
 
@@ -77,7 +78,7 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update'); // Mise à jour d'une catégorie
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy'); // Suppression d'une catégorie
     //PERMISSIONS
-    Route::post('/admin/permissions/handle/{id}', [PermissionController::class, 'handleRequest'])->name('permissions.handle');
+    Route::post('/admin/permissions/handle/{id}', [PermissionController::class, 'handleRequest'])->name('admin.permissions.handle');
     Route::delete('/admin/permissions/cancel/{id}', [PermissionController::class, 'cancelRequest'])->name('permissions.cancel');
     Route::delete('/admin/permissions/delete/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
     Route::get('/admin/permissions/user/{id}', [PermissionController::class, 'userRequest'])->name('permissions.user');

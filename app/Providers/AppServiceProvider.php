@@ -12,6 +12,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 use App\Policies\SuperAdminPolicy;
+use App\Policies\TemporaryAccessDocument;
 use App\Services\PermissionService;
 use App\Services\SubscriptionService;
 

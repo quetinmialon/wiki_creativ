@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property \App\Models\User|null $author
@@ -39,7 +39,7 @@ class Permission extends Model
     protected $fillable = [
         'name',
         'status',
-        'comments',
+        'comment',
         'handled_by',
         'author',
         'expired_at',
