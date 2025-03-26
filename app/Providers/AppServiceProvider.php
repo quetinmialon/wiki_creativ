@@ -9,12 +9,21 @@ use App\Services\FavoriteService;
 use App\Services\LogService;
 use App\Services\RoleService;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Gate;
-use App\Models\User;
-use App\Policies\SuperAdminPolicy;
-use App\Policies\TemporaryAccessDocument;
+use Illuminate\Support\Facades\Event;
 use App\Services\PermissionService;
 use App\Services\SubscriptionService;
+use App\Events\DocumentOpened;
+use App\Listeners\LogDocumentOpening;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
+use App\Models\Document;
+use App\Models\Category;
+use App\Models\Credential;
+use App\Models\Permission;
+use App\Policies\SuperAdminPolicy;
+
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -58,6 +67,61 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        /*************define Gate and policies*******************/
+        Gate::define('access-document', function (User $user, Document $document) {
+            $permission = Permission::where('author', $user->id)
+                ->where('document_id', $document->id)
+                ->where('status', 'approved')
+                ->Where('expired_at', '>', now())
+                ->exists();
+            return $permission;
+        });
+        Gate::define('has-role', function (User $user, string $role) {
+            return $user->roles->contains('name', $role) || $user->roles->contains('name', "$role admin");
+        });
+        Gate::define('is-superadmin', function (User $user) {
+            return $user->roles->contains('name', 'superadmin');
+        });
+        Gate::define('manage-category', function (User $user, Category $category) {
+            return true;
+        });
+        Gate::define('manage-document', function (User $user, Document $document) {
+            $userRoles = $user->roles->pluck('name')->toArray();
+            $categoryRoles = $document->categories->pluck('role.name')->toArray();
+            if ($user->id === $document->created_by) {
+                return true;
+            }
+            foreach ($categoryRoles as $categoryRole) {
+                $adminRole = 'Admin '.$categoryRole;
+
+                if (in_array($adminRole, $userRoles)) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        Gate::define('view-document',function(User $user, Document $document){
+            $userRoles = $user->roles->pluck('name')->toArray();
+            $categoriesRoles = $document->categories->pluck('role.name')->toArray();
+            return in_array('superadmin', $userRoles) || count(array_intersect($categoriesRoles, $userRoles)) > 0;
+        });
+        Gate::define('manage-shared-credential', function (User $user, Credential $credential) {
+            return true ;
+        });
+        /***************** define policies  ***************************/
         Gate::policy(User::class, SuperAdminPolicy::class);
+
+        /******************** define Listeners **********************/
+        Event::listen(
+            DocumentOpened::class,
+            LogDocumentOpening::class
+        );
+        /****************** defines Route files **************/
+        Route::middleware('web')
+            ->group(base_path('routes/web.php'));
+
+        Route::middleware('api')
+            ->prefix('api')
+            ->group(base_path('routes/api.php'));
     }
 }

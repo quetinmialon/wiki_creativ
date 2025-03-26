@@ -32,11 +32,27 @@
         @endif
     </div>
 
-    <a href="{{ route('documents.edit', $document->id) }}" class="inline-block px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
-        Modifier le document
-    </a>
+
     <a href="{{ route('documents.index') }}" class="inline-block ml-2 px-4 py-2 text-sm text-white bg-gray-500 rounded hover:bg-gray-600">
         Retour à la liste
     </a>
+    <button
+        class="inline-block ml-2 px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600"
+        onclick="toggleFavorite({{ $document->id }},{{ Auth::user()->id }})">
+        Ajouter au favoris
+    </button>
+    @if(Gate::allows('manage-document', $document))
+        <a href="{{ route('documents.edit', $document->id) }}" class="inline-block px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
+            Modifier le document
+        </a>
+        <form action="{{ route('documents.destroy', $document->id) }}" method="POST" class="inline-block ml-2">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="px-4 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-600">
+                Supprimer le document
+            </button>
+        </form>
+    @endif
 </div>
+
 @endsection

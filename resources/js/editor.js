@@ -55,7 +55,7 @@ async function uploadPastedImage(file, base64Image, quill) {
     formData.append("image", file);
 
     try {
-        const response = await fetch("/upload-image", {
+        const response = await fetch("/api/upload-image", {
             method: "POST",
             body: formData,
             headers: {

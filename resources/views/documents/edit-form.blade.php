@@ -29,14 +29,19 @@
         </div>
 
         <!-- Contenu (WYSIWYG) -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Contenu</label>
-            <div id="quill-editor" class="mt-1 h-48 border border-gray-300 rounded-md"></div>
-            <input type="hidden" name="content" id="content" value="{{ old('content', $document->content) }}">
-            @error('content')
-                <p class="text-sm text-red-600">{{ $message }}</p>
-            @enderror
+        <div id="toolbar">
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+            <button class="ql-header" value="1"></button>
+            <button class="ql-header" value="2"></button>
+            <button class="ql-list" value="ordered"></button>
+            <button class="ql-list" value="bullet"></button>
         </div>
+        <!-- Éditeur de texte -->
+        <div id="editor" class="border rounded p-2">{!! old('content', $document->content) !!}</div>
+        <!-- Champ caché qui stocke le HTML -->
+        <input type="hidden" name="content" id="content" value="{{ old('content', $document->content) }}">
 
         <!-- Catégories -->
         <div>

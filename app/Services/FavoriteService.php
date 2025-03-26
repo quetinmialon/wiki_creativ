@@ -12,17 +12,9 @@ class FavoriteService
     {
         $user = Auth::user();
         if (!$user || !Document::find($documentId)) {
-            return false;
+            return;
         }
-
-        $alreadyFavorite = Favorite::where('user_id', $user->id)
-                                   ->where('document_id', $documentId)
-                                   ->exists();
-        if (!$alreadyFavorite) {
-            Favorite::create(['user_id' => $user->id, 'document_id' => $documentId]);
-        }
-
-        return true;
+        Favorite::create(['user_id' => $user->id, 'document_id' => $documentId]);
     }
 
     public function getUserFavorites()
@@ -38,5 +30,10 @@ class FavoriteService
             return false;
         }
         return $document->delete();
+    }
+
+    public function isFavorited($documentId, $userId)
+    {
+        return Favorite::where('user_id', $userId)->where('document_id', $documentId)->exists();
     }
 }
