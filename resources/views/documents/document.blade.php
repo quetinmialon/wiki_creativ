@@ -36,11 +36,17 @@
     <a href="{{ route('documents.index') }}" class="inline-block ml-2 px-4 py-2 text-sm text-white bg-gray-500 rounded hover:bg-gray-600">
         Retour à la liste
     </a>
+    @php
+        $isFavorited = app(App\Services\FavoriteService::class)->isFavorited($document->id, Auth::id());
+    @endphp
+
     <button
-        class="inline-block ml-2 px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600"
-        onclick="toggleFavorite({{ $document->id }},{{ Auth::user()->id }})">
-        Ajouter au favoris
+        id="favorite-btn-{{ $document->id }}"
+        class="inline-block ml-2 px-4 py-2 text-sm text-white rounded {{ $isFavorited ? 'bg-red-500 hover:bg-red-600'  : 'bg-blue-500 hover:bg-blue-600' }}"
+        onclick="toggleFavorite({{ $document->id }}, {{ Auth::user()->id }})">
+        {{ $isFavorited ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
     </button>
+
     @if(Gate::allows('manage-document', $document))
         <a href="{{ route('documents.edit', $document->id) }}" class="inline-block px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
             Modifier le document

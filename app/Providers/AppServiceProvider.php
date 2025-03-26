@@ -16,6 +16,7 @@ use App\Events\DocumentOpened;
 use App\Listeners\LogDocumentOpening;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Document;
 use App\Models\Category;
@@ -88,7 +89,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('manage-document', function (User $user, Document $document) {
             $userRoles = $user->roles->pluck('name')->toArray();
             $categoryRoles = $document->categories->pluck('role.name')->toArray();
-            if ($user->id === $document->created_by) {
+            if ($user->id == $document->created_by) {
                 return true;
             }
             foreach ($categoryRoles as $categoryRole) {
@@ -103,7 +104,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('view-document',function(User $user, Document $document){
             $userRoles = $user->roles->pluck('name')->toArray();
             $categoriesRoles = $document->categories->pluck('role.name')->toArray();
-            return in_array('superadmin', $userRoles) || count(array_intersect($categoriesRoles, $userRoles)) > 0;
+            return in_array('superadmin', $userRoles) || count(array_intersect($categoriesRoles, $userRoles)) > 0  || Auth::user()->id === $document->created_by;
         });
         Gate::define('manage-shared-credential', function (User $user, Credential $credential) {
             return true ;

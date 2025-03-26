@@ -20,14 +20,6 @@
                                 class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                                 Voir le document
                             </a>
-                            <form action="{{ route('documents.removeFavorite', $favorite->document->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                    class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-                                    Retirer
-                                </button>
-                            </form>
                         </div>
                     </li>
                 @else

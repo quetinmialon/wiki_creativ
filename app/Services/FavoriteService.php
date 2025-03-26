@@ -8,29 +8,33 @@ use Illuminate\Support\Facades\Auth;
 
 class FavoriteService
 {
-    public function addToFavorites($documentId)
+    public function addToFavorites($documentId, $userId)
     {
-        $user = Auth::user();
-        if (!$user || !Document::find($documentId)) {
-            return;
-        }
-        Favorite::create(['user_id' => $user->id, 'document_id' => $documentId]);
+        Favorite::create(['user_id' => $userId, 'document_id' => $documentId]);
     }
 
     public function getUserFavorites()
     {
-        return Document::whereIn('id', Auth::user()->favorites->pluck('document_id'))->get();
+        $favorites = Favorite::with('document.author')
+            ->where('user_id', Auth::id())
+            ->get();
+
+        // Supprimer les favoris dont le document n'existe plus
+        $favorites = $favorites->reject(function ($favorite) {
+            return is_null($favorite->document);
+        });
+
+        return $favorites;
     }
 
-
-    public function removeFromFavorites($documentId)
-    {
-        $document = Favorite::where('user_id', Auth::id())->where('document_id', $documentId);
+    public function removeFromFavorites($documentId, $userId) {
+        $document = Favorite::where('user_id', $userId)->where('document_id', $documentId)->first();
         if (!$document){
             return false;
         }
         return $document->delete();
     }
+
 
     public function isFavorited($documentId, $userId)
     {

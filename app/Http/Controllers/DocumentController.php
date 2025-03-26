@@ -91,8 +91,8 @@ class DocumentController extends Controller
 
     public function update(Request $request, $id)
     {
-        $document = $this->documentService->findDocument($id)->first();
-        if(!Gate::allows('manage-document',$this->documentService->findDocument($id)->first()) && !Gate::allows('is-superadmin') ){
+        $document = $this->documentService->findDocument($id);
+        if(!Gate::allows('manage-document',$document) && !Gate::allows('is-superadmin') ){
             abort(403);
         }
 

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\FavoriteService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 
 class FavoriteController extends Controller
 {
@@ -16,13 +15,18 @@ class FavoriteController extends Controller
         $this->favoriteService = $favoriteService;
     }
 
-    public function ToggleFavorite(Request $request, $documentId): JsonResponse
-    {
-        if ($this->favoriteService->isFavorited($documentId, $request->userId)) {
-            $this->favoriteService->removeFromFavorites($documentId);
-            return response()->json(['message' => 'Retiré des favoris avec succès'], 200);
+    public function toggleFavorite(Request $request, $documentId): JsonResponse {
+        $validatedData = $request->validate([
+            'userId' => 'required|integer'
+        ]);
+
+        if ($this->favoriteService->isFavorited($documentId, $validatedData['userId'])) {
+            $this->favoriteService->removeFromFavorites($documentId, $validatedData['userId']);
+            return response()->json(['message' => 'Retiré des favoris avec succès', 'favorited' => false], 200);
         }
-        $this->favoriteService->addToFavorites($documentId);
-        return response()->json(['message' => 'Ajouté aux favoris avec succès'], 200);
+
+        $this->favoriteService->addToFavorites($documentId, $validatedData['userId']);
+        return response()->json(['message' => 'Ajouté aux favoris avec succès', 'favorited' => true], 200);
     }
+
 }
