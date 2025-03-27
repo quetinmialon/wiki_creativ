@@ -3,8 +3,6 @@
 namespace App\Services;
 
 use App\Models\Credential;
-use App\Models\Role;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
@@ -38,21 +36,33 @@ class CredentialService
         $user = Auth::user();
         $credentials = Credential::where('user_id', $user->id)->get();
         $roleIds = $user->roles->pluck('id');
-        $sharedCredentials = Credential::whereIn('role_id', $roleIds)->get();
 
+        // Récupérer les credentials partagés avec les rôles
+        $sharedCredentials = Credential::whereIn('role_id', $roleIds)
+            ->with('role') // Charge les rôles associés pour éviter les requêtes supplémentaires
+            ->get();
+
+        // Déchiffrement des mots de passe
         foreach ($credentials as $credential) {
             $credential->password = Crypt::decryptString($credential->password);
         }
 
+        // Organiser les credentials partagés par rôle
+        $groupedSharedCredentials = [];
         foreach ($sharedCredentials as $credential) {
-            $credential->password = Crypt::decryptString($credential->password);
+            if ($credential->role) {
+                $roleName = $credential->role->name;
+                $credential->password = Crypt::decryptString($credential->password);
+                $groupedSharedCredentials[$roleName][] = $credential;
+            }
         }
 
         return [
             'personnal_credentials' => $credentials,
-            'shared_credentials' => $sharedCredentials
+            'shared_credentials' => $groupedSharedCredentials
         ];
     }
+
 
     public function deleteCredential($id)
     {
@@ -61,10 +71,6 @@ class CredentialService
         }
 
         $credential = Credential::find($id);
-
-        if (!$credential || $credential->user_id != Auth::id()) {
-            return ['error' => 'vous ne pouvez pas supprimer ce log'];
-        }
 
         $credential->delete();
         return ['success' => 'logs supprimés avec succès'];
@@ -78,15 +84,10 @@ class CredentialService
 
         $credential = Credential::find($id);
 
-        if (!$credential || $credential->user_id != Auth::id()) {
-            return ['error' => 'vous ne pouvez pas modifier ce log'];
-        }
-
         $credential->password = Crypt::decryptString($credential->password);
         return [
             'credential' => $credential,
-            'roles' => Auth::user()->roles,
-            'roleList' => Role::all()
+            'roleList' => Auth::user()->roles,
         ];
     }
 
@@ -98,10 +99,6 @@ class CredentialService
 
         $data['password'] = Crypt::encryptString($data['password']);
         $credential = Credential::find($id);
-
-        if (!$credential || $credential->user_id != Auth::id()) {
-            return ['error' => 'vous ne pouvez pas modifier ce log'];
-        }
 
         $credential->update($data);
         return ['success' => 'logs modifiés avec succès'];

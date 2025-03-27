@@ -115,7 +115,15 @@ class AppServiceProvider extends ServiceProvider
             return in_array('superadmin', $userRoles) || count(array_intersect($categoriesRoles, $userRoles)) > 0  || Auth::user()->id === $document->created_by;
         });
         Gate::define('manage-shared-credential', function (User $user, Credential $credential) {
-            return true ;
+            $userRoles = $user->roles->pluck('name')->toArray();
+            $credentialRoles = $credential->role->pluck('name')->toArray();
+            foreach($credentialRoles as $role){
+                $adminRole = 'Admin '.$role;
+                if (in_array($adminRole, $userRoles)) {
+                    return true;
+                }
+            }
+            return in_array('superadmin', $userRoles);
         });
         /***************** define policies  ***************************/
         Gate::policy(User::class, SuperAdminPolicy::class);

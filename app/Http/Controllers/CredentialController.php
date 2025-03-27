@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Services\CredentialService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Credential;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Gate;
 
 class CredentialController extends Controller
 {
@@ -20,6 +24,7 @@ class CredentialController extends Controller
             'destination' => 'required|string|max:255',
             'username' => 'required|string|max:255',
             'password' => 'required|string',
+            'role_id' => 'nullable|exists:roles,id'
         ]);
 
         $response = $this->credentialService->storeCredential($request->all());
@@ -35,7 +40,7 @@ class CredentialController extends Controller
             return redirect()->back()->with('error', 'vous devez être connecté pour ajouter des logs');
         }
 
-        return view('create-credentials', ['roles' => $roles]);
+        return view('credentials.create-credentials', ['roles' => $roles]);
     }
 
     public function index()
@@ -46,11 +51,15 @@ class CredentialController extends Controller
             return redirect()->back()->with('error', $credentials['error']);
         }
 
-        return view('credentials', $credentials);
+        return view('credentials.credentials', $credentials);
     }
 
     public function destroy($id)
     {
+        $credential = Credential::find($id);
+        if( $credential->role_id != null&&!Gate::allows('manage-shared-credential',$credential) ){
+            abort(403);
+        }
         $response = $this->credentialService->deleteCredential($id);
 
         return redirect()->back()->with(key($response), reset($response));
@@ -64,7 +73,7 @@ class CredentialController extends Controller
             return redirect()->back()->with('error', $response['error']);
         }
 
-        return view('edit-credentials', $response);
+        return view('credentials.edit-credentials', $response);
     }
 
     public function update(Request $request, $id)
@@ -73,9 +82,14 @@ class CredentialController extends Controller
             'destination' => 'required|string|max:255',
             'username' => 'required|string|max:255',
             'password' => 'required|string',
-            'role_id' => 'exists:roles,id'
+            'role_id' => 'nullable|exists:roles,id'
         ]);
 
+        $credential = Credential::find($id);
+
+        if( $credential->role_id != null&&!Gate::allows('manage-shared-credential',$credential) ){
+            abort(403);
+        }
         $response = $this->credentialService->updateCredential($id, $request->all());
 
         return redirect()->back()->with(key($response), reset($response));
