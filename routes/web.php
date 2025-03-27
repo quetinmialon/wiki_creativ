@@ -43,8 +43,13 @@ Route::middleware(AuthMiddleware::class)->group(function(){
     Route::put('/credentials/{id}', [CredentialController::class, 'update'])->name('credentials.update');
     Route::delete('/credentials/{id}', [CredentialController::class, 'destroy'])->name('credentials.destroy');
     // categories routes
-    Route::prefix('categories')->name('categories.')->group(function () {
+    Route::prefix('myCategories')->name('myCategories.')->group(function () {
         Route::get('/myCategories', [CategoryController::class,'getUserCategories'])->name('myCategories');
+        Route::get('/createCategory', [CategoryController::class,'createCategoryOnUserRoles'])->name('create');
+        Route::post('/createCategory', [CategoryController::class,'storeCategoryOnUserRoles'])->name('store');
+        Route::get('/{id}/edit', [CategoryController::class, 'editCategoryOnUserRoles'])->name('edit');
+        Route::put('/{id}', [CategoryController::class, 'updateCategoryOnUserRoles'])->name('update');
+        Route::delete('/{id}', [CategoryController::class, 'destroyCategoryOnUserRoles'])->name('destroy');
     });
     Route::get('/create-documents', [DocumentController::class, 'create'])->name('create-documents'); // Formulaire de création
     //permissions routes

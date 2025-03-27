@@ -84,7 +84,15 @@ class AppServiceProvider extends ServiceProvider
             return $user->roles->contains('name', 'superadmin');
         });
         Gate::define('manage-category', function (User $user, Category $category) {
-            return true;
+            $userRoles = $user->roles->pluck('name')->toArray();
+            $categoryRoles = $category->role->pluck('name')->toArray();
+            foreach($categoryRoles as $role){
+                $adminRole = 'Admin '.$role;
+                if (in_array($adminRole, $userRoles)) {
+                    return true;
+                }
+            }
+            return in_array('superadmin', $userRoles);
         });
         Gate::define('manage-document', function (User $user, Document $document) {
             $userRoles = $user->roles->pluck('name')->toArray();

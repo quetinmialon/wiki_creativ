@@ -21,6 +21,7 @@
                 <a href="{{ route('documents.index') }}" class="{{ request()->routeIs('documents','documents.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Documents</a>
                 <a href="{{ route('create-documents') }}" class="{{ request()->routeIs('create-documents') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Nouveau Document</a>
                 <a href="{{ route('credentials.index') }}" class="{{ request()->routeIs('credentials','credentials.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Identifiants</a>
+                <a href="{{ route('myCategories.myCategories') }}" class= "{{ request()->routeIs('myCategories.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Catégories</a>
                 @can('SuperAdmin', Auth::user())
                     <a href="{{ route('admin') }}" class="{{ request()->routeIs('admin','admin.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Admin</a>
                 @endcan
