@@ -23,9 +23,11 @@
             <select name="role_id" id="role_id" class="w-full px-4 py-2 border border-gray-300 rounded-md">
                 <option value="">Aucun</option>
                 @foreach($roleList as $role)
+                @if(!str_contains($role->name, 'Admin '))
                     <option value="{{ $role->id }}" {{ $credential->role_id == $role->id ? 'selected' : '' }}>
                         {{ $role->name }}
                     </option>
+                @endif
                 @endforeach
             </select>
         </div>

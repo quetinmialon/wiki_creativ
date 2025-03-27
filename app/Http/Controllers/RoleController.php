@@ -23,7 +23,15 @@ class RoleController extends Controller
 
     public function insert(Request $request): RedirectResponse
     {
+        $request->validate([
+            'name' => "required|string|max:255|unique:roles",
+        ]);
         $this->roleService->createRole($request->all());
+
+        $adminRole = $request->all();
+
+        $adminRole['name'] = 'Admin ' . $adminRole['name'];
+        $this->roleService->createRole($adminRole);
         return redirect('/admin/roles')->with('success', 'Rôle créé avec succès.');
     }
 
@@ -38,14 +46,22 @@ class RoleController extends Controller
         $request->validate([
             'name' => "required|string|max:255|unique:roles,name,{$request->id}",
         ]);
-
-        $this->roleService->updateRole($request->id, $request->all());
+        $role = $this->roleService->updateRole($request->id, $request->all());
+        if ($role === null) {
+            return redirect('/admin/roles')->with('error', 'Ce rôle ne peut pas être modifié.');
+        }
+        $adminRole = $role;
+        $adminRole['name'] = 'Admin ' . $adminRole['name'];
+        $adminRole['id'] = $request->id + 1;
+        $this->roleService->updateRole($adminRole['id'], $adminRole->toArray());
         return redirect('/admin/roles')->with('success', 'Rôle modifié avec succès.');
     }
 
     public function destroy(Request $request): RedirectResponse
     {
         $response = $this->roleService->deleteRole($request->id);
+        //also delete related admin role
+        $this->roleService->deleteRole($request->id + 1);
         return redirect('/admin/roles')->with(key($response), reset($response));
     }
 }

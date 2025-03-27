@@ -8,8 +8,10 @@
 
     <ul class="divide-y divide-gray-200">
         @foreach ($roles as $role)
+            @if(!Str::contains($role->name, 'Admin '))
             <li class="flex justify-between items-center py-3">
                 <span class="text-gray-700 font-medium">{{ $role->name }}</span>
+                @if($role->name !== 'superadmin' && $role->name !== 'default')
                 <div class="flex space-x-2">
                     <!-- Bouton d'édition -->
                     <a
@@ -29,7 +31,9 @@
                         </button>
                     </form>
                 </div>
+                @endif
             </li>
+            @endif
         @endforeach
     </ul>
 </div>

@@ -54,6 +54,7 @@
         <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">Rôles et Catégories</label>
             @foreach($roles as $role)
+                @if(!str_contains($role->name, 'Admin '))
                 <div class="mb-4">
                     <h2 class="text-lg font-semibold text-gray-800">{{ $role->name }}</h2>
                     <div class="mt-2 space-y-2">
@@ -65,6 +66,7 @@
                         @endforeach
                     </div>
                 </div>
+                @endif
             @endforeach
             @error('categories_id')
                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

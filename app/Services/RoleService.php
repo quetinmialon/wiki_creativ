@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Role;
-use Illuminate\Http\Request;
 
 class RoleService
 {
@@ -25,6 +24,9 @@ class RoleService
     public function updateRole($id, array $data)
     {
         $role = Role::findOrFail($id);
+        if(in_array($role->name, ['superadmin', 'default', 'qualité','Admin qualité'])){
+            return null;
+        }
         $data['name'] = $data['name'] ?? $role->name;
 
         $role->update($data);
@@ -35,7 +37,7 @@ class RoleService
     {
         $role = Role::findOrFail($id);
 
-        if (in_array($role->name, ['Admin', 'Default', 'Qualité'])) {
+        if (in_array($role->name, ['superadmin', 'default', 'qualité','Admin qualité'])) {
             return ['error' => 'Vous ne pouvez pas supprimer ce rôle.'];
         }
 
@@ -44,6 +46,6 @@ class RoleService
     }
 
     public function getRolesWhereCategoriesExist(){
-        return Role::whereHas('categories')->get();
+        return Role::whereHas('categories')->where('name', 'not like', '%Admin %')->get();
     }
 }

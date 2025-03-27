@@ -12,7 +12,9 @@ class UsersByRole extends Component
 
     public function __construct()
     {
-        $roles = Role::withCount('users')->get();
+        $roles = Role::withCount('users')
+            ->where('name', 'not like', '%Admin %')
+            ->get();
 
         $this->labels = $roles->map(fn($role) => $role->name)->toArray();
         $this->data = $roles->map(fn($role) => $role->users_count)->toArray();

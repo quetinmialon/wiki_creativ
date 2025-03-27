@@ -17,7 +17,9 @@
             <label class="block text-gray-700 text-sm font-bold mb-2" for="role_id">Rôle associé</label>
             <select id="role_id" name="role_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                 @foreach($roles as $role)
-                    <option value="{{ $role->id }}" {{ old('role_id', $category->role_id) == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                @if(!str_contains($role->name, 'Admin '))
+                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                @endif
                 @endforeach
             </select>
             @error('role_id') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
