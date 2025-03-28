@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Services\ImageService;
+use Illuminate\Support\Str;
 
 class DeletingUnusedImages extends Command
 {
@@ -20,11 +22,23 @@ class DeletingUnusedImages extends Command
      */
     protected $description = 'Deleting images that has been downloaded from front but aren\'t used in documents';
 
+    protected $imageService;
+
+    public function __construct(ImageService $imageService)
+    {
+        parent::__construct(); // Important pour l'enregistrement de la commande
+
+        $this->imageService = $imageService;
+    }
+
+
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        // hard to do so we'll see after
+        $this->info("Début du nettoyage des images...");
+        $this->imageService->deleteUnusedImages();
+        $this->info("Nettoyage terminé !");
     }
 }

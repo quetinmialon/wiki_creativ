@@ -9,6 +9,6 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 app(Schedule::class)->command('temp:deletings-logs')->dailyAt('00:00');
-app(Schedule::class)->command('temp:deleting-unused-images')->dailyAt('00:00');
+app(Schedule::class)->command('temp:deleting-unused-images')->dailyAt('02:00');
 app(Schedule::class)->command('temp:deleting-expired-permissions')->dailyAt('00:00');
 app(Schedule::class)->command('temp:update-expired-permissions')->dailyAt('00:00');

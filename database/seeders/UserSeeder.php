@@ -15,14 +15,14 @@ class UserSeeder extends Seeder
         $users = [
             [
                 "name" => "superadmin",
-                "email" => "qu.mialon@laposte.net",
-                "password" => bcrypt("superadmin"),
+                "email" => env('SUPERADMIN_MAIL'),
+                "password" => bcrypt(env('SUPERADMIN_PASSWORD')),
                 "id" => 1,
             ],];
         $user_roles = [
             [
                 "user_id" => 1,
-                "role_id" => 3,
+                "role_id" => 2,
             ],
         ];
 

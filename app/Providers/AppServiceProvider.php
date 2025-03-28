@@ -23,8 +23,7 @@ use App\Models\Category;
 use App\Models\Credential;
 use App\Models\Permission;
 use App\Policies\SuperAdminPolicy;
-
-
+use App\Services\ImageService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -59,6 +58,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton(SubscriptionService::class, function ($app) {
             return new SubscriptionService();
+        });
+        $this->app->singleton(ImageService::class, function ($app) {
+            return new ImageService();
         });
     }
 
