@@ -12,7 +12,6 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use App\Services\PermissionService;
 use App\Services\SubscriptionService;
-use App\Events\DocumentOpened;
 use App\Listeners\LogDocumentOpening;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Gate;
@@ -132,7 +131,6 @@ class AppServiceProvider extends ServiceProvider
 
         /******************** define Listeners **********************/
         Event::listen(
-            DocumentOpened::class,
             LogDocumentOpening::class
         );
         /****************** defines Route files **************/

@@ -64,6 +64,7 @@ Route::middleware(AuthMiddleware::class)->group(function(){
         Route::put('/{id}', [DocumentController::class, 'update'])->name('update'); // Mise à jour d'un document
         Route::delete('/{id}', [DocumentController::class, 'destroy'])->name('destroy'); // Suppression d'un document
         Route::get('/allDocumentsInfo', [DocumentController::class, 'allDocumentsInfo'])->name('allDocumentsInfo');
+        Route::post('/searchDocuments', [DocumentController::class, 'search'])->name('searchDocuments');
     });
 });
 
@@ -90,6 +91,7 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/permissions/document/{id}', [PermissionController::class, 'documentRequest'])->name('permissions.document');
     Route::get('/admin/permissions', [PermissionController::class, 'index'])->name('admin.permissions');
     Route::get('/admin/permissions/pending', [PermissionController::class, 'pendingPermissions'])->name('admin.permissions.pendings');
+    Route::post('/admin/permissions/search', [PermissionController::class, 'searchPermission'])->name('admin.permissions.search');
     //opened logs route
     Route::get('/logs', [DocumentController::class, 'everyLogs'])->name('everyLogs');// récrupération de tout les logs d'ouvertures
     Route::get('/logs/{document}/logs', [DocumentController::class, 'logs'])->name('logs'); // Affichage des logs d'ouverture du document
@@ -101,6 +103,7 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/users/{id}/edit', [AdminController::class, 'EditUsersRole'])->name('admin.edit-users-role');
     Route::delete('/admin/users/{id}', [AdminController::class,'revokeUser'])->name('admin.delete-user');
     Route::put('/admin/users/{id}', [AdminController::class, 'updateUserRole'])->name('admin.update-user-roles');
+    Route::post('/admin/users/searchDocument', [AdminController::class, 'searchUser'])->name('admin.search-user');
     //roles
     Route::get('/admin/roles', [AdminController::class, 'RoleList'])->name('admin.roles');
     Route::get(uri: '/admin/roles/{id}/edit', action: [RoleController::class, 'edit'])->name(name: 'roles.edit');

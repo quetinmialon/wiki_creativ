@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Services\ImageService;
-use Illuminate\Support\Str;
 
 class DeletingUnusedImages extends Command
 {
@@ -26,7 +25,7 @@ class DeletingUnusedImages extends Command
 
     public function __construct(ImageService $imageService)
     {
-        parent::__construct(); // Important pour l'enregistrement de la commande
+        parent::__construct();
 
         $this->imageService = $imageService;
     }

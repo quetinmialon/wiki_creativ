@@ -1,8 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
+
+<x-search-bar.document-search-bar/>
+
+<div class="max-w-full mx-auto p-6 bg-white rounded-lg shadow-md m-4">
     <h1 class="text-2xl font-bold mb-6">Liste des documents accessibles</h1>
+
     <a href="{{ route('documents.allDocumentsInfo') }}"> Voir tous les documents</a>
 
     @if($categories->isEmpty())

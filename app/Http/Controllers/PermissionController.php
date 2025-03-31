@@ -94,4 +94,14 @@ class PermissionController extends Controller
         $permissions = $this->permissionService->getDocumentPermissions($id);
         return view('permission.document-request-list', compact('permissions'));
     }
+
+    public function searchPermission(Request $request)
+    {
+        $query = $request->input('query');
+        $permissions = $this->permissionService->searchPermissions($query);
+        if ($permissions->isEmpty()) {
+            return redirect()->route('admin.permissions')->with('error', 'Aucune permission trouvée.');
+        }
+        return view('permission.permission-list', compact('permissions', 'query'));
+    }
 }

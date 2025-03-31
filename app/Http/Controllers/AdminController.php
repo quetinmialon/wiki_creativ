@@ -60,4 +60,17 @@ class AdminController extends Controller
     public function UserRequests(){
         return view("admin.user_request_list");
     }
+
+    public function searchUser(Request $request)
+    {
+        $query = $request->input('query');
+        $users = $this->userService->searchUsers($query);
+        if($users->isEmpty()){
+            return redirect()->route('admin.users')->with('error', 'Aucun résultat trouvé');
+        }
+        return view('admin.search_users_results', compact('users', 'query'));
+    }
+
+
+    
 }

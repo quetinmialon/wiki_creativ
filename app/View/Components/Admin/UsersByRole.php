@@ -14,6 +14,8 @@ class UsersByRole extends Component
     {
         $roles = Role::withCount('users')
             ->where('name', 'not like', '%Admin %')
+            ->whereNot('name', 'default')
+            ->whereNot('name', 'superadmin')
             ->get();
 
         $this->labels = $roles->map(fn($role) => $role->name)->toArray();

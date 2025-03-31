@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Gate;
 use App\Events\DocumentOpened;
 use App\Models\Document;
 
+
 class DocumentController extends Controller
 {
     protected $documentService;
@@ -60,8 +61,8 @@ class DocumentController extends Controller
 
     public function byCategory($categoryId)
     {
-        $documents = $this->documentService->getDocumentsByCategory($categoryId);
-        return view('documents.by-category', compact('documents'));
+        $category = $this->documentService->getDocumentsByCategory($categoryId);
+        return view('documents.by-category', compact('category'));
     }
 
 
@@ -162,5 +163,17 @@ class DocumentController extends Controller
     {
         $categories = $this->documentService->getEveryDocuments()->except('content');
         return view ('documents.all-documents-info', compact('categories'));
+    }
+
+    public function search(Request $request){
+        $query = $request->input('query');
+        $documents = $this->documentService->searchDocuments($query);
+        if($documents->isEmpty()){
+            return redirect()->route('documents.index')->with('error', 'Aucun résultat trouvé');
+        }
+        if($request->input('admin') == 'admin'){
+            return view('documents.admin-search-results', compact('documents','query'));
+        }
+        return view('documents.search-results', compact('documents','query'));
     }
 }

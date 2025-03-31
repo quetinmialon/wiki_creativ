@@ -2,7 +2,9 @@
 
 @section('content')
 
-<div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
+<x-search-bar.document-search-bar/>
+
+<div class="max-w-full mx-auto p-6 bg-white rounded-lg shadow-md m-4">
     <h1 class="text-2xl font-bold mb-6">Liste des Documents par Catégorie</h1>
     @if($categories->isEmpty())
         <p class="text-gray-500">Aucune catégorie trouvée.</p>

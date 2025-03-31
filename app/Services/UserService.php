@@ -46,4 +46,11 @@ class UserService{
     {
         User::find($user_id)->delete();
     }
+
+    public function searchUsers($query)
+    {
+        return User::where('name', 'LIKE', "%{$query}%")
+                       ->orWhere('email', 'LIKE', "%{$query}%")
+                       ->get();
+    }
 }

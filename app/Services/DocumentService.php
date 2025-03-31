@@ -58,7 +58,7 @@ class DocumentService
         // Chercher les catégories qui correspondent à ces rôles
         return Category::whereIn('role_id', $roleIds)
                        ->with('documents')
-                       ->get();
+                       ->distinct()->get();
     }
 
     public function getEveryDocuments()
@@ -87,7 +87,7 @@ class DocumentService
 
     public function getDocumentsByCategory($categoryId)
     {
-        return Category::findOrFail($categoryId)->documents;
+        return Category::findOrFail($categoryId)->with('documents')->first(); ;
     }
 
     public function findDocument($id)
@@ -112,5 +112,21 @@ class DocumentService
     public function deleteDocument(Document $document)
     {
         return $document->delete();
+    }
+
+    public function searchDocuments($query)
+    {
+        return Document::where('name', 'LIKE', "%{$query}%")
+                       ->orWhere('content', 'LIKE', "%{$query}%")
+                       ->orWhere('excerpt', 'LIKE', "%{$query}%")
+                       ->orWhereHas('author', function ($q) use ($query) {
+                           $q->where('name', 'LIKE', "%{$query}%");
+                       })
+                       ->orWhereHas('categories', function ($q) use ($query) {
+                           $q->where('name', 'LIKE', "%{$query}%");
+                       })
+                       ->orWhere('formated_name', 'LIKE', "%{$query}%")
+                       ->groupBy(('documents.id'))
+                       ->get();
     }
 }
