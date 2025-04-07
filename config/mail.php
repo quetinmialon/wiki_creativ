@@ -74,7 +74,9 @@ return [
             'transport' => 'log',
             'channel' => env('MAIL_LOG_CHANNEL'),
         ],
-
+        'mailgun' => [
+            'transport' => 'mailgun',
+        ],
         'array' => [
             'transport' => 'array',
         ],

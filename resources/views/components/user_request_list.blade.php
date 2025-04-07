@@ -12,7 +12,7 @@
 
                 {{-- Rôle Default (coché et non modifiable) --}}
                 <div class="flex items-center space-x-2">
-                    <input type="hidden" name="role_ids[]" value="default" id="role_default">
+                    <input type="hidden" name="role_ids[]" value="1" id="role_default">
                 </div>
 
                 {{-- Liste des rôles classiques avec option Admin --}}

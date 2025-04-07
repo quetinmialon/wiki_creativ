@@ -37,5 +37,10 @@ return [
     'python_service' => [
         'host' => env('PYTHON_SERVICE_HOST', 'http://python_embeddings:5000'),
     ],
+    'mailgun' => [
+        'domain' => env('MAILGUN_DOMAIN'),
+        'secret' => env('MAILGUN_SECRET'),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+    ],
 
 ];
