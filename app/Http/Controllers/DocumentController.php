@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Events\DocumentOpened;
 use App\Models\Document;
+use App\Models\Category;
 
 
 class DocumentController extends Controller
@@ -61,9 +62,17 @@ class DocumentController extends Controller
 
     public function byCategory($categoryId)
     {
-        $category = $this->documentService->getDocumentsByCategory($categoryId);
-        return view('documents.by-category', compact('category'));
+        $category = Category::findOrFail($categoryId);
+
+        $documents = Document::whereHas('categories', function ($query) use ($categoryId) {
+                $query->where('categories.id', $categoryId);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(9);
+
+        return view('documents.by-category', compact('category', 'documents'));
     }
+
 
 
     public function show($id)

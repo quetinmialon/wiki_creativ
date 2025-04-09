@@ -23,6 +23,7 @@ use App\Models\Credential;
 use App\Models\Permission;
 use App\Policies\SuperAdminPolicy;
 use App\Services\ImageService;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -69,6 +70,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::useTailwind();
         /*************define Gate and policies*******************/
         Gate::define('access-document', function (User $user, Document $document) {
             $permission = Permission::where('author', $user->id)

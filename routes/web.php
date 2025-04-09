@@ -58,7 +58,7 @@ Route::middleware(AuthMiddleware::class)->group(function(){
     Route::prefix('documents')->name('documents.')->group(function () {
         Route::get('/', [DocumentController::class, 'index'])->name('index'); // Liste des document
         Route::post('/', [DocumentController::class,'store'])->name('store'); // Création d'un document
-        Route::get('/byCategory/{id}/', [DocumentController::class, 'byCategory'])->name('byCategory'); // Formulaire de modification
+        Route::get('/byCategory/{id}/', [DocumentController::class, 'byCategory'])->name('byCategory'); // Liste des documents par catégorie
         Route::get('/documents/{document}', [DocumentController::class, 'show'])->name('show');
         Route::get('/{id}/edit', [DocumentController::class, 'edit'])->name('edit'); // Formulaire d'édition
         Route::put('/{id}', [DocumentController::class, 'update'])->name('update'); // Mise à jour d'un document

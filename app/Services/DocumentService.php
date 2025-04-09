@@ -48,7 +48,7 @@ class DocumentService
         return $converter->convert($markdown);
     }
 
-    public function getAllCategoriesWithDocuments()
+    public function getAllCategoriesWithDocuments($limit = 6)
     {
         $user = Auth::user();
 
@@ -57,13 +57,18 @@ class DocumentService
 
         // Chercher les catégories qui correspondent à ces rôles
         return Category::whereIn('role_id', $roleIds)
-                       ->with('documents')
-                       ->distinct()->get();
+                       ->with(['documents' => function ($query) use ($limit) {
+                            $query->limit($limit)->orderBy('created_at', 'desc');
+                        }])
+                       ->distinct()
+                       ->get();
     }
 
-    public function getEveryDocuments()
+    public function getEveryDocuments($limit = 6)
     {
-        return Category::with('documents')->get();
+        return Category::with(['documents' => function ($query) use ($limit) {
+            $query->limit($limit)->orderBy('created_at', 'desc');
+        }])->get();
     }
 
     public function createDocument(array $data)
@@ -85,9 +90,13 @@ class DocumentService
         return $document;
     }
 
-    public function getDocumentsByCategory($categoryId)
+    public function getDocumentsByCategory($categoryId, $perPage = 12)
     {
-        return Category::findOrFail($categoryId)->with('documents')->first(); ;
+        return Document::whereHas('categories', function ($query) use ($categoryId) {
+                $query->where('categories.id', $categoryId);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
     }
 
     public function findDocument($id)

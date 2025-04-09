@@ -13,6 +13,12 @@
         <p class="text-gray-500">Aucune catégorie trouvée.</p>
     @else
         @foreach($categories as $category)
+        <button>
+            <a href="{{ route('documents.byCategory', $category->id) }}"
+                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Voir tous les documents de cette catégorie
+            </a>
+        </button>
             <div class="mb-8">
                 <!-- Titre de la catégorie -->
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Catégorie : {{ $category->name }}</h2>
