@@ -57,6 +57,9 @@ class CredentialController extends Controller
     public function destroy($id)
     {
         $credential = Credential::find($id);
+        if ($credential->role_id == null && $credential ->user_id != Auth::id()) {
+            return redirect()->back()->with('error', "vous ne pouvez pas supprimer ce log");
+        }
         if( $credential->role_id != null&&!Gate::allows('manage-shared-credential',$credential) ){
             abort(403);
         }
@@ -67,6 +70,13 @@ class CredentialController extends Controller
 
     public function edit($id)
     {
+        $credential = Credential::find($id);
+        if ($credential->role_id == null && $credential ->user_id != Auth::id()) {
+            return redirect()->back()->with('error', "vous ne pouvez pas modifier ce log");
+        }
+        if( $credential->role_id != null&&!Gate::allows('manage-shared-credential',$credential) ){
+            abort(403);
+        }
         $response = $this->credentialService->getCredentialForEdit($id);
 
         if (isset($response['error'])) {
@@ -86,6 +96,10 @@ class CredentialController extends Controller
         ]);
 
         $credential = Credential::find($id);
+
+        if ($credential->role_id == null && $credential ->user_id != Auth::id()) {
+            return redirect()->back()->with('error', "vous ne pouvez pas modifier ce log");
+        }
 
         if( $credential->role_id != null&&!Gate::allows('manage-shared-credential',$credential) ){
             abort(403);
