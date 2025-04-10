@@ -12,6 +12,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
+use App\Http\Controllers\UserController;
 
 //----------------------------------------------------------------/
 // --------------------------Guest routes -----------------------/
@@ -65,6 +66,13 @@ Route::middleware(AuthMiddleware::class)->group(function(){
         Route::delete('/{id}', [DocumentController::class, 'destroy'])->name('destroy'); // Suppression d'un document
         Route::get('/allDocumentsInfo', [DocumentController::class, 'allDocumentsInfo'])->name('allDocumentsInfo');
         Route::post('/searchDocuments', [DocumentController::class, 'search'])->name('searchDocuments');
+    });
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [UserController::class, 'showProfile'])->name('show');
+        Route::get('/edit', [UserController::class, 'editProfile'])->name('edit');
+        Route::put('/', [UserController::class, 'updateProfile'])->name('update');
+        Route::get('/change-password', [UserController::class, 'showChangePasswordForm'])->name('change-password');
+        Route::post('/change-password', [UserController::class, 'changePassword'])->name('update-password');
     });
 });
 

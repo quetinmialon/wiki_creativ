@@ -4,9 +4,13 @@
 <x-search-bar.document-search-bar/>
 
 <div class="max-w-full mx-auto p-6 bg-white rounded-lg shadow-md m-4">
-    <h1 class="text-2xl font-bold mb-6">Liste des Documents par Catégorie</h1>
-    <a href="{{ route('documents.index') }}">Voir les documents accessibles</a>
-
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Liste des documents accessibles</h1>
+        <a href="{{ route('documents.index') }}"
+           class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Catégories accessibles
+        </a>
+    </div>
     @if($categories->isEmpty())
         <p class="text-gray-500">Aucune catégorie trouvée.</p>
     @else
@@ -32,11 +36,11 @@
                                     || Gate::allows('access-document', $document)
                                 )
                                     <a href="{{ route('documents.show', $document->id) }}" class="inline-block mt-2 px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
-                                        Voir le document
+                                        👀 Voir le document
                                     </a>
                                 @else
                                     <a href="{{ route('permissions.requestForm', $document->id) }}" class="inline-block mt-2 px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
-                                        Demander l'accès
+                                        🔐 Demander l'accès
                                     </a>
                                 @endif
                             </div>

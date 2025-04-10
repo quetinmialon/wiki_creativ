@@ -23,6 +23,7 @@ use App\Models\Credential;
 use App\Models\Permission;
 use App\Policies\SuperAdminPolicy;
 use App\Services\ImageService;
+use App\Services\UserService;
 use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
@@ -37,9 +38,6 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton(CredentialService::class, function ($app) {
             return new CredentialService();
-        });
-        $this->app->singleton(RoleService::class, function ($app) {
-            return new RoleService();
         });
         $this->app->singleton(RoleService::class, function ($app) {
             return new RoleService();
@@ -61,6 +59,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton(ImageService::class, function ($app) {
             return new ImageService();
+        });
+        $this->app->singleton(UserService::class, function ($app) {
+            return new UserService();
         });
     }
 

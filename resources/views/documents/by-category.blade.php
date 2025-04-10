@@ -15,13 +15,10 @@
                     <p class="text-sm text-gray-500 mb-4">Auteur : {{ $document->author->name }}</p>
                     <a href="{{ route('documents.show', $document->id) }}"
                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                        Voir le document
+                       👀 Voir le document
                     </a>
                 </div>
             @endforeach
-
-            <!-- Pagination -->
-
         </div>
         <div class="mt-6">
             {{ $documents->links() }}

@@ -45,12 +45,14 @@ class LogService
     {
         return User::with('logs')->find($userId) ?? null;
     }
-    public function getLastOpenedDocuments()
+    public function getLastOpenedDocuments($limit = 5)
     {
         return Log::with('document')
             ->where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
+            ->latest('created_at')
+            ->get()
+            ->unique('document_id') // supprime les doublons par document
+            ->take($limit);
     }
+
 }

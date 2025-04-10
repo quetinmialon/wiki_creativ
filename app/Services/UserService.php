@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 
 class UserService{
@@ -26,10 +27,6 @@ class UserService{
     {
         $user->update($data);
         return $user;
-    }
-    public function deleteUser(User $user)
-    {
-        $user->delete();
     }
     public function updateUserRole(array $data)
     {

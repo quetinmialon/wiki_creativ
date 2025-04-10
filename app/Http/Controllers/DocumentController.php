@@ -47,14 +47,16 @@ class DocumentController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'string|required',
+        $validate = $request->validate([
+            'name' => 'string|required','max:255',
             'content' => ['string', 'required', 'min:10', 'max:500000', new ValidMarkdown()],
-            'excerpt' => 'string|nullable',
+            'excerpt' => 'string|nullable','max:255',
             'categories_id' => 'array|nullable',
             'categories_id.*' => 'exists:categories,id',
         ]);
-        $this->documentService->createDocument($request->all());
+
+
+        $this->documentService->createDocument($validate);
 
         return redirect()->route('documents.index')->with('success', 'Créé avec succès');
     }
@@ -164,13 +166,13 @@ class DocumentController extends Controller
         ]);
     }
     public function getAllDocuments(){
-        $categories = $this->documentService->getEveryDocuments();
+        $categories = $this->documentService->getEveryDocumentswithoutPagination();
         return view('documents.all-documents', compact('categories'));
     }
 
     public function AllDocumentsInfo()
     {
-        $categories = $this->documentService->getEveryDocuments()->except('content');
+        $categories = $this->documentService->getEveryDocumentswithoutPagination()->except('content');
         return view ('documents.all-documents-info', compact('categories'));
     }
 

@@ -24,7 +24,7 @@ class LastOpenedDocuments extends Component
      */
     public function render(): View|Closure|string
 {
-        $logs = $this->logService->getLastOpenedDocuments();
+        $logs = $this->logService->getLastOpenedDocuments(5);
         return view('components.last-opened-documents', compact('logs'));
 
     }
