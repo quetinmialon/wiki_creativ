@@ -43,7 +43,7 @@
     <button
         id="favorite-btn-{{ $document->id }}"
         class="inline-block ml-2 px-4 py-2 text-sm text-white rounded {{ $isFavorited ? 'bg-red-500 hover:bg-red-600'  : 'bg-blue-500 hover:bg-blue-600' }}"
-        onclick="toggleFavorite({{ $document->id }}, {{ Auth::user()->id }})">
+        onclick="toggleFavorite({{ $document->id }})">
         {{ $isFavorited ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
     </button>
 

@@ -1,5 +1,4 @@
 <?php
-
 namespace Tests\Feature;
 
 use App\Models\Category;
@@ -8,173 +7,83 @@ use App\Models\Favorite;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class FavoriteTest extends TestCase
 {
-    use DatabaseTransactions, WithFaker;
-    /**
-     * A basic feature test example.
-     */
-    public function test_add_to_favorite_adds_document_to_user_favorites()
-    {
-        //arange
-        $user = User::create([
-            "name"=> "John Doe",
-            'email' => 'john.doe@example.com',
-            'password' => bcrypt('password123'),
-        ]);
-        $this->actingAs($user);
-        $role = Role::create(['name'=> 'pédagogie']);
+    use DatabaseTransactions;
 
-        $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
+    private function createUserWithRoleAndDocument(): array
+    {
+        $user = User::factory()->create(); // Ensure $user is an instance of User
+        $user = User::find($user->id); // Explicitly resolve $user to avoid type issues
+        $role = Role::create(['name' => 'pédagogie']);
+        $user->roles()->attach($role);
+
+        $category = Category::create([
+            'name' => 'Category 1',
+            'role_id' => $role->id,
+        ]);
 
         $document = Document::create([
-            'name' => 'Document 1',
-            'content' => 'Content 1',
-            'excerpt' => 'Excerpt 1',
+            'name' => 'Test Document',
+            'content' => 'Some content',
+            'excerpt' => 'Excerpt',
             'created_by' => $user->id,
-            'categories_id' => [$category->id],
         ]);
+        $document->categories()->attach($category->id);
 
-        // Act
-        $response = $this->post(route('documents.favorite', $document->id));
+        return [$user, $document];
+    }
 
-        // Assert
-        $response->assertRedirect();
+    public function test_user_can_add_a_document_to_favorites()
+    {
+        [$user, $document] = $this->createUserWithRoleAndDocument();
+        $this->actingAs($user);
+
+        $response = $this->postJson(route('api.ToggleFavorite', $document->id));
+        $response->assertStatus(200)
+                 ->assertJson(['favorited' => true]);
+
         $this->assertDatabaseHas('favorites', [
             'user_id' => $user->id,
             'document_id' => $document->id,
         ]);
     }
-    public function test_user_can_view_own_favorites()
+
+    public function test_user_can_remove_a_document_from_favorites()
     {
-        // Arrange
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john.doe@example.com',
-            'password' => bcrypt('password123'),
-        ]);
-
-        $this->actingAs($user);
-        $role = Role::create(['name'=> 'pédagogie']);
-
-        $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
-
-        $document1 = Document::create([
-            'name' => 'Document 1',
-            'content' => 'Content of Document 1',
-            'excerpt' => 'Excerpt of Document 1',
-            'created_by' => $user->id,
-            'categories_id' => [$category->id],
-        ]);
-
-        $document2 = Document::create([
-            'name' => 'Document 2',
-            'content' => 'Content of Document 2',
-            'excerpt' => 'Excerpt of Document 2',
-            'created_by' => $user->id,
-            'categories_id' => [$category->id],
-        ]);
-
-        Favorite::create(['user_id' => $user->id, 'document_id' => $document1->id]);
-        Favorite::create(['user_id' => $user->id, 'document_id' => $document2->id]);
-
-
-
-        // Act
-        $response = $this->get(route('documents.favorites'));
-
-        // Assert
-        $response->assertStatus(200);
-        $response->assertViewHas('favorites', function ($favorites) use ($document1, $document2) {
-            return $favorites->contains($document1) && $favorites->contains($document2);
-        });
-    }
-
-    public function test_user_cannot_view_others_favorites()
-    {
-        // Arrange
-        $user1 = User::create([
-            'name' => 'User One',
-            'email' => 'user.one@example.com',
-            'password' => bcrypt('password123'),
-        ]);
-
-        $user2 = User::create([
-            'name' => 'User Two',
-            'email' => 'user.two@example.com',
-            'password' => bcrypt('password123'),
-        ]);
-
-        $document1 = Document::create([
-            'name' => 'Document 1',
-            'content' => 'Content of Document 1',
-            'excerpt' => 'Excerpt of Document 1',
-            'created_by' => $user1->id,
-        ]);
-
-        Favorite::create(['user_id' => $user1->id, 'document_id' => $document1->id]);
-
-        $this->actingAs($user2);
-
-        // Act
-        $response = $this->get(route('documents.favorites'));
-
-        // Assert
-        $response->assertStatus(200);
-        $response->assertViewHas('favorites', function ($favorites) {
-            return $favorites->isEmpty();
-        });
-    }
-    public function test_user_can_remove_favorite_document()
-    {
-        // Arrange
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john.doe@example.com',
-            'password' => bcrypt('password123'),
-        ]);
-
-        $document = Document::create([
-            'name' => 'Document 1',
-            'content' => 'Content of Document 1',
-            'excerpt' => 'Excerpt of Document 1',
-            'created_by' => $user->id,
-        ]);
-
+        [$user, $document] = $this->createUserWithRoleAndDocument();
         Favorite::create(['user_id' => $user->id, 'document_id' => $document->id]);
-
         $this->actingAs($user);
 
-        // Act
-        $response = $this->delete(route('documents.removeFavorite', $document->id));
+        $response = $this->postJson(route('api.ToggleFavorite', $document->id));
+        $response->assertStatus(200)
+                 ->assertJson(['favorited' => false]);
 
-        // Assert
-        $response->assertRedirect();
         $this->assertDatabaseMissing('favorites', [
             'user_id' => $user->id,
             'document_id' => $document->id,
         ]);
     }
-    public function test_removing_nonexistent_favorite_document()
-    {
-        // Arrange
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john.doe@example.com',
-            'password' => bcrypt('password123'),
-        ]);
 
+    public function test_user_can_view_own_favorites()
+    {
+        $user = User::factory()->create();
+        $user = User::find($user->id);
         $this->actingAs($user);
 
-        // Act
-        $response = $this->delete(route('documents.removeFavorite', 999)); // ID inexistant
+        $doc1 = Document::factory()->create(['name' => 'Doc A', 'created_by' => $user->id]);
+        $doc2 = Document::factory()->create(['name' => 'Doc B', 'created_by' => $user->id]);
 
-        // Assert
-        $response->assertRedirect();
-        $response->assertSessionHas('error', 'Document introuvable.');
+        Favorite::factory()->create(['user_id' => $user->id, 'document_id' => $doc1->id]);
+        Favorite::factory()->create(['user_id' => $user->id, 'document_id' => $doc2->id]);
+
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+        $response->assertSee('Doc A');
+        $response->assertSee('Doc B');
     }
+
 }

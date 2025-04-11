@@ -6,6 +6,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\FavoriteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
@@ -74,6 +75,8 @@ Route::middleware(AuthMiddleware::class)->group(function(){
         Route::get('/change-password', [UserController::class, 'showChangePasswordForm'])->name('change-password');
         Route::post('/change-password', [UserController::class, 'changePassword'])->name('update-password');
     });
+
+    Route::post('/api/favorites/{documentId}', [FavoriteController::class, 'ToggleFavorite'])->name('api.ToggleFavorite');
 });
 
 // -----------------------------------------admin routes ----------------------------------------/

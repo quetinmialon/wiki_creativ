@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    window.toggleFavorite = async function (documentId, userId) {
+    window.toggleFavorite = async function (documentId) {
         const button = document.getElementById(`favorite-btn-${documentId}`);
 
         fetch(`/api/favorites/${documentId}`, {
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify({ userId: userId })
+            credentials: 'same-origin'
         })
         .then(response => response.json())
         .then(data => {

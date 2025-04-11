@@ -21,11 +21,10 @@ class DocumentFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word(),
-            'except' => $this->faker->words(4),
-            'content' => $this->faker->paragraphs(5),
-            'category_id' => Category::factory()->create()->id,
-            'created_by' => User::factory()->create()->id,
+            'name' => $this->faker->sentence(3),
+            'excerpt' => $this->faker->sentence(6),
+            'content' => $this->faker->paragraph(3),
+            'created_by' => User::factory(),
         ];
     }
 }

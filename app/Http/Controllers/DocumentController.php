@@ -124,14 +124,23 @@ class DocumentController extends Controller
 
     public function destroy($id)
     {
-        if(!Gate::allows('manage-document',$this->documentService->findDocument($id)->first()) && !Gate::allows('is-superadmin') ){
+        $document = $this->documentService->findDocument($id)->first();
+
+        if (
+            !Gate::allows('manage-document', $document) &&
+            !Gate::allows('is-superadmin') &&
+            $document->created_by !== Auth::id()
+        ) {
             abort(403);
         }
-        $document = $this->documentService->findDocument($id)->first();
+
         $this->documentService->deleteDocument($document);
 
-        return redirect()->route('documents.index')->with('success', 'Supprimé avec succès');
+        return redirect()
+            ->route('documents.index')
+            ->with('success', 'Supprimé avec succès');
     }
+
 
     public function logs($documentId)
     {

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $destination
@@ -32,6 +32,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Credential extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+
     protected $fillable = [
         'destination',
         'username',

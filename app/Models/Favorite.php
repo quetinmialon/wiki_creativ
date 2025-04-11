@@ -26,8 +26,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Favorite extends Model
 {
-    protected $table = 'favorites';
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     
+    protected $table = 'favorites';
+
     protected $fillable = [
         'user_id',
         'document_id',

@@ -6,7 +6,7 @@ use App\Models\User\UserInvitation;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -29,6 +29,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Role extends Model
 {
+
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+
     protected $fillable = [
         'name',
         'id',

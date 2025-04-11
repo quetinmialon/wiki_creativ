@@ -43,8 +43,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Document extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
-    
+
     protected $fillable = [
         'name',
         'excerpt',

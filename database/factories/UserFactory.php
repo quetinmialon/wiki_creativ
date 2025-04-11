@@ -12,7 +12,7 @@ use App\Models\User;
 class UserFactory extends Factory
 {
     protected $model = User::class;
-    
+
     /**
      * Define the model's default state.
      *
@@ -25,7 +25,6 @@ class UserFactory extends Factory
             'name'  => $this->faker->name(),
             'email'=> $this->faker->unique()->safeEmail,
             'password' => hash('sha256','password'), // password is 'password'
-            'role_id' => Role::factory()->create()->id, // use RoleFactory to create a Role record
         ];
     }
 }

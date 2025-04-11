@@ -20,7 +20,7 @@ class CategoryFactory extends Factory
     {
         return [
             "name"=> $this->faker->word(),
-            'role_id'=> Role::factory()->new()->id
+            'role_id'=> Role::factory()
         ];
     }
 }
