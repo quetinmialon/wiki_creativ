@@ -20,7 +20,6 @@ class PermissionTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
         $this->user = User::create([
             'name' => 'John Doe',
             'email' => 'john.doe@example.com',

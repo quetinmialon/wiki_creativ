@@ -9,255 +9,146 @@ use App\Models\User;
 use App\Models\User\UserInvitation;
 use App\Models\User\UserRequest;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class RegisterTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
     use DatabaseTransactions;
 
     public function test_create_user_request()
     {
-        $data = [
-            'name' => 'John Doe',
-            'email' => 'john.doe@example.com',
-        ];
+        $data = ['name' => 'John Doe', 'email' => 'john.doe@example.com'];
         $this->post(route('subscribe.store'), $data);
 
         $this->assertDatabaseHas('user_requests', $data);
-
     }
 
     public function test_send_user_invitation()
     {
-        //mocking mail system
         Mail::fake();
-        // test creating user_requests
-        $userRequest = UserRequest::create([
-            'name' => 'John Doe',
-            'email' => 'john.doe@example.com',
-            'status' => 'pending'
+
+        $userRequest = UserRequest::factory()->create(['status' => 'pending']);
+        $this->assertDatabaseHas('user_requests', [
+            'name' => $userRequest->name,
+            'email' => $userRequest->email,
+            'status' => $userRequest->status,
         ]);
-        $expected = [
-            'name' => 'John Doe',
-            'email' => 'john.doe@example.com',
-            'status' => 'pending'
-        ];
-        $this->assertDatabaseHas('user_requests',$expected);
 
-        // test validating user_request and creating user_invitation
+        $user = User::factory()->create();
+        $user->roles()->attach(Role::factory()->create(['name' => 'superadmin']));
+        $user = User::find($user->id); // Ensure $user is an instance of User
+        $this->actingAs($user);
 
-        $this->post(route('subscribe.process', $userRequest->id), ['action' => 'accept','role_ids'=>[]]);
-        $this->assertDatabaseHas('user_invitations', ['email' => 'john.doe@example.com']);
+        $this->post(route('subscribe.process', $userRequest->id), [
+            'action' => 'accept',
+            'role_ids' => []
+        ]);
 
-        // test if the mail has been sent successfully
-        Mail::assertSent(RegistrationLinkMail::class, function ($mail) use ($userRequest) {
-            return $mail->hasTo($userRequest->email);
-        });
+
+        $this->assertDatabaseHas('user_invitations', ['email' => $userRequest->email]);
+
+        Mail::assertSent(RegistrationLinkMail::class, fn($mail) => $mail->hasTo($userRequest->email));
     }
-    public function test_send_rejection_mail(){
-        //mocking mail system
-        Mail::fake();
-        // test creating user_requests
-        $userRequest = UserRequest::create([
-            'name' => 'John Doe',
-            'email' => 'john.doe@example.com',
-            'status' => 'pending'
-        ]);
-        $expected = [
-            'name' => 'John Doe',
-            'email' => 'john.doe@example.com',
-            'status' => 'pending'
-        ];
-        $this->assertDatabaseHas('user_requests',$expected);
 
-        // test validating user_request and creating user_invitation
+    public function test_send_rejection_mail()
+    {
+        Mail::fake();
+
+        $userRequest = UserRequest::factory()->create(['status' => 'pending']);
+
+        $user = User::factory()->create();
+        $user->roles()->attach(Role::factory()->create(['name' => 'superadmin']));
+        $user = User::find($user->id); // Ensure $user is an instance of User
+        $this->actingAs($user);
+        
         $this->post(route('subscribe.process', $userRequest->id), ['action' => 'reject']);
 
-        // test if the mail has been sent successfully
-        Mail::assertSent(RejectionMail::class, function ($mail) use ($userRequest) {
-            return $mail->hasTo($userRequest->email);
-        });
-
-
+        Mail::assertSent(RejectionMail::class, fn($mail) => $mail->hasTo($userRequest->email));
     }
+
     public function test_complete_registration_success()
     {
+        $userRequest = UserRequest::factory()->create(['email' => 'jane.doe@example.com', 'status' => 'accepted']);
+        $invitation = UserInvitation::factory()->create(['email' => $userRequest->email, 'token' => 'test_token']);
 
-        $userRequest = UserRequest::create([
-            'name' => 'Jane Doe',
-            'email' => 'jane.doe@example.com',
-            'status'=>'accepted'
-        ]);
-
-        DB::table('user_invitations')->insert([
-            'email' => 'jane.doe@example.com',
-            'token' => 'test_token',
-            'created_at' => now(),
-        ]);
-
-        $this->post(route('register.finalization', ['token' =>'test_token']), [
-            'email' => 'jane.doe@example.com',
+        $this->post(route('register.finalization', ['token' => 'test_token']), [
+            'email' => $invitation->email,
             'password' => 'password123',
-        ],);
-
-        $this->assertDatabaseHas('users', [
-            'email' => 'jane.doe@example.com',
         ]);
 
-        $this->assertDatabaseMissing('user_invitations', [
-            'email' => 'jane.doe@example.com',
-        ]);
+        $this->assertDatabaseHas('users', ['email' => $invitation->email]);
+        $this->assertDatabaseMissing('user_invitations', ['email' => $invitation->email]);
     }
 
     public function test_choose_password_with_invalid_token()
     {
         $response = $this->get(route('register.finalization', ['token' => 'invalid_token']));
-
         $response->assertStatus(405);
     }
 
     public function test_choose_password_with_valid_token()
     {
-        DB::table('user_invitations')->insert([
-            'email' => 'jane.doe@example.com',
-            'token' => 'valid_token',
-            'created_at' => now(),
-        ]);
-
+        $invitation = UserInvitation::factory()->create(['email' => 'jane.doe@example.com', 'token' => 'valid_token']);
         $response = $this->get(route('register.complete', ['token' => 'valid_token']));
 
         $response->assertStatus(200);
         $response->assertViewIs('user_form_password_step');
-        $response->assertViewHas('email', 'jane.doe@example.com');
+        $response->assertViewHas('email', $invitation->email);
     }
 
     public function test_roles_are_associated_to_user_invitation()
     {
         Mail::fake();
 
-        // Fake user data
-        $fakeuser = [
-            'name' => 'Jane Doe',
-            'email' => 'jane.doe@example.com',
-            'status' => 'accepted',
-        ];
+        $request = UserRequest::factory()->create(['email' => 'jane.doe@example.com']);
+        $this->post(route('subscribe.store'), $request->only('name', 'email'));
+        $this->assertDatabaseHas('user_requests', ['email' => $request->email]);
 
-        // Create subscription
-        $this->post(route('subscribe.store'), $fakeuser);
-        $this->assertDatabaseHas('user_requests', ['email' => 'jane.doe@example.com']);
+        $roles = Role::factory()->count(3)->create();
+        $invitation = UserInvitation::factory()->create(['email' => $request->email]);
+        $invitation->roles()->attach($roles->pluck('id'));
 
-        // Create roles
-        $fakeroles = [
-            ['name' => 'admin'],
-            ['name' => 'guest'],
-            ['name' => 'super admin'],
-        ];
-
-        foreach ($fakeroles as $role) {
-            Role::create([
-                'name' => $role['name'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
-        // Create user invitation
-        $fakeinvitation = [
-            'email' => 'jane.doe@example.com',
-            'token' => 'test_token',
-            'created_at' => now(),
-        ];
-
-        $userInvitation = UserInvitation::create($fakeinvitation);
-
-        // Attach roles to invitation
-        $roles = Role::all();
-        $userInvitation->roles()->attach($roles->pluck('id'));
-
-        // Process subscription
-        $this->post(route('subscribe.process', $userInvitation->id), [
+        $this->post(route('subscribe.process', $invitation->id), [
             'action' => 'accept',
             'role_ids' => $roles->pluck('id')->toArray(),
         ]);
 
-        // Assert user role is saved
         $this->assertDatabaseHas('user_invitation_role', [
-            'user_invitation_id' => $userInvitation->id,
+            'user_invitation_id' => $invitation->id,
             'role_id' => $roles->first()->id,
         ]);
 
-        // Assert relationships
-
-        $this->assertTrue($userInvitation->roles->pluck('name')->contains('admin'));
+        $this->assertTrue($invitation->roles->pluck('name')->contains($roles->first()->name));
     }
 
     public function test_invitation_roles_transfer_to_user_roles_when_user_created()
     {
         Mail::fake();
 
-        // Fake user data
-        $fakeuser = [
-            'name' => 'Jane Doe',
-            'email' => 'jane.doe@example.com',
-            'password' => bcrypt('password123'), // Hash password for testing
-           'status' => 'accepted',
-        ];
+        $request = UserRequest::factory()->create(['email' => 'jane.doe@example.com']);
+        $roles = Role::factory()->count(3)->create();
+        $invitation = UserInvitation::factory()->create(['email' => $request->email]);
 
-        // Create subscription
-        $this->post(route('subscribe.store'), $fakeuser);
-        $this->assertDatabaseHas('user_requests', ['email' => 'jane.doe@example.com']);
+        $invitation->roles()->attach($roles->pluck('id'));
 
-        // Create roles
-        $fakeroles = [
-            ['name' => 'admin'],
-            ['name' => 'guest'],
-            ['name' => 'super admin'],
-        ];
-        foreach ($fakeroles as $role) {
-            Role::create([
-                'name' => $role['name'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
-        // Create user invitation
-        $fakeinvitation = [
-            'email' => 'jane.doe@example.com',
-            'token' => 'test_token',
-            'created_at' => now(),
-        ];
-
-        $userInvitation = UserInvitation::create($fakeinvitation);
-
-        // Attach roles to invitation
-        $roles = Role::all();
-        $userInvitation->roles()->attach($roles->pluck('id'));
-
-        // Process subscription
-        $this->post(route('subscribe.process', $userInvitation->id), [
+        $this->post(route('subscribe.process', $invitation->id), [
             'action' => 'accept',
             'role_ids' => $roles->pluck('id')->toArray(),
         ]);
 
-        // Create user
-        $this->post(route('register.finalization', ['token' => 'test_token']), [
-            'email' => 'jane.doe@example.com',
+        $this->post(route('register.finalization', ['token' => $invitation->token]), [
+            'email' => $invitation->email,
             'password' => 'password123',
-        ],);
+        ]);
 
-        // Assert user role is saved
+        $user = User::where('email', $invitation->email)->first();
         $this->assertDatabaseHas('user_role', [
-            'user_id' => User::where('email', 'jane.doe@example.com')->first()->id,
+            'user_id' => $user->id,
             'role_id' => $roles->first()->id,
         ]);
 
-        // Assert relationships
-        $this->assertTrue(User::where('email', 'jane.doe@example.com')->first()->roles->pluck('name')->contains('admin'));
+        $this->assertTrue($user->roles->pluck('name')->contains($roles->first()->name));
     }
 }
+

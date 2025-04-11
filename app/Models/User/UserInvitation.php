@@ -6,7 +6,7 @@ use App\Models\Role;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $token
@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UserInvitation extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     protected $fillable = [
         'email', 'token',
     ];
