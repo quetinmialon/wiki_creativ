@@ -60,6 +60,9 @@ class RoleController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $response = $this->roleService->deleteRole($request->id);
+        if (isset($response['error'])) {
+            return redirect('/admin/roles')->with('error', $response['error']);
+        }
         //also delete related admin role
         $this->roleService->deleteRole($request->id + 1);
         return redirect('/admin/roles')->with(key($response), reset($response));
