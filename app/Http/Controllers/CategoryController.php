@@ -26,8 +26,8 @@ class CategoryController extends Controller
     public function store(Request $request){
         // Validate the request data before creating a new category
         $request->validate([
-            'name' =>'required',
-            'role_id' =>'required'
+            'name' =>'required|string|max:255',
+            'role_id' =>'exists:roles,id|required'
         ]);
         // Create a new category
         Category::create($request->all());
@@ -45,8 +45,8 @@ class CategoryController extends Controller
     public function update(Request $request, $id){
         // Validate the request data before updating the category
         $request->validate([
-            'name' =>'required',
-            'role_id' =>'required'
+            'name' =>'required|string|max:255',
+            'role_id' =>'exists:roles,id|required'
         ]);
         // Update the category
         $category = Category::find($id);
@@ -86,8 +86,8 @@ class CategoryController extends Controller
         $user = Auth::user();
         // Validate the request data before creating a new category
         $request->validate([
-            'name' =>'required',
-            'role_id' =>'required'
+            'name' =>'required|string|max:255',
+            'role_id' =>'exists:roles,id|required'
         ]);
         if(!$user->roles->contains('id', $request->role_id)){
             return redirect()->back()->withErrors(['role_id' => 'Vous ne pouvez pas créer une catégorie pour un rôle qui ne vous est pas attribué']);
@@ -126,8 +126,8 @@ class CategoryController extends Controller
         }
         // Validate the request data before updating the category
         $request->validate([
-            'name' =>'required',
-            'role_id' =>'required'
+            'name' =>'required|string|max:255',
+            'role_id' =>'exists:roles,id|required'
         ]);
         $category->update($request->all());
         return redirect()->route('myCategories.myCategories');

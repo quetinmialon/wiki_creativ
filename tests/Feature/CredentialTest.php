@@ -243,5 +243,69 @@ class CredentialTest extends TestCase
 
         $this->assertDatabaseHas('credentials', ['id' => $credential->id]);
     }
-}
 
+
+    public function test_personnal_credentials_arent_display_to_others_users()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $role = Role::factory()->create(['name' => 'pédagogie']);
+        $user->roles()->attach($role->id);
+        $otherUser->roles()->attach($role->id);
+        $otherUser = User::find($otherUser->id); // Ensure $otherUser is an instance of User
+        $credential = Credential::factory()->create([
+            'role_id' => null, // personal credential
+            'user_id' => $user->id,
+        ]);
+        $sharedCredential = Credential::factory()->create([
+            'user_id' => $otherUser->id,
+            'role_id' => $role->id, //shared credentials
+        ]);
+        $this->actingAs($otherUser)
+            ->get(route('credentials.index'))
+            ->assertOk()
+            ->assertSee($sharedCredential->destination)
+            ->assertDontSee($credential->destination);
+    }
+    public function test_shared_credentials_are_displayed_to_users_with_the_proper_role()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $thirdUser = User::factory()->create();
+
+        $role = Role::factory()->create(['name' => 'pédagogie']);
+        $user->roles()->attach($role->id);
+        $otherUser->roles()->attach($role->id);
+        $user = User::find($user->id); // Ensure $user is an instance of User
+        $otherUser = User::find($otherUser->id); // Ensure $otherUser is an instance of User
+        $thirdUser = User::find($thirdUser->id); // Ensure $thirdUser is an instance of User
+        $credential = Credential::factory()->create([
+            'role_id' => null, // personal credential
+            'user_id' => $user->id,
+        ]);
+        $sharedCredential = Credential::factory()->create([
+            'user_id' => $otherUser->id,
+            'role_id' => $role->id, //shared credentials
+        ]);
+        $this->actingAs($user)
+            ->get(route('credentials.index'))
+            ->assertOk()
+            ->assertSee($sharedCredential->destination)
+            ->assertSee($credential->destination);
+        $this->actingAs($otherUser)
+            ->get(route('credentials.index'))
+            ->assertOk()
+            ->assertSee($sharedCredential->destination)
+            ->assertDontSee($credential->destination);
+        $this->actingAs($thirdUser)
+            ->get(route('credentials.index'))
+            ->assertOk()
+            ->assertDontSee($sharedCredential->destination)
+            ->assertDontSee($credential->destination);
+        $this->assertDatabaseHas('credentials', [
+            'destination' => $sharedCredential->destination,
+            'username' => $sharedCredential->username,
+            'user_id' => $otherUser->id,
+        ]);
+    }
+}

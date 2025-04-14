@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Credential;
+use Illuminate\Support\Facades\Crypt;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Credential>
@@ -22,8 +23,8 @@ class CredentialFactory extends Factory
     {
         return [
             'destination' => $this->faker->url(),
-            'username' => $this->faker->mail(),
-            'password' => $this->faker->password(),
+            'username' => $this->faker->safeEmail,
+            'password' => Crypt::encryptString('password123'),
             'user_id' => User::factory()->create()->id,
         ];
     }
