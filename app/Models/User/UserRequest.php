@@ -30,6 +30,4 @@ class UserRequest extends Model
     protected $fillable = [
         'id','name','email','status'
     ];
-
-
 }

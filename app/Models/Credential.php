@@ -42,11 +42,17 @@ class Credential extends Model
         'role_id',
     ];
 
+    protected $nullable = [
+        'role_id',
+    ];
+
     public function user(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
     public function role(){
         return $this->belongsTo(Role::class, 'role_id');
     }
+
+
 
 }
