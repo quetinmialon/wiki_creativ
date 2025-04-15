@@ -85,5 +85,4 @@ class FavoriteTest extends TestCase
         $response->assertSee('Doc A');
         $response->assertSee('Doc B');
     }
-
 }

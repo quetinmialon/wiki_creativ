@@ -92,11 +92,14 @@ class DocumentController extends Controller
 
     public function edit($id)
     {
+        $document = $this->documentService->findDocument($id);
         $user = Auth::user();
-        if(!Gate::allows('manage-document',$this->documentService->findDocument($id)) && !Gate::allows('is-superadmin') ){
+        if (
+            !Gate::forUser($user)->allows('manage-document', $document) &&
+            !Gate::forUser($user)->allows('is-superadmin')
+        ) {
             abort(403);
         }
-        $document = $this->documentService->findDocument($id);
         $roles = $this->roleService->getRolesWhereCategoriesExist();
         return view('documents.edit-form', compact('document', 'roles'));
     }
@@ -104,10 +107,13 @@ class DocumentController extends Controller
     public function update(Request $request, $id)
     {
         $document = $this->documentService->findDocument($id);
-        if(!Gate::allows('manage-document',$document) && !Gate::allows('is-superadmin') ){
+        $user = Auth::user();
+        if (
+            !Gate::forUser($user)->allows('manage-document', $document) &&
+            !Gate::forUser($user)->allows('is-superadmin')
+        ) {
             abort(403);
         }
-
         $request->validate([
             'name'=> 'string|required',
             'content'=> ['string', 'required', 'min:10', 'max:500000', new ValidMarkdown()],
@@ -115,8 +121,6 @@ class DocumentController extends Controller
             'categories_id' => 'array',
             'categories_id.*'=> 'exists:categories,id',
         ]);
-
-        $document = $this->documentService->findDocument($id)->first();
         $this->documentService->updateDocument($document, $request->all());
 
         return redirect()->route('documents.show', $document->id)->with('success', 'Modifié avec succès');
@@ -124,7 +128,7 @@ class DocumentController extends Controller
 
     public function destroy($id)
     {
-        $document = $this->documentService->findDocument($id)->first();
+        $document = $this->documentService->findDocument($id);
 
         if (
             !Gate::allows('manage-document', $document) &&
