@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Favorite;
-use App\Models\Document;
 use Illuminate\Support\Facades\Auth;
 
 class FavoriteService

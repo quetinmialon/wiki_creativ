@@ -3,8 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Models\Role;
-use Illuminate\Support\Facades\Auth;
 
 
 class UserService{

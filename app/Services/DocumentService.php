@@ -7,8 +7,6 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use League\CommonMark\CommonMarkConverter;
 use League\HTMLToMarkdown\HtmlConverter;
-use App\Models\User;
-use League\CommonMark\Extension\DisallowedRawHtml\DisallowedRawHtmlExtension;
 
 class DocumentService
 {

@@ -3,133 +3,148 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Role;
+use App\Services\AuthService;
+use App\Services\CategoryService;
+use App\Services\RoleService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
-    public function index(){
-        // Fetch all categories
-        $categories = Category::all();
-        return view('category.category-list',compact('categories'));
+    protected $categoryService;
+    protected $roleService;
+    protected $authService;
+
+    public function __construct(CategoryService $categoryService, RoleService $roleService, AuthService $authService)
+    {
+        $this->categoryService = $categoryService;
+        $this->roleService = $roleService;
+        $this->authService = $authService;
     }
 
-    public function create(){
-        // Fetch all roles for dropdown selection in the form
-        $roles = Role::all();
-        // Show form to create a new category
-        return view('category.create-category-form',compact('roles'));
+    public function index()
+    {
+        $categories = $this->categoryService->getAll();
+        return view('category.category-list', compact('categories'));
     }
 
-    public function store(Request $request){
-        // Validate the request data before creating a new category
-        $request->validate([
-            'name' =>'required|string|max:255',
-            'role_id' =>'exists:roles,id|required'
+    public function create()
+    {
+        $roles = $this->roleService->getAllRoles();
+        return view('category.create-category-form', compact('roles'));
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'role_id' => 'exists:roles,id|required',
         ]);
-        // Create a new category
-        Category::create($request->all());
+
+        $this->categoryService->create($data);
         return redirect()->route('categories.index');
     }
 
-    public function edit($id){
-        $category = Category::find($id);
-        // Fetch all roles for dropdown selection in the form
-        $roles = Role::all();
-        // Show form to edit the category
-        return view('category.edit-category-form',compact('category','roles'));
+    public function edit($id)
+    {
+        $category = $this->categoryService->getById($id);
+        $roles = $this->roleService->getAllRoles();
+        return view('category.edit-category-form', compact('category', 'roles'));
     }
 
-    public function update(Request $request, $id){
-        // Validate the request data before updating the category
-        $request->validate([
-            'name' =>'required|string|max:255',
-            'role_id' =>'exists:roles,id|required'
+    public function update(Request $request, $id)
+    {
+        $category = $this->categoryService->getById($id);
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'role_id' => 'exists:roles,id|required',
         ]);
-        // Update the category
-        $category = Category::find($id);
-        $category->update($request->all());
+
+        $this->categoryService->update($category, $data);
         return redirect()->route('categories.index');
     }
 
-    public function destroy($id){
-     // Delete the category
-        $category = Category::find($id);
-        $category->delete();
+    public function destroy($id)
+    {
+        $category = $this->categoryService->getById($id);
+        $this->categoryService->delete($category);
         return redirect()->route('categories.index');
     }
 
-    public function getUserCategories(){
-        // Check if the user is authenticated and has a valid role_id
-        if (!Auth::check() || Auth::user()->roles->isEmpty()) {
+    public function getUserCategories()
+    {
+        if (!$this->authService->isAuthenticated() || $this->authService->getCurrentUser()->roles->isEmpty()) {
             return redirect()->route('login')->withErrors(['error' => 'Vous devez être connecté pour accéder à cette page.']);
         }
-        // Fetch all categories associated with a user
-        $categories = Category::whereIn('role_id', Auth::user()->roles->pluck('id'))->get();
+
+        $user = $this->authService->getCurrentUser();
+        $categories = $this->categoryService->getUserCategories($user);
         return view('category.user-categories-list', compact('categories'));
     }
 
-    public function createCategoryOnUserRoles(){
-        $user = Auth::user();
-        if(!Auth::check() || Auth::user()->roles->isEmpty()){
+    public function createCategoryOnUserRoles()
+    {
+        if (!$this->authService->isAuthenticated() || $this->authService->getCurrentUser()->roles->isEmpty()) {
             return redirect()->route('login')->withErrors(['error' => 'Vous devez être connecté pour accéder à cette page.']);
         }
-        // Fetch all roles for dropdown selection in the form
-        $roles = $user->roles->all();
-        // Show form to create a new category
-        return view('category.users-create-category-form',compact('roles'));
+
+        $user = $this->authService->getCurrentUser();
+        $roles = $this->categoryService->getRolesForUser($user);
+        return view('category.users-create-category-form', compact('roles'));
     }
 
-    public function storeCategoryOnUserRoles(Request $request){
-        $user = Auth::user();
-        // Validate the request data before creating a new category
-        $request->validate([
-            'name' =>'required|string|max:255',
-            'role_id' =>'exists:roles,id|required'
+    public function storeCategoryOnUserRoles(Request $request)
+    {
+        $user = $this->authService->getCurrentUser();
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'role_id' => 'exists:roles,id|required',
         ]);
-        if(!$user->roles->contains('id', $request->role_id)){
-            return redirect()->back()->withErrors(['role_id' => 'Vous ne pouvez pas créer une catégorie pour un rôle qui ne vous est pas attribué']);
-        }
-        // Create a new category
-        Category::create($request->all());
+
+        $this->categoryService->createWithUserRole($user, $data);
         return redirect()->route('myCategories.myCategories');
     }
 
-    public function destroyCategoryOnUserRoles($categoryId){
+    public function destroyCategoryOnUserRoles($categoryId)
+    {
+        $category = $this->categoryService->getById($categoryId);
 
-        $category = Category::find($categoryId);
-        if(!Gate::allows('manage-category', $category)){
+        if (!Gate::allows('manage-category', $category)) {
             abort(403);
         }
-        $category->delete();
+
+        $this->categoryService->delete($category);
         return redirect()->route('myCategories.myCategories');
     }
-    public function editCategoryOnUserRoles($categoryId){
-        $user = Auth::user();
-        $category = Category::find($categoryId);
-        if(!Gate::allows('manage-category', $category)){
+
+    public function editCategoryOnUserRoles($categoryId)
+    {
+        $user = $this->authService->getCurrentUser();
+        $category = $this->categoryService->getById($categoryId);
+
+        if (!Gate::allows('manage-category', $category)) {
             abort(403);
         }
 
-        // Fetch all roles for dropdown selection in the form
-        $roles = $user->roles->all();
-        // Show form to edit the category
-        return view('category.users-edit-category-form',compact('category','roles'));
+        $roles = $this->categoryService->getRolesForUser($user);
+        return view('category.users-edit-category-form', compact('category', 'roles'));
     }
-    public function updateCategoryOnUserRoles(Request $request, $categoryId){
-        $user = Auth::user();
-        $category = Category::find($categoryId);
-        if(!Gate::allows('manage-category', $category)){
+
+    public function updateCategoryOnUserRoles(Request $request, $categoryId)
+    {
+        $user = $this->authService->getCurrentUser();
+        $category = $this->categoryService->getById($categoryId);
+
+        if (!Gate::allows('manage-category', $category)) {
             abort(403);
         }
-        // Validate the request data before updating the category
-        $request->validate([
-            'name' =>'required|string|max:255',
-            'role_id' =>'exists:roles,id|required'
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'role_id' => 'exists:roles,id|required',
         ]);
-        $category->update($request->all());
+
+        $this->categoryService->updateWithUserRole($user, $category, $data);
         return redirect()->route('myCategories.myCategories');
     }
 }

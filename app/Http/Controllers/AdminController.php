@@ -70,7 +70,4 @@ class AdminController extends Controller
         }
         return view('admin.search_users_results', compact('users', 'query'));
     }
-
-
-    
 }

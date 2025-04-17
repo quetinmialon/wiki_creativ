@@ -32,8 +32,8 @@ class AuthController extends Controller
             if ($this->authService->login($credentials)) {
                 return redirect()->intended('/');
             }
-        } catch (ValidationException $e) {
-            throw $e;
+        } catch (ValidationException $validationException) {
+            throw $validationException;
         }
     }
 

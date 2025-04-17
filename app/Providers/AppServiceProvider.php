@@ -22,6 +22,7 @@ use App\Models\Category;
 use App\Models\Credential;
 use App\Models\Permission;
 use App\Policies\SuperAdminPolicy;
+use App\Services\CategoryService;
 use App\Services\ImageService;
 use App\Services\UserService;
 use Illuminate\Pagination\Paginator;
@@ -62,6 +63,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton(UserService::class, function ($app) {
             return new UserService();
+        });
+        $this->app->singleton(CategoryService::class, function ($app) {
+            return new CategoryService();
         });
     }
 

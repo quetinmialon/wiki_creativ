@@ -6,7 +6,6 @@ use App\Services\CredentialService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Credential;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 
 class CredentialController extends Controller

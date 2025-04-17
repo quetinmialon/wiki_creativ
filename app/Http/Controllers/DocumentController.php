@@ -79,7 +79,7 @@ class DocumentController extends Controller
 
     public function show($id)
     {
-        $document = Document::findOrFail($id);
+        $document = $this->documentService->findDocument($id);
         $userId = Auth::user()->id; // Récupère l'utilisateur connecté
         if (!Gate::allows('view-document', $document) && !Gate::allows('access-document', $document)) {
             abort(403);
@@ -123,7 +123,7 @@ class DocumentController extends Controller
         ]);
         $this->documentService->updateDocument($document, $request->all());
 
-        return redirect()->route('documents.show', $document->id)->with('success', 'Modifié avec succès');
+        return redirect()->route('documents.show', ['document'=>$document->id])->with('success', 'Modifié avec succès');
     }
 
     public function destroy($id)
