@@ -14,6 +14,8 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\SupervisorMiddleware;
+use App\Http\Controllers\SupervisorController;
 
 //----------------------------------------------------------------/
 // --------------------------Guest routes -----------------------/
@@ -124,4 +126,17 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get(uri: '/admin/roles/create',action: [RoleController::class,'create'])->name(name: 'roles.create');
     //usersRequests
     Route::get('/admin/requests', [AdminController::class, 'UserRequests'])->name('admin.users-requests');
+});
+//supervisor routes
+Route::middleware(SupervisorMiddleware::class)->name('supervisor.')->group(function () {
+    Route::get('/supervisor', [SupervisorController::class, 'index'])->name('index');
+    Route::post('/supervisor/promote/{userId}', [SupervisorController::class, 'promoteUserIntoSuperAdmin'])->name('promote');
+    Route::post('/supervisor/revoke/{userId}', [SupervisorController::class, 'revokeUser'])->name('revoke');
+    Route::post('/supervisor/restore/{userId}', [SupervisorController::class, 'restoreUser'])->name('restore');
+    Route::post('/supervisor/revokeRole/{userId}', [SupervisorController::class, 'revokeRoleSuperAdminOnUser'])->name('revokeRole');
+    Route::get('/supervisor/revokedUsers', [SupervisorController::class, 'revokedUsersList'])->name('revokedUsers');
+    Route::post('/supervisor/revokedUsers/{userId}/restore', [SupervisorController::class, 'restoreUser'])->name('restoreUser');
+    Route::post('/supervisor/createSuperadmin', [SupervisorController::class, 'sendSuperadminInvitation'])->name('createSuperadmin');
+    Route::get('/supervisor/changePassword', [SupervisorController::class, 'changePasswordForm'])->name('changePassword');
+    Route::post('/supervisor/changePassword', [SupervisorController::class, 'changePassword'])->name('updatePassword');
 });

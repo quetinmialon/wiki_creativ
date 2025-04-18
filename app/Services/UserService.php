@@ -8,13 +8,20 @@ use App\Models\User;
 class UserService{
     public function getAllUsersWithRoles()
     {
-        return User::with('roles')->get();
+        $user = User::with('roles')->get();
+        foreach ($user as $key => $u) {
+            if ($u->roles->contains('name', 'supervisor')) {
+                $user->forget($key);
+            }
+        }
+        return $user;
     }
 
     public function getUserById($id)
     {
-        return User::find($id)->with('roles')->first();
+        return User::with('roles')->find($id);
     }
+
 
     public function createUser(array $data)
     {
@@ -32,14 +39,34 @@ class UserService{
         $user->roles()->sync($data['role_ids']);
     }
 
-    public function getUserWithRoles($user_id)
+    public function addingRoleToUser($userId, $roleId)
     {
-        return User::with('roles')->find($user_id);
+        $user = User::find($userId);
+        $user->roles()->attach($roleId);
+    }
+    public function removeRoleFromUser($userId, $roleId)
+    {
+        $user = User::find($userId);
+        $user->roles()->detach($roleId);
+    }
+    public function getUserWithRoles($userId)
+    {
+        $user = User::with('roles')->find($userId);
+        return $user;
     }
 
-    public function revokeUser($user_id)
+    public function revokeUser($userId)
     {
-        User::find($user_id)->delete();
+        User::find($userId)->delete();
+    }
+
+    public function getRevokedUsers()
+    {
+        return User::onlyTrashed()->get();
+    }
+    public function restoreUser($userId)
+    {
+        User::withTrashed()->find($userId)->restore();
     }
 
     public function searchUsers($query)
@@ -48,4 +75,5 @@ class UserService{
                        ->orWhere('email', 'LIKE', "%{$query}%")
                        ->get();
     }
+
 }

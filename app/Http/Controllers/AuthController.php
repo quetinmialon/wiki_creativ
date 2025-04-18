@@ -30,6 +30,9 @@ class AuthController extends Controller
 
         try {
             if ($this->authService->login($credentials)) {
+                if ($this->authService->getCurrentUser()->roles()->where('name', 'supervisor')->exists()) {
+                    return redirect()->intended('/supervisor');
+                }
                 return redirect()->intended('/');
             }
         } catch (ValidationException $validationException) {
@@ -40,7 +43,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $this->authService->logout($request);
-        return redirect('/');
+        return redirect('/login')->with('success', 'Déconnexion réussie.');
     }
 
     public function showForgotPasswordForm()

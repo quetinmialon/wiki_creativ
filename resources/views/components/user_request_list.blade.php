@@ -18,6 +18,9 @@
                 {{-- Liste des rôles classiques avec option Admin --}}
                 <div class="grid grid-cols-2 gap-2 mt-2">
                     @foreach($roles as $role)
+                    @if($role->name =='supervisor')
+                        @continue
+                    @endif
                         @if(!str_contains($role->name, 'Admin ') && $role->name !== 'default')
                             @php
                                 $adminRole = $roles->firstWhere('name', 'Admin ' . $role->name);

@@ -8,6 +8,9 @@
 
     <ul class="divide-y divide-gray-200">
         @foreach ($roles as $role)
+            @if($role->name == 'supervisor')
+                @continue
+            @endif
             @if(!Str::contains($role->name, 'Admin '))
             <li class="flex justify-between items-center py-3">
                 <span class="text-gray-700 font-medium">{{ $role->name }}</span>

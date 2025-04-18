@@ -1,16 +1,29 @@
 <?php
 
-namespace Database\Seeders;
+namespace App\Console\Commands;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use Illuminate\Console\Command;
 
-class RoleSeeder extends Seeder
+class GenerateCoreRoles extends Command
 {
     /**
-     * Run the database seeds.
+     * The name and signature of the console command.
+     *
+     * @var string
      */
-    public function run(): void
+    protected $signature = 'boot:generate_cores_roles';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Generate cores roles and admin associated roles';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
     {
         $roles = [
             ["name" => "default"],
@@ -29,7 +42,9 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($roles as $role) {
-            \App\Models\Role::create($role);
+            \App\Models\Role::updateOrCreate(['name' => $role['name']], $role);
         }
+
+        $this->info('Roles have been generated successfully.');
     }
 }

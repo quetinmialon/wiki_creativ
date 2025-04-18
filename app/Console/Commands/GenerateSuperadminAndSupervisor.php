@@ -1,27 +1,38 @@
 <?php
 
-namespace Database\Seeders;
+namespace App\Console\Commands;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use Illuminate\Console\Command;
 
-class UserSeeder extends Seeder
+class GenerateSuperadminAndSupervisor extends Command
 {
     /**
-     * Run the database seeds.
+     * The name and signature of the console command.
+     *
+     * @var string
      */
-    public function run(): void
+    protected $signature = 'boot:generate_superadmin_and_supervisor';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Generate superadmin and supervisor users';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
     {
         $users = [
             [
-                'id' => 1,
                 'name' => 'superadmin',
                 'email' => env('SUPERADMIN_MAIL'),
                 'password' => bcrypt(env('SUPERADMIN_PASSWORD')),
                 'role_id' => 2, // ID du rôle superadmin
             ],
             [
-                'id' => 2,
                 'name' => 'supervisor',
                 'email' => env('SUPERVISOR_MAIL'),
                 'password' => bcrypt(env('SUPERVISOR_PASSWORD')),
@@ -31,11 +42,13 @@ class UserSeeder extends Seeder
 
         foreach ($users as $data) {
             $user = \App\Models\User::updateOrCreate(
-                ['id' => $data['id']],
+                ['email' => $data['email']],
                 collect($data)->except('role_id')->toArray()
             );
 
             $user->roles()->syncWithoutDetaching([$data['role_id']]);
         }
+
+        $this->info('Superadmin and supervisor users have been generated successfully.');
     }
 }

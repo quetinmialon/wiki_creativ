@@ -193,7 +193,6 @@ class DocumentControllerTest extends TestCase
         ->shouldReceive('updateDocument')
         ->once()
         ->with($document, Mockery::type('array'));
-        dump($document->id);
         $response =$this->controller->update($request,$document->id);
 
 

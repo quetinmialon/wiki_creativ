@@ -24,8 +24,8 @@ class RoleService
     public function updateRole($id, array $data)
     {
         $role = Role::findOrFail($id);
-        if(in_array($role->name, ['superadmin', 'default', 'qualité','Admin qualité'])){
-            return null;
+        if(in_array($role->name, ['superadmin', 'default', 'qualité','Admin qualité','supervisor'])) {
+            return ['error' => 'Vous ne pouvez pas modifier ce rôle.'];
         }
         $data['name'] = $data['name'] ?? $role->name;
 
@@ -37,7 +37,7 @@ class RoleService
     {
         $role = Role::findOrFail($id);
 
-        if (in_array($role->name, ['superadmin', 'default', 'qualité','Admin qualité'])) {
+        if (in_array($role->name, ['superadmin', 'default', 'qualité','Admin qualité','supervisor'])) {
             return ['error' => 'Vous ne pouvez pas supprimer ce rôle.'];
         }
 

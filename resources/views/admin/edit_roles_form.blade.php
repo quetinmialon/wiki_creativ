@@ -25,6 +25,9 @@
                 <label class="form-label">Rôles</label>
                 <div class="form-check">
                     @foreach($roles as $role)
+                    @if($role->name == 'supervisor')
+                        @continue
+                    @endif
                         <input
                             type="checkbox"
                             class="form-check-input"

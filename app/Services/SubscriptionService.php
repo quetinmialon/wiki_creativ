@@ -97,4 +97,28 @@ class SubscriptionService
 
         return $userInvitation;
     }
+    public function createSuperadminInvitation(array $data)
+    {
+        $token = Str::random(60);
+
+        $userInvitation = UserInvitation::create([
+            'email' => $data['email'],
+            'token' => $token,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        UserRequest::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'status' => 'accepted',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $userInvitation->roles()->attach(2);
+        Mail::to($data['email'])->send(new RegistrationLinkMail($token));
+
+        return $userInvitation;
+    }
 }
