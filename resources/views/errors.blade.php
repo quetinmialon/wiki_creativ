@@ -3,7 +3,7 @@
         <p class="font-bold">Oups ! Il y a eu un problème.</p>
         <ul class="mt-2 list-disc list-inside">
             @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+                <li>{!! $error !!}</li>
             @endforeach
         </ul>
     </div>

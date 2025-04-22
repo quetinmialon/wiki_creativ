@@ -15,6 +15,8 @@ use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\SupervisorMiddleware;
+use App\Http\Controllers\QualiteController;
+use App\Http\Middleware\QualiteMiddleware;
 use App\Http\Controllers\SupervisorController;
 
 //----------------------------------------------------------------/
@@ -139,4 +141,12 @@ Route::middleware(SupervisorMiddleware::class)->name('supervisor.')->group(funct
     Route::post('/supervisor/createSuperadmin', [SupervisorController::class, 'sendSuperadminInvitation'])->name('createSuperadmin');
     Route::get('/supervisor/changePassword', [SupervisorController::class, 'changePasswordForm'])->name('changePassword');
     Route::post('/supervisor/changePassword', [SupervisorController::class, 'changePassword'])->name('updatePassword');
+});
+//qualite routes
+Route::middleware(QualiteMiddleware::class)->name('qualite.')->group(function () {
+    Route::get('/qualite', [QualiteController::class, 'index'])->name('index');
+    Route::get('/qualite/{id}/edit', [QualiteController::class, 'edit'])->name('edit');
+    Route::put('/qualite/{id}', [QualiteController::class, 'update'])->name('update');
+    Route::put('/qualite/normed/{id}', [QualiteController::class, 'addNormedNameToDocument'])->name('addNormedName');
+    Route::get('/qualite/documents', [QualiteController::class, 'documentList'])->name('documents');
 });

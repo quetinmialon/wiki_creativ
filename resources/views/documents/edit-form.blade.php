@@ -65,6 +65,9 @@
                     @endif
                 </div>
             @endforeach
+            @error('categories_id')
+                <p class="text-sm text-red-600">{!! $message !!}</p>
+            @enderror
         </div>
 
         <!-- Boutons -->

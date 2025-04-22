@@ -136,6 +136,12 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('supervisor', function (User $user) {
             return $user->roles->contains('name', 'supervisor');
         });
+        Gate::define('qualite', function (User $user) {
+
+            return ($user->roles->contains('name', 'qualité')||
+                $user->roles->contains('name', 'Admin qualité')||
+                $user->roles->contains('name', 'superadmin'));
+        });
         /***************** define policies  ***************************/
         Gate::policy(User::class, SuperAdminPolicy::class);
 

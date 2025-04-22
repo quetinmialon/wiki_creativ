@@ -20,12 +20,14 @@ class QualiteMiddleware
 
         $autorizedRoles =
         [
-            'admin',
             'superadmin',
             'qualité',
+            'Admin qualité'
         ];
-        if (!$user || !in_array($user->role, $autorizedRoles)) {
-            return redirect()->back()->with(403, 'Vous n\'avez pas les droits pour accéder à cette page.');
+        $roles = $user->roles()->pluck('name')->toArray();
+
+        if (!$user || !array_intersect($roles, $autorizedRoles)) {
+            return redirect()->back()->with('Vous n\'avez pas les droits pour accéder à cette page.');
         }
         return $next($request);
     }

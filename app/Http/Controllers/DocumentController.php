@@ -54,7 +54,11 @@ class DocumentController extends Controller
             'categories_id' => 'array|nullable',
             'categories_id.*' => 'exists:categories,id',
         ]);
-
+        if (empty($request->categories_id)) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['categories_id' => "Veuillez sélectionner au moins une catégorie. Si aucune ne correspond, vous pouvez en créer une adaptée <a href='" . route('myCategories.create') . "' class='underline text-blue-500'>ici</a>."]);
+        }
 
         $this->documentService->createDocument($validate);
 
@@ -115,12 +119,18 @@ class DocumentController extends Controller
             abort(403);
         }
         $request->validate([
-            'name'=> 'string|required',
-            'content'=> ['string', 'required', 'min:10', 'max:500000', new ValidMarkdown()],
-            'excerpt'=> 'string',
-            'categories_id' => 'array',
-            'categories_id.*'=> 'exists:categories,id',
+            'name' => 'string|required',
+            'content' => ['string', 'required', 'min:10', 'max:500000', new ValidMarkdown()],
+            'excerpt' => 'string',
+            'categories_id' => 'array|required',
+            'categories_id.*' => 'exists:categories,id|min:1',
         ]);
+        if (empty($request->categories_id)) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['categories_id' => "Veuillez sélectionner au moins une catégorie. Si aucune ne correspond, vous pouvez en créer une adaptée <a href='" . route('myCategories.create') . "' class='underline text-blue-500'>ici</a>."]);
+        }
+
         $this->documentService->updateDocument($document, $request->all());
 
         return redirect()->route('documents.show', ['document'=>$document->id])->with('success', 'Modifié avec succès');

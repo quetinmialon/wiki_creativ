@@ -69,7 +69,7 @@
                 @endif
             @endforeach
             @error('categories_id')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                <p class="text-red-500 text-xs mt-1">{!! $message !!}</p>
             @enderror
         </div>
 

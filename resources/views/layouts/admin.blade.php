@@ -26,6 +26,9 @@
                 @can('SuperAdmin', Auth::user())
                     <a href="{{ route('admin') }}" class="{{ request()->routeIs('admin','admin.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Admin</a>
                 @endcan
+                @can('qualite', Auth::user())
+                    <a href="{{ route('qualite.index') }}" class="{{ request()->routeIs('qualite','qualite.*') ? 'text-blue-400 font-bold' : 'text-gray-800' }}">Qualité</a>
+                @endcan
                 <form action="{{route('logout')}}" method="POST" class="inline">
                     @csrf
                     <button type="submit" class="text-gray-800">Déconnexion</button>

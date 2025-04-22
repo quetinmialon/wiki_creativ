@@ -114,7 +114,6 @@ class DocumentService
             $data['content'] = $this->convertHtmlToMarkdown($data['content']);
             $data['content'] = $this->sanitizeMarkdown($data['content']);
         }
-
         $document->update($data);
         $document->categories()->sync($data['categories_id'] ?? []);
 
@@ -140,5 +139,30 @@ class DocumentService
                        ->orWhere('formated_name', 'LIKE', "%{$query}%")
                        ->groupBy(('documents.id'))
                        ->get();
+    }
+    public function getAllDocumentThatAreNotNormed()
+    {
+        return Document::where('formated_name', null)->get();
+    }
+
+    public function countDocumentsThatAreNotNormed()
+    {
+        return Document::where('formated_name', null)->count();
+    }
+    public function getAllDocumentThatAreNormed()
+    {
+        return Document::whereNotNull('formated_name')
+                      ->orderBy('formated_name', 'asc')
+                      ->get();
+    }
+
+    public function addNormedNameToDocument(Document $document, ?string $formated_name)
+    {
+
+        if (empty($formated_name)) {
+            return ['error' => 'Le champ nomenclature ne peut pas être vide.'];
+        }
+        $document->formated_name = $formated_name;
+        $document->save();
     }
 }
