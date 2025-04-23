@@ -1,19 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
-    window.togglePassword = function (id) {
-        let passwordSpan = document.getElementById(`password-${id}`);
-        if (passwordSpan.classList.contains('hidden')) {
-            passwordSpan.classList.remove('hidden');
-        } else {
-            passwordSpan.classList.add('hidden');
-        }
-    }
+    window.copyPassword = function (id) {
+        const passwordSpan = document.getElementById(`password-${id}`);
+        const password = passwordSpan.textContent;
 
-    window.toggleSharedPassword = function(id){
-        let sharedPasswordSpan = document.getElementById(`shared-password-${id}`);
-        if (sharedPasswordSpan.classList.contains('hidden')) {
-            sharedPasswordSpan.classList.remove('hidden');
-        } else {
-            sharedPasswordSpan.classList.add('hidden');
-        }
+        navigator.clipboard.writeText(password)
+            .then(() => {
+                alert("Mot de passe copié dans le presse-papiers !");
+            })
+            .catch(err => {
+                console.error("Erreur lors de la copie :", err);
+                alert("Échec de la copie du mot de passe.");
+            });
+    };
+
+    window.copySharedPassword = function(id){
+        const sharedPasswordSpan = document.getElementById(`password-${id}`);
+        const sharedPassword = sharedPasswordSpan.textContent;
+
+        navigator.clipboard.writeText(sharedPassword)
+            .then(() => {
+                alert("Mot de passe copié dans le presse-papiers !");
+            })
+            .catch(err => {
+                console.error("Erreur lors de la copie :", err);
+                alert("Échec de la copie du mot de passe.");
+            });
     }
 });

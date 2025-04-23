@@ -39,7 +39,7 @@
                             <form class="inline" action="{{ route('admin.delete-user', $user->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700">Revoquer</button>
+                                <button type="submit" class="text-red-500 hover:text-red-700" onclick="return confirm('Êtes-vous sûr de vouloir révoquer l\'utilisateur suivant : {{ addslashes($user->name) }} ?')">Revoquer</button>
                             </form>
                     </tr>
                 @endforeach

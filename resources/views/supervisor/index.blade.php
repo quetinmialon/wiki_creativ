@@ -48,7 +48,7 @@
 
                 <form action="{{ route('supervisor.revoke', $u->id) }}" method="POST" class="inline">
                     @csrf
-                    <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Supprimer</button>
+                    <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" onclick="return confirm('Êtes-vous sûr de vouloir révoquer l\'utilisateur suivant : {{ addslashes($u->name) }} ?')">Supprimer</button>
                 </form>
 
             </td>

@@ -2,12 +2,12 @@
 
 @section('content')
 <div class="container mx-auto mt-10 px-6">
-    <h1 class="text-3xl font-bold mb-6">Vos Credentials</h1>
+    <h1 class="text-3xl font-bold mb-6">Vos identifiants </h1>
 
     <div class="mb-8">
-        <h2 class="text-2xl font-semibold mb-4">Vos logs personnels</h2>
+        <h2 class="text-2xl font-semibold mb-4">Vos identifiants personnels</h2>
         @if($personnal_credentials->isEmpty())
-            <p class="text-gray-600">Aucun log personnel disponible.</p>
+            <p class="text-gray-600">Aucun identifiant personnel disponible.</p>
         @else
             <ul class="space-y-4">
                 @foreach($personnal_credentials as $credential)
@@ -16,11 +16,12 @@
                             <span class="font-bold text-lg">{{ $credential->destination }}</span>
                             <span class="text-gray-600">- {{ $credential->username }}</span>
                             <div class="mt-2">
-                                <button onclick="togglePassword({{ $credential->id }})" class="text-blue-500 hover:underline">
-                                    Voir mot de passe
+                                <button onclick="copyPassword({{ $credential->id }})" class="text-blue-500 hover:underline">
+                                    Copier le mot de passe
                                 </button>
-                                <span id="password-{{ $credential->id }}" class="hidden bg-gray-200 px-2 py-1 rounded-md">{{ $credential->password }}</span>
+                                <span id="password-{{ $credential->id }}" class="hidden">{{ $credential->password }}</span>
                             </div>
+
                         </div>
                         <div class="flex space-x-4">
                             <a href="{{ route('credentials.edit', $credential->id) }}" class="text-blue-500 hover:underline">Modifier</a>
@@ -37,9 +38,9 @@
         @endif
     </div>
     <div>
-        <h2 class="text-2xl font-semibold mb-4">Logs partagés avec vos rôles</h2>
+        <h2 class="text-2xl font-semibold mb-4">identifiants partagés avec vos rôles</h2>
         @if(empty($shared_credentials))
-            <p class="text-gray-600">Aucun log partagé disponible.</p>
+            <p class="text-gray-600">Aucun identifiant partagé disponible.</p>
         @else
             @foreach($shared_credentials as $roleName => $credentials)
                 <h3 class="text-xl font-semibold mt-6">{{ $roleName }}</h3>
@@ -50,7 +51,7 @@
                                 <span class="font-bold text-lg">{{ $credential->destination }}</span>
                                 <span class="text-gray-600">- {{ $credential->username }}</span>
                                 <div class="mt-2">
-                                    <button onclick="toggleSharedPassword({{ $credential->id }})" class="text-blue-500 hover:underline">
+                                    <button onclick="copySharedPassword({{ $credential->id }})" class="text-blue-500 hover:underline">
                                         Voir mot de passe
                                     </button>
                                     <span id="shared-password-{{ $credential->id }}" class="hidden bg-gray-200 px-2 py-1 rounded-md">{{ $credential->password }}</span>
