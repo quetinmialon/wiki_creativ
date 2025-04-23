@@ -17,7 +17,7 @@
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="id" value="{{ $doc->id }}">
-                <input type="text" name="formated_name" placeholder="Nomenclature..." required
+                <input type="text" name="formated_name" placeholder="Nomenclature..."
                        class="border border-gray-300 rounded px-2 py-1 w-1/2" value="{{ old('formated_name', $doc->formated_name) }}">
                 <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
                     Changer la nomenclature

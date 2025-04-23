@@ -43,15 +43,18 @@ class QualiteController extends Controller
     {
         $this->accessQualityPages();
         $request->validate([
-            'formated_name' => 'required|string|max:255',
+            'formated_name' => 'nullable|string|max:255',
             'id' => 'required|integer|exists:documents,id',
         ]);
         $document = $this->documentService->findDocument($request->id);
         if (!$document) {
             return redirect()->route('qualite.index')->with('error', "Le document n'existe pas en base de donnée");
         }
+        if($document->formated_name == null) {
+            return redirect()->route('qualite.index')->with('success', "nomenclature retirée avec succès, le document n'est plus accessible aux utilisateurs");
+        }
         $this->documentService->addNormedNameToDocument($document, $request->formated_name);
-        return redirect()->route('qualite.index')->with('success', 'Nomanclature ajouté avec succès.');
+        return redirect()->route('qualite.index')->with('success', 'Nomanclature ajouté avec succès, le document est accessible aux utilisateurs.');
     }
     public function edit(Request $request)
     {
@@ -68,7 +71,7 @@ class QualiteController extends Controller
         $this->accessQualityPages();
         $request->validate([
             'name' => 'string|required|max:255',
-            'formated_name' => 'required|string|max:255',
+            'formated_name' => 'nullable|string|max:255',
             'id' => 'required|integer|exists:documents,id',
             'content' => 'required|string|max:5000000|min:10|', new ValidMarkdown(),
             'excerpt' => 'string|nullable|max:255',

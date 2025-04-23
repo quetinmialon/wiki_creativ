@@ -56,7 +56,7 @@ class DocumentService
         // Chercher les catégories qui correspondent à ces rôles
         return Category::whereIn('role_id', $roleIds)
                        ->with(['documents' => function ($query) use ($limit) {
-                            $query->limit($limit)->orderBy('created_at', 'desc');
+                            $query->where('formated_name','!=',null)->limit($limit)->orderBy('created_at', 'desc');
                         }])
                        ->distinct()
                        ->get();
@@ -65,13 +65,15 @@ class DocumentService
     public function getEveryDocuments($limit = 6)
     {
         return Category::with(['documents' => function ($query) use ($limit) {
-            $query->limit($limit)->orderBy('created_at', 'desc');
-        }])->get();
+            $query->where('formated_name', '!=', null)->limit($limit)->orderBy('formated_name', 'asc');
+        }])->orderBy('name', 'asc')->get();
     }
 
     public function getEveryDocumentswithoutPagination()
     {
-        return Category::with('documents')->get();
+        return Category::with(['documents' => function ($query) {
+            $query->where('formated_name', '!=', null)->orderBy('formated_name', 'asc');
+        }])->orderBy('name', 'asc')->get();
     }
 
     public function createDocument(array $data)
@@ -93,13 +95,12 @@ class DocumentService
         return $document;
     }
 
-    public function getDocumentsByCategory($categoryId, $perPage = 12)
+    public function getDocumentsByCategory($categoryId, $perPage = 6)
     {
-        return Document::whereHas('categories', function ($query) use ($categoryId) {
-                $query->where('categories.id', $categoryId);
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+        return Document::whereHas('categories', function ($query) use ($categoryId, $perPage) {
+                $query->where('formated_name', '!=', null)->where('categories.id', $categoryId);
+         })
+         ->orderBy('formated_name', 'asc')->paginate($perPage);
     }
 
     public function findDocument($id)
@@ -158,10 +159,6 @@ class DocumentService
 
     public function addNormedNameToDocument(Document $document, ?string $formated_name)
     {
-
-        if (empty($formated_name)) {
-            return ['error' => 'Le champ nomenclature ne peut pas être vide.'];
-        }
         $document->formated_name = $formated_name;
         $document->save();
     }

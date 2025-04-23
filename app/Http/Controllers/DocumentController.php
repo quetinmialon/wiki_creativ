@@ -69,13 +69,7 @@ class DocumentController extends Controller
     public function byCategory($categoryId)
     {
         $category = Category::findOrFail($categoryId);
-
-        $documents = Document::whereHas('categories', function ($query) use ($categoryId) {
-                $query->where('categories.id', $categoryId);
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(9);
-
+        $documents = $this->documentService->getDocumentsByCategory($categoryId);
         return view('documents.by-category', compact('category', 'documents'));
     }
 
@@ -84,6 +78,14 @@ class DocumentController extends Controller
     public function show($id)
     {
         $document = $this->documentService->findDocument($id);
+
+        if(!$document) {
+            return redirect()->route('documents.index')->with('error', 'Document introuvable');
+        }
+        if(!$document->formated_name)
+        {
+            return redirect()->route('documents.index')->with('error', 'Document non disponnible');
+        }
         $userId = Auth::user()->id; // Récupère l'utilisateur connecté
         if (!Gate::allows('view-document', $document) && !Gate::allows('access-document', $document)) {
             abort(403);
@@ -190,6 +192,7 @@ class DocumentController extends Controller
     }
     public function getAllDocuments(){
         $categories = $this->documentService->getEveryDocumentswithoutPagination();
+
         return view('documents.all-documents', compact('categories'));
     }
 

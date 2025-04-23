@@ -22,7 +22,7 @@
         <div>
             <label for="formated_name" class="block text-sm font-medium text-gray-700">Nomenclature</label>
             <input type="text" name="formated_name" id="formated_name" value="{{ old('formated_name', $document->formated_name) }}"
-                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
+                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
             @error('formated_name')
                 <p class="text-sm text-red-600">{{ $message }}</p>
             @enderror

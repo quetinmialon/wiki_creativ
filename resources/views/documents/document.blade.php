@@ -1,12 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-@if(!$document->formated_name)
-    <div class="bg-red-500 text-white text-center py-4 mb-4 rounded">
-        <p class="text-lg font-bold">⚠️ Attention : Le service qualité n'a pas encore validé ce document et il ne respecte peut-être pas les normes de qualité de l'entreprise.</p>
-    </div>
-@endif
-
 <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
     <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ $document->name }}</h1>
 

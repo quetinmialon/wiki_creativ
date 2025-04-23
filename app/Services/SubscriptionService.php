@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Mail\RegistrationLinkMail;
 use App\Mail\RejectionMail;
-use App\Models\Role;
 use App\Models\User;
 use App\Models\User\UserInvitation;
 use App\Models\User\UserRequest;
@@ -38,6 +37,10 @@ class SubscriptionService
             ]);
 
             $userInvitation->roles()->attach($roleIds);
+            if(!in_array(1, $roleIds))
+            {
+                $userInvitation->roles()->attach(1);
+            } // Attach the "user" role (ID 1)
             Mail::to($userRequest->email)->send(new RegistrationLinkMail($token));
 
         } else {
@@ -62,6 +65,10 @@ class SubscriptionService
             'password' => Hash::make($data['password']),
         ]);
 
+        if(!in_array(1, $roles))
+        {
+            $user->roles()->attach(1);
+        } // Attach the "user" role (ID 1)
         $user->roles()->attach($roles);
         $invitation->delete();
 
@@ -93,6 +100,10 @@ class SubscriptionService
         ]);
 
         $userInvitation->roles()->attach($data['role_ids']);
+        if(!in_array(1, $data['role_ids']))
+        {
+            $userInvitation->roles()->attach(1);
+        }// Attach the "public" role (ID 1)
         Mail::to($data['email'])->send(new RegistrationLinkMail($token));
 
         return $userInvitation;
@@ -117,8 +128,11 @@ class SubscriptionService
         ]);
 
         $userInvitation->roles()->attach(2);
+        if(!in_array(1, $data['role_ids']))
+        {
+            $userInvitation->roles()->attach(1);
+        } // Attach the "user" role (ID 1)
         Mail::to($data['email'])->send(new RegistrationLinkMail($token));
-
         return $userInvitation;
     }
 }

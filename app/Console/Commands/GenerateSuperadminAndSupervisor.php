@@ -30,13 +30,13 @@ class GenerateSuperadminAndSupervisor extends Command
                 'name' => 'superadmin',
                 'email' => env('SUPERADMIN_MAIL'),
                 'password' => bcrypt(env('SUPERADMIN_PASSWORD')),
-                'role_id' => 2, // ID du rôle superadmin
+                'role_id' => [2,1]
             ],
             [
                 'name' => 'supervisor',
                 'email' => env('SUPERVISOR_MAIL'),
                 'password' => bcrypt(env('SUPERVISOR_PASSWORD')),
-                'role_id' => 13, // ID du rôle supervisor
+                'role_id' => [13] // ID du rôle supervisor
             ],
         ];
 
@@ -46,7 +46,7 @@ class GenerateSuperadminAndSupervisor extends Command
                 collect($data)->except('role_id')->toArray()
             );
 
-            $user->roles()->syncWithoutDetaching([$data['role_id']]);
+            $user->roles()->syncWithoutDetaching($data['role_id']);
         }
 
         $this->info('Superadmin and supervisor users have been generated successfully.');
