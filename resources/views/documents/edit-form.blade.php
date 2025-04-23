@@ -42,11 +42,19 @@
         <div id="editor" class="border rounded p-2">{!! old('content', $document->content) !!}</div>
         <!-- Champ caché qui stocke le HTML -->
         <input type="hidden" name="content" id="content" value="{{ old('content', $document->content) }}">
-
+        <div class="flex items-center mb-4">
+            <label for="public" class="mr-2 text-sm font-medium text-gray-700">Document publique</label>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="public" name="categories_id[]" value="1" class="sr-only peer" {{ in_array(1, $document->categories->pluck('id')->toArray()) ? 'checked' : '' }}>
+                <div class="w-11 h-6 bg-gray-200 rounded-full peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 peer dark:bg-gray-700 peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+            </label>
+        </div>
         <!-- Catégories -->
-        <div>
+        <div id="categoriesDiv">
             <h3 class="text-sm font-medium text-gray-700 mb-2">Catégories</h3>
             @foreach($roles as $role)
+            @if(!str_contains($role->name, 'Admin '))
+            @if(!str_contains($role->name, 'default'))
                 <div class="mb-4">
                     <h4 class="font-semibold text-gray-600">{{ $role->name }}</h4>
                     @if($role->categories->isEmpty())
@@ -64,6 +72,8 @@
                         </div>
                     @endif
                 </div>
+            @endif
+            @endif
             @endforeach
             @error('categories_id')
                 <p class="text-sm text-red-600">{!! $message !!}</p>

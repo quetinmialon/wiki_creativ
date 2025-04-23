@@ -50,11 +50,19 @@
         <div id="editor" class="border rounded p-2"></div>
         <!-- Champ caché qui stocke le HTML -->
         <input type="hidden" name="content" id="content">
+        <div class="flex items-center mb-4">
+            <label for="public" class="mr-2 text-sm font-medium text-gray-700">Document publique</label>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="public" name="categories_id[]" value="1" class="sr-only peer" >
+                <div class="w-11 h-6 bg-gray-200 rounded-full peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 peer dark:bg-gray-700 peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+            </label>
+        </div>
         <!-- Rôles et catégories -->
-        <div class="mb-6">
+        <div class="mb-6" id="categoriesDiv">
             <label class="block text-sm font-medium text-gray-700 mb-2">Rôles et Catégories</label>
             @foreach($roles as $role)
                 @if(!str_contains($role->name, 'Admin '))
+                @if(!str_contains($role->name, 'default'))
                 <div class="mb-4">
                     <h2 class="text-lg font-semibold text-gray-800">{{ $role->name }}</h2>
                     <div class="mt-2 space-y-2">
@@ -66,6 +74,7 @@
                         @endforeach
                     </div>
                 </div>
+                @endif
                 @endif
             @endforeach
             @error('categories_id')

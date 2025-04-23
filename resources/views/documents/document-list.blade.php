@@ -39,7 +39,7 @@
                                 <p class="text-sm text-gray-600 mb-2">Auteur : {{ $document->author?->name ?? 'Inconnu' }}</p>
                                 <p class="text-sm text-gray-700">{{ $document->excerpt }}</p>
                                 <a href="{{ route('documents.show', $document->id) }}" class="inline-block mt-2 px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
-                                    👀 Voir le document
+                                    Voir le document
                                 </a>
                             </div>
                         @endforeach

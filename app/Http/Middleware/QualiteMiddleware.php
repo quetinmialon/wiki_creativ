@@ -17,7 +17,9 @@ class QualiteMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::user();
-
+        if (!$user) {
+            return redirect()->route('login')->with('error', "Connectez vous pour acceder à cette page");
+        }
         $autorizedRoles =
         [
             'superadmin',

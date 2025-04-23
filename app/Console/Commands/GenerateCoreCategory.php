@@ -33,5 +33,6 @@ class GenerateCoreCategory extends Command
                 'role_id' => 1,
             ]
         );
+        $this->info('The "public" category has been created successfully.');
     }
 }

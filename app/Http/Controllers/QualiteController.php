@@ -50,7 +50,8 @@ class QualiteController extends Controller
         if (!$document) {
             return redirect()->route('qualite.index')->with('error', "Le document n'existe pas en base de donnée");
         }
-        if($document->formated_name == null) {
+        if($request->formated_name == null) {
+            $this->documentService->addNormedNameToDocument($document, null);
             return redirect()->route('qualite.index')->with('success', "nomenclature retirée avec succès, le document n'est plus accessible aux utilisateurs");
         }
         $this->documentService->addNormedNameToDocument($document, $request->formated_name);
