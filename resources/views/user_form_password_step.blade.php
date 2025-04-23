@@ -5,10 +5,24 @@
     @csrf
     <input type="hidden" name="email" value="{{ $email }}">
     <input type="hidden" name="token" value="{{ $token }}">
+    <div class="mb-4">
+        Choisissez votre mot de passer pour finaliser votre inscription
+    </div>
+
+    <div class="mb-4">
+        <label for="name" class="block text-gray-700 font-semibold mb-2">email</label>
+        <input type="text" id="name" name="name" value="{{ $email }}" readonly
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none">
+    </div>
 
     <div class="mb-4">
         <label for="password" class="block text-gray-700 font-semibold mb-2">Mot de passe</label>
         <input type="password" id="password" name="password" required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+    </div>
+    <div class="mb-4">
+        <label for="password_confirmation" class="block text-gray-700 font-semibold mb-2">Confirmer le mot de passe</label>
+        <input type="password" id="password_confirmation" name="password_confirmation" required
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
     </div>
 

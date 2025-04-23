@@ -52,6 +52,7 @@ class SubscriptionController extends Controller
         $request->validate([
             'email' => 'required|email|exists:user_invitations,email',
             'password' => 'required|min:8',
+            'password_confirmation' => 'required|same:password',
             'token' => 'required|string',
         ]);
 

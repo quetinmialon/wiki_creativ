@@ -10,7 +10,7 @@
     </div>
 
     <div class="mb-4">
-        <label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
+        <label for="password" class="block text-gray-700 font-semibold mb-2">Mot de passe</label>
         <input type="password" name="password" required
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
     </div>
