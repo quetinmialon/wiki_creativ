@@ -34,10 +34,11 @@
             </div>
 
             @else
-                <a href="{{ route('subscribe') }}" class="{{ request()->routeIs('subscribe') ? 'text-[#126C83]' : 'text-gray-800' }} hover:text-[#35A5A7]">S'inscrire</a>
+                <a href="{{ route('subscribe') }}" class="border-r-2 px-4 border-gray-200{{ request()->routeIs('subscribe') ? 'text-[#126C83]' : 'text-gray-800' }} hover:text-[#35A5A7]">S'inscrire</a>
                 <a href="{{ route('login') }}" class="{{ request()->routeIs('login') ? 'text-[#126C83]' : 'text-gray-800' }} hover:text-[#35A5A7]">Se connecter</a>
             @endif
         </div>
+        @if(Auth::check())
         <div class ="border-l px-4 gap-4 border-gray-200">
             <a href="{{ route('profile.show') }}" class="{{ request()->routeIs('profile.*') ? 'text-[#126C83]' : 'text-gray-800' }} hover:text-[#35A5A7] px-4">Mon Profil</a>
             <form action="{{route('logout')}}" method="POST" class="inline">
@@ -45,6 +46,7 @@
                 <button type="submit" class="text-red-900 hover:text-red-700">Déconnexion</button>
             </form>
         </div>
+        @endif
     </nav>
 
         <!-- Contenu principal -->
