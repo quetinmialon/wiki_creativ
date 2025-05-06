@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class CategoryTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     /**
      * Test creating a new category.

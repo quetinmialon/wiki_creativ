@@ -56,7 +56,7 @@ class DocumentService
         // Chercher les catégories qui correspondent à ces rôles
         return Category::whereIn('role_id', $roleIds)
                        ->with(['documents' => function ($query) use ($limit) {
-                            $query->where('formated_name','!=',null)->limit($limit)->orderBy('created_at', 'desc');
+                            $query->where('formated_name','!=',null)->limit($limit)->orderBy('documents.created_at', 'desc');
                         }])
                        ->distinct()
                        ->get();

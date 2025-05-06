@@ -7,11 +7,12 @@ use App\Models\Favorite;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class FavoriteTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private function createUserWithRoleAndDocument(): array
     {

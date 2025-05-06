@@ -9,12 +9,13 @@ use App\Models\User;
 use App\Models\User\UserInvitation;
 use App\Models\User\UserRequest;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class RegisterTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public function test_create_user_request()
     {
@@ -61,7 +62,7 @@ class RegisterTest extends TestCase
         $user->roles()->attach(Role::factory()->create(['name' => 'superadmin']));
         $user = User::find($user->id); // Ensure $user is an instance of User
         $this->actingAs($user);
-        
+
         $this->post(route('subscribe.process', $userRequest->id), ['action' => 'reject']);
 
         Mail::assertSent(RejectionMail::class, fn($mail) => $mail->hasTo($userRequest->email));
@@ -75,6 +76,7 @@ class RegisterTest extends TestCase
         $this->post(route('register.finalization', ['token' => 'test_token']), [
             'email' => $invitation->email,
             'password' => 'password123',
+            'password_confirmation'=> 'password123'
         ]);
 
         $this->assertDatabaseHas('users', ['email' => $invitation->email]);
@@ -140,6 +142,7 @@ class RegisterTest extends TestCase
         $this->post(route('register.finalization', ['token' => $invitation->token]), [
             'email' => $invitation->email,
             'password' => 'password123',
+            'password_confirmation'=> 'password123'
         ]);
 
         $user = User::where('email', $invitation->email)->first();

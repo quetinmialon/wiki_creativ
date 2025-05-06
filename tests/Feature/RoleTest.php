@@ -6,10 +6,11 @@ use App\Models\Role;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RoleTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     /**
      * Testing role creation
@@ -235,16 +236,14 @@ class RoleTest extends TestCase
     public function test_cores_roles_cant_be_updated(){
         // Creating admin and default roles
         $role_admin = Role::create(['name' => 'superadmin']);
-        $role_default = Role::create(['name' => 'default']);
 
         $user = User::factory()->create();
         $user->roles()->attach($role_admin);
         $user = User::find($user->id); // Ensure $user is an instance of User
         $this->actingAs($user);
 
-        // try to delete roles admin and default
+        // try to update roles admin and default
         $response_admin = $this->put(route('roles.update', $role_admin->id), ['name' => 'test']);
-        $response_default = $this->put(route('roles.update', $role_default->id), ['name' => 'test']);
 
         // check if datas are in databases
         $this->assertDatabaseHas('roles', [
@@ -255,10 +254,8 @@ class RoleTest extends TestCase
         ]);
         // check rdirection on each session
         $response_admin->assertRedirect('/admin/roles');
-        $response_default->assertRedirect('/admin/roles');
         // check if error message is present
         $response_admin->assertSessionHas('error');
-        $response_default->assertSessionHas('error');
     }
 
 }

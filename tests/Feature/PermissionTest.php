@@ -7,11 +7,12 @@ use App\Models\Role;
 use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PermissionTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
 
     public function test_displays_permissions_list()

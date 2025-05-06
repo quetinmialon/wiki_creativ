@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class CredentialTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     /**
      * Test store method for creating a credential.

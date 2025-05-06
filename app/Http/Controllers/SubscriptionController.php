@@ -26,7 +26,7 @@ class SubscriptionController extends Controller
 
         $this->subscriptionService->createUserRequest($request->only(['name', 'email']));
 
-        return redirect()->back()->with('success', 'Votre demande a été envoyée.');
+        return redirect()->route('login')->with('success', 'Votre demande a été envoyée.');
     }
 
     public function subscribe(): View

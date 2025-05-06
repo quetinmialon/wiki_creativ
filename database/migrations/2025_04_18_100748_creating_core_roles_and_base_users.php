@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        
+        Artisan::call('boot:all'); // This command will create necessary entries in database
     }
 
     /**

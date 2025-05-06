@@ -8,20 +8,24 @@ use App\Models\Log;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class LogsTest extends TestCase
 {
-    use DatabaseTransactions, WithFaker;
+    use RefreshDatabase, WithFaker;
 
     public function test_add_log_dispatches_event()
     {
         Event::fake();
 
         $user = User::factory()->create();
-        $document = Document::factory()->create(['created_by' => $user->id]);
+        $document = Document::factory()->create([
+            'created_by' => $user->id,
+            'formated_name' => 'test_name'
+        ]);
 
         $user = User::find($user->id); // Ensure $user is an instance of User
         $this->actingAs($user);

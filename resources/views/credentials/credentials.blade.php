@@ -1,11 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto mt-10 px-6">
-    <h1 class="text-3xl font-bold mb-6">Vos identifiants </h1>
-
-    <div class="mb-8">
-        <h2 class="text-2xl font-semibold mb-4">Vos identifiants personnels</h2>
+<div class=" container mx-auto mt-4 px-6">
+    <h1 class="text-xl font-semibold text-center text-[#35A5A7] mb-6">Gestionnaire de mot de passes </h1>
+    <div class="absolute top-20 right-4">
+        <a href="{{ route('credentials.create') }}" class="inline-block px-4 py-1 bg-[#35A5A7] text-white rounded-md shadow hover:bg-[#126C83]">
+            + Ajouter un identifiant
+        </a>
+    </div>
+    <div class="flex w-full justify-between">
+        <div class="mb-8 overflow-y-scroll w-2/5">
+            <h2 class="text-[#126C83] font-semibold mb-4 text-center">Vos identifiants personnels</h2>
         @if($personnal_credentials->isEmpty())
             <p class="text-gray-600">Aucun identifiant personnel disponible.</p>
         @else
@@ -37,13 +42,12 @@
             </ul>
         @endif
     </div>
-    <div>
-        <h2 class="text-2xl font-semibold mb-4">identifiants partagés avec vos rôles</h2>
+    <div class="mb-8 overflow-y-scroll w-2/5">
+        <h2 class="text-[#126C83] font-semibold mb-4 text-center">Identifiants partagés</h2>
         @if(empty($shared_credentials))
-            <p class="text-gray-600">Aucun identifiant partagé disponible.</p>
+            <p class="text-gray-600 align-self-center">Aucun identifiant partagé disponible.</p>
         @else
             @foreach($shared_credentials as $roleName => $credentials)
-                <h3 class="text-xl font-semibold mt-6">{{ $roleName }}</h3>
                 <ul class="space-y-4">
                     @foreach($credentials as $credential)
                         <li class="p-4 bg-gray-100 rounded-md shadow-md flex justify-between items-center">
@@ -52,7 +56,7 @@
                                 <span class="text-gray-600">- {{ $credential->username }}</span>
                                 <div class="mt-2">
                                     <button onclick="copySharedPassword({{ $credential->id }})" class="text-blue-500 hover:underline">
-                                        Voir mot de passe
+                                        Copier le mot de passe
                                     </button>
                                     <span id="shared-password-{{ $credential->id }}" class="hidden bg-gray-200 px-2 py-1 rounded-md">{{ $credential->password }}</span>
                                 </div>
@@ -74,9 +78,6 @@
             @endforeach
         @endif
     </div>
-
-    <a href="{{ route('credentials.create') }}" class="mt-8 inline-block px-6 py-2 bg-blue-500 text-white font-semibold rounded-md shadow hover:bg-blue-600">
-        Ajouter un log
-    </a>
+    </div>
 </div>
 @endsection

@@ -25,7 +25,7 @@ class RoleService
     {
         $role = Role::findOrFail($id);
         if(in_array($role->name, ['superadmin', 'default', 'qualité','Admin qualité','supervisor'])) {
-            return ['error' => 'Vous ne pouvez pas modifier ce rôle.'];
+            return null;
         }
         $data['name'] = $data['name'] ?? $role->name;
 
