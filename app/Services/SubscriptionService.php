@@ -135,4 +135,8 @@ class SubscriptionService
         Mail::to($data['email'])->send(new RegistrationLinkMail($token));
         return $userInvitation;
     }
+
+    public function getPendingsUsersRequests(){
+        return UserRequest::where('status', 'pendings')->get();
+    }
 }

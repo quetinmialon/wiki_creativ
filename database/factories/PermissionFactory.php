@@ -25,6 +25,7 @@ class PermissionFactory extends Factory
             'document_id' => Document::factory()->create()->id,
             'comment' => fake()->sentence(3),
             'status' => 'pending',
+            'expired_at'=>now()->addweeks(2)
         ];
     }
 }

@@ -26,7 +26,7 @@ class UpdateExpiredPermissions extends Command
     public function handle()
     {
         $date = now();
-        $permissions = \App\Models\Permission::where('created_at', '<', $date)->where('status', 'approved')->get();
+        $permissions = \App\Models\Permission::where('expired_at', '<', $date)->where('status', 'approved')->get();
         foreach ($permissions as $permission) {
             $permission->status = 'expired';
             $permission->save();

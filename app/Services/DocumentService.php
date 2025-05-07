@@ -16,7 +16,7 @@ class DocumentService
     public function __construct()
     {
         $this->markdownConverter = new CommonMarkConverter();
-        $this->htmlConverter = new HtmlConverter();
+        $this->htmlConverter = new HtmlConverter(['header_style' => 'atx']);
     }
 
     /**
@@ -49,11 +49,12 @@ class DocumentService
     public function getAllCategoriesWithDocuments($limit = 6)
     {
         $user = Auth::user();
+        if(!$user){
+            return [];
+        }
 
-        // Récupérer tous les IDs des rôles de l'utilisateur
         $roleIds = $user->roles->pluck('id');
 
-        // Chercher les catégories qui correspondent à ces rôles
         return Category::whereIn('role_id', $roleIds)
                        ->with(['documents' => function ($query) use ($limit) {
                             $query->where('formated_name','!=',null)->limit($limit)->orderBy('documents.created_at', 'desc');

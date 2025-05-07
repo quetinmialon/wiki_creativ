@@ -26,10 +26,10 @@ class DeletingExpiredPermissions extends Command
     public function handle()
     {
         $date = now()->subMonths(1);
-        $permissions = \App\Models\Permission::where('created_at', '<', $date)
-        ->where('status', 'denied')
-        ->orWhere('status', 'expired')
-        ->get();
+        $permissions = \App\Models\Permission::where(function ($query) use ($date) {
+            $query->where('created_at', '<', $date)
+                  ->whereIn('status', ['denied', 'expired']);
+        })->get();
         foreach ($permissions as $permission) {
             $permission->delete();
         }

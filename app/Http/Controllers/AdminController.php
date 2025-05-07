@@ -6,8 +6,7 @@ use App\Services\RoleService;
 use Illuminate\Http\Request;
 use App\Services\UserService;
 use App\Services\AuthService;
-use Illuminate\Support\Str;
-
+use App\Services\SubscriptionService;
 class AdminController extends Controller
 {
     protected UserService $userService;
@@ -16,11 +15,14 @@ class AdminController extends Controller
 
     protected AuthService $authService;
 
-    public function __construct(UserService $userService, RoleService $roleService, AuthService $authService)
+    protected SubscriptionService $subService;
+
+    public function __construct(UserService $userService, RoleService $roleService, AuthService $authService, SubscriptionService $subService)
     {
         $this->userService = $userService;
         $this->roleService = $roleService;
         $this->authService = $authService;
+        $this->subService = $subService;
     }
     public function index()
     {
@@ -86,15 +88,14 @@ class AdminController extends Controller
     }
 
     public function RoleList(){
-        return view("admin.role_list");
-    }
-
-    public function PermissionList(){
-        return view("admin.permission_list");
+        $roles = $this->roleService->getAllRoles();
+        return view('admin.role_list', compact('roles'));
     }
 
     public function UserRequests(){
-        return view("admin.user_request_list");
+        $roles = $this->roleService->getAllRoles();
+        $userRequests = $this->subService->getPendingsUsersRequests();
+        return view("admin.user_request_list", compact('userRequests','roles'));
     }
 
     public function searchUser(Request $request)
