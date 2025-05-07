@@ -1,27 +1,15 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Category;
 use App\Models\Document;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Auth;
-use Tests\TestCase;
 
-class DocumentTest extends TestCase
-{
-    use RefreshDatabase, WithFaker;
+uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(\Illuminate\Foundation\Testing\WithFaker::class);
 
-    /**
-     * Test de la méthode index.
-     */
-    public function test_index_displays_categories_and_documents()
-{
+test('index displays categories and documents', function () {
     // Arrange
     $user = User::create([
         "name"=> "John Doe",
@@ -49,302 +37,291 @@ class DocumentTest extends TestCase
     // Act
     $this->actingAs($user);
     $response = $this->get(route('documents.index'));
-    
 
     // Assert
     $response->assertStatus(200);
     $response->assertViewHas('categories', function ($categories) use ($category) {
         return $categories->contains($category);
     });
-}
+});
+
+test('create displays form with roles', function () {
+    // Arrange
+    $user = User::create([
+        "name"=> "John Doe",
+        'email' => 'john.doe@example.com',
+        'password' => bcrypt('password123'),
+    ]);
+    $this->actingAs($user);
 
 
-    /**
-     * Test de la méthode create.
-     */
-    public function test_create_displays_form_with_roles()
-    {
-        // Arrange
-        $user = User::create([
-            "name"=> "John Doe",
-            'email' => 'john.doe@example.com',
-            'password' => bcrypt('password123'),
-        ]);
-        $this->actingAs($user);
+    // Act
+    $response = $this->get(route('create-documents'));
 
-        // Act
-        $response = $this->get(route('create-documents'));
+    // Assert
+    $response->assertStatus(200);
+    $response->assertViewHas('roles');
+});
 
-        // Assert
-        $response->assertStatus(200);
-        $response->assertViewHas('roles');
-    }
+test('store creates new document', function () {
+    // Arrange
+    $user = User::create([
+        "name"=> "John Doe",
+        'email' => 'john.doe@example.com',
+        'password' => bcrypt('password123'),
+    ]);
+    $this->actingAs($user);
+    $role = Role::create(['name'=> 'pédagogie']);
+    $user->roles()->attach($role);
 
-    /**
-     * Test de la méthode store.
-     */
-    public function test_store_creates_new_document()
-    {
-        // Arrange
-        $user = User::create([
-            "name"=> "John Doe",
-            'email' => 'john.doe@example.com',
-            'password' => bcrypt('password123'),
-        ]);
-        $this->actingAs($user);
-        $role = Role::create(['name'=> 'pédagogie']);
-        $user->roles()->attach($role);
+    $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
+    $data = [
+        'name' => 'Document 1',
+        'content' => 'Content 1 that could be markdown file',
+        'excerpt' => 'Excerpt 1',
+        'categories_id' => [$category->id],
+    ];
 
-        $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
-        $data = [
-            'name' => 'Document 1',
-            'content' => 'Content 1 that could be markdown file',
-            'excerpt' => 'Excerpt 1',
-            'categories_id' => [$category->id],
-        ];
+    // Act
+    $response = $this->post(route('documents.store'), $data);
 
-        // Act
-        $response = $this->post(route('documents.store'), $data);
+    // Assert
+    $response->assertRedirect(route('documents.index'));
+    $this->assertDatabaseHas('documents', ['name' => 'Document 1']);
+    $this->assertDatabaseHas('category_document', [
+        'category_id' => $category->id,
+    ]);
+});
 
-        // Assert
-        $response->assertRedirect(route('documents.index'));
-        $this->assertDatabaseHas('documents', ['name' => 'Document 1']);
-        $this->assertDatabaseHas('category_document', [
-            'category_id' => $category->id,
-        ]);
-    }
+test('show displays document when user is author', function () {
+    $user = User::create([
+        "name"=> "John Doe",
+        'email' => 'john.doe@example.com',
+        'password' => bcrypt('password123'),
+    ]);
+    $this->actingAs($user);
+    $role = Role::create(['name'=> 'pédagogie']);
 
-    /**
-     * Test de la méthode show.
-     */
-    public function test_show_displays_document_when_user_is_author()
-    {
-        $user = User::create([
-            "name"=> "John Doe",
-            'email' => 'john.doe@example.com',
-            'password' => bcrypt('password123'),
-        ]);
-        $this->actingAs($user);
-        $role = Role::create(['name'=> 'pédagogie']);
-        //$user->roles()->attach($role);
+    //$user->roles()->attach($role);
+    $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
 
-        $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
+    $document = Document::create([
+        'name' => 'Document 1',
+        'content' => 'Content 1',
+        'excerpt' => 'Excerpt 1',
+        'created_by' => $user->id,
+        'formated_name' => 'test_name'
+    ]);
+    $document->categories()->attach($category->id);
 
-        $document = Document::create([
-            'name' => 'Document 1',
-            'content' => 'Content 1',
-            'excerpt' => 'Excerpt 1',
-            'created_by' => $user->id,
-            'formated_name' => 'test_name'
-        ]);
-        $document->categories()->attach($category->id);
+    // Act
+    $response = $this->get(route('documents.show', $document->id));
 
-        // Act
-        $response = $this->get(route('documents.show', $document->id));
+    // Assert
+    $response->assertStatus(200);
+    $response->assertViewHas('document', $document);
+});
 
-        // Assert
-        $response->assertStatus(200);
-        $response->assertViewHas('document', $document);
-    }
+test('show displays document when user got proper role', function () {
+    $user = User::create([
+        "name"=> "John Doe",
+        'email' => 'john.doe@example.com',
+        'password' => bcrypt('password123'),
+    ]);
+    $author = User::create([
+        "name"=> "Jane Doe",
+        'email' => 'jane.doe@example.com',
+        'password' => bcrypt('password123'),
+    ]);
+    $this->actingAs($author);
+    $role = Role::create(['name'=> 'pédagogie']);
+    $author->roles()->attach($role);
+    $user->roles()->attach($role);
 
-    public function test_show_displays_document_when_user_got_proper_role()
-    {
+    $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
 
-        $user = User::create([
-            "name"=> "John Doe",
-            'email' => 'john.doe@example.com',
-            'password' => bcrypt('password123'),
-        ]);
-        $author = User::create([
-            "name"=> "Jane Doe",
-            'email' => 'jane.doe@example.com',
-            'password' => bcrypt('password123'),
-        ]);
-        $this->actingAs($author);
-        $role = Role::create(['name'=> 'pédagogie']);
-        $author->roles()->attach($role);
-        $user->roles()->attach($role);
+    $document = Document::create([
+        'name' => 'Document 1',
+        'content' => 'Content 1',
+        'excerpt' => 'Excerpt 1',
+        'created_by' => $author->id,
+        'formated_name' => 'test_name'
+    ]);
+    $document->categories()->attach($category->id);
 
-        $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
+    // Act
+    $this->actingAs($user);
+    $response = $this->get(route('documents.show', $document->id));
 
-        $document = Document::create([
-            'name' => 'Document 1',
-            'content' => 'Content 1',
-            'excerpt' => 'Excerpt 1',
-            'created_by' => $author->id,
-            'formated_name' => 'test_name'
-        ]);
-        $document->categories()->attach($category->id);
+    // Assert
+    $response->assertStatus(200);
+    $response->assertViewHas('document', $document);
+});
+test('document can be see with a permission', function () {
+    //arrange
+    $user = User::factory()->create();
+    $user = User::find($user->id);
+    // Ensure $user is an instance of User
+    $author = User::factory()->create();
+    $role = Role::create(['name'=> 'pédagogie']);
+    $author->roles()->attach($role);
+    $document = Document::create([
+        'name' => 'Document 1',
+        'content' => 'Content 1',
+        'excerpt' => 'Excerpt 1',
+        'created_by' => $author->id,
+        'formated_name' => 'test_name'
+    ]);
+    $unauthorizedUser = User::factory()->create();
+    $unauthorizedUser = User::find($unauthorizedUser->id);
+    // Ensure $unauthorizedUser is an instance of User
+    $this->actingAs($unauthorizedUser);
+    $response = $this->get(route('documents.show', $document->id));
+    $response->assertStatus(403);
+    Permission::factory()->create([
+        'document_id' => $document->id,
+        'expired_at' => now()->addDays(7),
+        'status' => 'approved',
+        'author' => $user->id,
+    ]);
 
-        // Act
-        $this->actingAs($user);
-        $response = $this->get(route('documents.show', $document->id));
+    //act
+    $this->actingAs($user);
+    $response = $this->get(route('documents.show', $document->id));
 
-        // Assert
-        $response->assertStatus(200);
-        $response->assertViewHas('document', $document);
-    }
-    public function test_document_can_be_see_with_a_permission()
-    {
-        //arrange
-        $user = User::factory()->create();
-        $user = User::find($user->id); // Ensure $user is an instance of User
-        $author = User::factory()->create();
-        $role = Role::create(['name'=> 'pédagogie']);
-        $author->roles()->attach($role);
-        $document = Document::create([
-            'name' => 'Document 1',
-            'content' => 'Content 1',
-            'excerpt' => 'Excerpt 1',
-            'created_by' => $author->id,
-            'formated_name' => 'test_name'
-        ]);
-        $unauthorizedUser = User::factory()->create();
-        $unauthorizedUser = User::find($unauthorizedUser->id); // Ensure $unauthorizedUser is an instance of User
-        $this->actingAs($unauthorizedUser);
-        $response = $this->get(route('documents.show', $document->id));
-        $response->assertStatus(403);
-        Permission::factory()->create([
-            'document_id' => $document->id,
-            'expired_at' => now()->addDays(7),
-            'status' => 'approved',
-            'author' => $user->id,
-        ]);
+    //assert
+    $response->assertStatus(200);
+    $response->assertViewHas('document', $document);
+});
 
-        //act
-        $this->actingAs($user);
-        $response = $this->get(route('documents.show', $document->id));
+test('document can be updated by superadmin', function () {
+    $user = User::factory()->create();
+    $user = User::find($user->id);
+    // Ensure $user is an instance of User
+    $role = Role::create(['name'=> 'superadmin']);
+    $user->roles()->attach($role);
+    $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
+    $document = Document::create([
+        'name' => 'Document 1',
+        'content' => 'Content 1',
+        'excerpt' => 'Excerpt 1',
+        'created_by' => $user->id,
+    ]);
+    $document->categories()->attach($category->id);
+    $this->actingAs($user);
+    $response = $this->put(route('documents.update', $document->id), [
+        'name' => 'Updated Document',
+        'content' => 'Updated Content',
+        'excerpt' => 'Updated Excerpt',
+        'categories_id' => [$category->id],
+    ]);
+    $response->assertRedirect(route('documents.show', $document->id));
+    $this->assertDatabaseHas('documents', ['name' => 'Updated Document']);
+});
+test('document can be soft deleted by superadmin', function () {
+    $user = User::factory()->create();
+    $user = User::find($user->id);
+    // Ensure $user is an instance of User
+    $role = Role::factory()->create(['name'=> 'superadmin']);
+    $user->roles()->attach($role);
+    $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
+    $document = Document::create([
+        'name' => 'Document 1',
+        'content' => 'Content 1',
+        'excerpt' => 'Excerpt 1',
+        'created_by' => $user->id,
+    ]);
+    $document->categories()->attach($category->id);
+    $this->actingAs($user);
+    $response = $this->delete(route('documents.destroy', $document));
+    $response->assertRedirect(route('documents.index'));
+    $this->assertSoftDeleted('documents', ['name' => 'Document 1']);
+});
+test('admin roles can update document', function () {
+    $user = User::factory()->create();
+    $user = User::find($user->id);
+    // Ensure $user is an instance of User
+    $role = Role::create(['name'=> 'pédagogie']);
+    $user->roles()->attach($role);
+    $pedagogicUser = User::factory()->create();
+    $pedagogicUser = User::find($pedagogicUser->id);
+    // Ensure $pedagogicUser is an instance of User
+    $pedagogicUser->roles()->attach($role);
+    $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
+    $document = Document::create([
+        'name' => 'Document 1',
+        'content' => 'Content 1',
+        'excerpt' => 'Excerpt 1',
+        'created_by' => $user->id,
+    ]);
+    $document->categories()->attach($category->id);
+    $document = Document::with('categories.role')->find($document->id);
 
-        //assert
-        $response->assertStatus(200);
-        $response->assertViewHas('document', $document);
-    }
+    expect($document->categories->first()->role)->not->toBeNull();
 
-    public function test_document_can_be_updated_by_superadmin()
-    {
-        $user = User::factory()->create();
-        $user = User::find($user->id); // Ensure $user is an instance of User
-        $role = Role::create(['name'=> 'superadmin']);
-        $user->roles()->attach($role);
-        $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
-        $document = Document::create([
-            'name' => 'Document 1',
-            'content' => 'Content 1',
-            'excerpt' => 'Excerpt 1',
-            'created_by' => $user->id,
-        ]);
-        $document->categories()->attach($category->id);
-        $this->actingAs($user);
-        $response = $this->put(route('documents.update', $document->id), [
-            'name' => 'Updated Document',
-            'content' => 'Updated Content',
-            'excerpt' => 'Updated Excerpt',
-            'categories_id' => [$category->id],
-        ]);
-        $response->assertRedirect(route('documents.show', $document->id));
-        $this->assertDatabaseHas('documents', ['name' => 'Updated Document']);
-    }
-    public function test_document_can_be_soft_deleted_by_superadmin()
-    {
-        $user = User::factory()->create();
-        $user = User::find($user->id); // Ensure $user is an instance of User
-        $role = Role::factory()->create(['name'=> 'superadmin']);
-        $user->roles()->attach($role);
-        $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
-        $document = Document::create([
-            'name' => 'Document 1',
-            'content' => 'Content 1',
-            'excerpt' => 'Excerpt 1',
-            'created_by' => $user->id,
-        ]);
-        $document->categories()->attach($category->id);
-        $this->actingAs($user);
-        $response = $this->delete(route('documents.destroy', $document));
-        $response->assertRedirect(route('documents.index'));
-        $this->assertSoftDeleted('documents', ['name' => 'Document 1']);
-    }
-    public function test_admin_roles_can_update_document()
-    {
-        $user = User::factory()->create();
-        $user = User::find($user->id); // Ensure $user is an instance of User
-        $role = Role::create(['name'=> 'pédagogie']);
-        $user->roles()->attach($role);
-        $pedagogicUser = User::factory()->create();
-        $pedagogicUser = User::find($pedagogicUser->id); // Ensure $pedagogicUser is an instance of User
-        $pedagogicUser->roles()->attach($role);
-        $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
-        $document = Document::create([
-            'name' => 'Document 1',
-            'content' => 'Content 1',
-            'excerpt' => 'Excerpt 1',
-            'created_by' => $user->id,
-        ]);
-        $document->categories()->attach($category->id);
-        $document = Document::with('categories.role')->find($document->id);
+    $adminUser = User::factory()->create();
+    $adminUser = User::find($adminUser->id);
+    // Ensure $adminUser is an instance of User
+    $adminRole = Role::create(['name'=> "Admin $role->name"]);
+    $adminUser->roles()->attach($adminRole);
+    $this->actingAs($pedagogicUser);
 
-        $this->assertNotNull($document->categories->first()->role);
+    $response = $this->put(route('documents.update',$document), [
+        'name' => 'Updated Document',
+        'content' => 'Updated Content',
+        'excerpt' => 'Updated Excerpt',
+    ]);
+    $response->assertStatus(403);
+    $this->assertDatabaseMissing('documents', ['name' => 'Updated Document']);
+    $this->assertDatabaseHas('documents', ['name' => 'Document 1']);
+    $this->actingAs($adminUser);
+    $response = $this->put(route('documents.update', $document->id), [
+        'name' => 'Updated Document',
+        'content' => 'Updated Content',
+        'excerpt' => 'Updated Excerpt',
+        'categories_id' => [$category->id],
+    ]);
+    $response->assertRedirect(route('documents.show', $document->id));
+    $this->assertDatabaseHas('documents', ['name' => 'Updated Document']);
+    $this->assertDatabaseMissing('documents', ['name' => 'Document 1']);
+});
 
-        $adminUser = User::factory()->create();
-        $adminUser = User::find($adminUser->id); // Ensure $adminUser is an instance of User
-        $adminRole = Role::create(['name'=> "Admin $role->name"]);
-        $adminUser->roles()->attach($adminRole);
-        $this->actingAs($pedagogicUser);
+test('admin roles can delete document', function () {
+    $user = User::factory()->create();
+    $user = User::find($user->id);
+    // Ensure $user is an instance of User
+    $role = Role::create(['name'=> 'pédagogie']);
+    $user->roles()->attach($role);
+    $pedagogicUser = User::factory()->create();
+    $pedagogicUser = User::find($pedagogicUser->id);
+    // Ensure $pedagogicUser is an instance of User
+    $pedagogicUser->roles()->attach($role);
+    $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
+    $document = Document::create([
+        'name' => 'Document 1',
+        'content' => 'Content 1',
+        'excerpt' => 'Excerpt 1',
+        'created_by' => $user->id,
+    ]);
+    $document->categories()->attach($category->id);
+    $document = Document::with('categories.role')->find($document->id);
 
-        $response = $this->put(route('documents.update',$document), [
-            'name' => 'Updated Document',
-            'content' => 'Updated Content',
-            'excerpt' => 'Updated Excerpt',
-        ]);
-        $response->assertStatus(403);
-        $this->assertDatabaseMissing('documents', ['name' => 'Updated Document']);
-        $this->assertDatabaseHas('documents', ['name' => 'Document 1']);
-        $this->actingAs($adminUser);
-        $response = $this->put(route('documents.update', $document->id), [
-            'name' => 'Updated Document',
-            'content' => 'Updated Content',
-            'excerpt' => 'Updated Excerpt',
-            'categories_id' => [$category->id],
-        ]);
-        $response->assertRedirect(route('documents.show', $document->id));
-        $this->assertDatabaseHas('documents', ['name' => 'Updated Document']);
-        $this->assertDatabaseMissing('documents', ['name' => 'Document 1']);
-    }
+    expect($document->categories->first()->role)->not->toBeNull();
 
-    public function test_admin_roles_can_delete_document()
-    {
-        $user = User::factory()->create();
-        $user = User::find($user->id); // Ensure $user is an instance of User
-        $role = Role::create(['name'=> 'pédagogie']);
-        $user->roles()->attach($role);
-        $pedagogicUser = User::factory()->create();
-        $pedagogicUser = User::find($pedagogicUser->id); // Ensure $pedagogicUser is an instance of User
-        $pedagogicUser->roles()->attach($role);
-        $category = Category::create(['name' => 'Category 1','role_id' => $role->id]);
-        $document = Document::create([
-            'name' => 'Document 1',
-            'content' => 'Content 1',
-            'excerpt' => 'Excerpt 1',
-            'created_by' => $user->id,
-        ]);
-        $document->categories()->attach($category->id);
-        $document = Document::with('categories.role')->find($document->id);
-
-        $this->assertNotNull($document->categories->first()->role);
-
-        $adminUser = User::factory()->create();
-        $adminUser = User::find($adminUser->id); // Ensure $adminUser is an instance of User
-        $adminRole = Role::create(['name'=> "Admin $role->name"]);
-        $adminUser->roles()->attach($adminRole);
-        $this->actingAs($pedagogicUser);
-        $response = $this->delete(route('documents.destroy', $document));
-        $response->assertStatus(403);
-        $this->assertDatabaseHas('documents', ['name' => 'Document 1']);
-        $this->assertNotNull(Document::find($document->id));
-        $this->actingAs($adminUser);
-        $response = $this->delete(route('documents.destroy', $document));
-        $response->assertRedirect(route('documents.index'));
-        $this->assertSoftDeleted('documents', ['name' => 'Document 1']);
-        $this->assertNull(Document::find($document->id));
-        $this->assertNotNull(Document::withTrashed()->find($document->id));
-    }
-}
+    $adminUser = User::factory()->create();
+    $adminUser = User::find($adminUser->id);
+    // Ensure $adminUser is an instance of User
+    $adminRole = Role::create(['name'=> "Admin $role->name"]);
+    $adminUser->roles()->attach($adminRole);
+    $this->actingAs($pedagogicUser);
+    $response = $this->delete(route('documents.destroy', $document));
+    $response->assertStatus(403);
+    $this->assertDatabaseHas('documents', ['name' => 'Document 1']);
+    expect(Document::find($document->id))->not->toBeNull();
+    $this->actingAs($adminUser);
+    $response = $this->delete(route('documents.destroy', $document));
+    $response->assertRedirect(route('documents.index'));
+    $this->assertSoftDeleted('documents', ['name' => 'Document 1']);
+    expect(Document::find($document->id))->toBeNull();
+    expect(Document::withTrashed()->find($document->id))->not->toBeNull();
+});

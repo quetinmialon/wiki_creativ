@@ -23,7 +23,7 @@ class PermissionFactory extends Factory
         return [
             'author' => User::factory()->create()->id,
             'document_id' => Document::factory()->create()->id,
-            'comment' => $this->faker->sentence(3),
+            'comment' => fake()->sentence(3),
             'status' => 'pending',
         ];
     }

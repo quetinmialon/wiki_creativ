@@ -34,14 +34,19 @@ class QualiteController extends Controller
 
     public function index()
     {
-        $this->accessQualityPages();
+        if ($response = $this->accessQualityPages()) {
+            return $response;
+        }
+
         $document = $this->documentService->getAllDocumentThatAreNotNormed();
         return view('qualite.index', compact('document'));
     }
 
     public function addNormedNameToDocument(Request $request)
     {
-        $this->accessQualityPages();
+        if ($response = $this->accessQualityPages()) {
+            return $response;
+        }
         $request->validate([
             'formated_name' => 'nullable|string|max:255',
             'id' => 'required|integer|exists:documents,id',
@@ -59,7 +64,9 @@ class QualiteController extends Controller
     }
     public function edit(Request $request)
     {
-        $this->accessQualityPages();
+        if ($response = $this->accessQualityPages()) {
+            return $response;
+        }
         $document = $this->documentService->findDocument($request->id);
         if (!$document) {
             return redirect()->route('qualite.index')->with('error', "Le document n'existe pas en base de donnée");
@@ -69,7 +76,10 @@ class QualiteController extends Controller
     }
     public function update(Request $request)
     {
-        $this->accessQualityPages();
+        if ($response = $this->accessQualityPages()) {
+
+            return $response;
+        }
         $request->validate([
             'name' => 'string|required|max:255',
             'formated_name' => 'nullable|string|max:255',
@@ -94,7 +104,9 @@ class QualiteController extends Controller
 
     public function documentList()
     {
-        $this->accessQualityPages();
+        if ($response = $this->accessQualityPages()) {
+            return $response;
+        }
         $document = $this->documentService->getAllDocumentThatAreNormed();
         return view('qualite.document_list', compact('document'));
     }

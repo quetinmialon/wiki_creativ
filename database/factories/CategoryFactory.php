@@ -19,7 +19,7 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            "name"=> $this->faker->word(),
+            "name"=> fake()->word(),
             'role_id'=> Role::factory()
         ];
     }

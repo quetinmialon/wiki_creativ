@@ -19,7 +19,7 @@ class UserInvitationFactory extends Factory
     public function definition()
     {
         return [
-            'email' => $this->faker->unique()->safeEmail,
+            'email' => fake()->unique()->safeEmail,
             'token' => Str::random(32),
             'created_at' => now(),
         ];

@@ -21,9 +21,9 @@ class DocumentFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->sentence(3),
-            'excerpt' => $this->faker->sentence(6),
-            'content' => $this->faker->paragraph(3),
+            'name' => fake()->sentence(3),
+            'excerpt' => fake()->sentence(6),
+            'content' => fake()->paragraph(3),
             'created_by' => User::factory(),
         ];
     }

@@ -22,8 +22,8 @@ class CredentialFactory extends Factory
     public function definition(): array
     {
         return [
-            'destination' => $this->faker->url(),
-            'username' => $this->faker->safeEmail,
+            'destination' => fake()->url(),
+            'username' => fake()->safeEmail,
             'password' => Crypt::encryptString('password123'),
             'user_id' => User::factory()->create()->id,
         ];
