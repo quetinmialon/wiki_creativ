@@ -28,15 +28,11 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        try {
-            if ($this->authService->login($credentials)) {
-                if ($this->authService->getCurrentUser()->roles()->where('name', 'supervisor')->exists()) {
-                    return redirect()->intended('/supervisor');
-                }
-                return redirect()->intended('/');
+        if ($this->authService->login($credentials)) {
+            if ($this->authService->getCurrentUser()->roles()->where('name', 'supervisor')->exists()) {
+                return redirect()->intended('/supervisor');
             }
-        } catch (ValidationException $validationException) {
-            throw $validationException;
+            return redirect()->intended('/');
         }
     }
 

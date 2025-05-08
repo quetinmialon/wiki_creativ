@@ -55,7 +55,7 @@ class AdminController extends Controller
         }
         if($user->roles->contains('name','supervisor'))
         {
-            return redirect()->route('admin.users')->with('error',"touche pas à ça petit con");
+            return redirect()->route('admin.users')->with('error',"l'utilisateur que vous tentez de supprimer n'existe pas");
         }
         $this->userService->revokeUser($user->id);
         return redirect()->route('admin.users')->with('success', 'Utilisateur retiré avec succès.');
@@ -76,7 +76,7 @@ class AdminController extends Controller
         }
         if ($this->userService->getUserById($request->id)->roles->contains('name','supervisor'))
         {
-            return redirect()->back()->withErrors(['roles'=>"touche pas à ça petit con"]);
+            return redirect()->back()->withErrors(['roles'=>"l'utilisateur que vous tentez de supprimer n'existe pas"]);
         }
 
         $this->userService->updateUserRole([

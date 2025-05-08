@@ -17,7 +17,7 @@ class GuestMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check()) {
-            return redirect()->route('home')->with('error', 'Vous devez être déconnecté pour accéder à cette page.');
+            return redirect()->route('home')->with('error', "Cette page n'est plus accessible une fois connecter, vous devez vous déconnecter au préalable.");
         }
 
         return $next($request);
