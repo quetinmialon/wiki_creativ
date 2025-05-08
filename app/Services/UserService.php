@@ -22,12 +22,6 @@ class UserService{
         return User::with('roles')->find($id);
     }
 
-
-    public function createUser(array $data)
-    {
-        return User::create($data);
-    }
-
     public function updateUser(User $user, array $data)
     {
         $user->update($data);

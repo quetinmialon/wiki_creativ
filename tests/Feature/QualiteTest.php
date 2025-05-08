@@ -200,3 +200,8 @@ test('basic members cant access not formated document list', function(){
     $response->assertRedirect(route('home'));
     $response->assertSessionHas('error');
 });
+test('redirects guests to login on index', function () {
+    $this->get(route('qualite.index'))
+         ->assertRedirect(route('login'))
+         ->assertSessionHas('error', 'Connectez vous pour acceder à cette page');
+});
