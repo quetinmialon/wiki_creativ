@@ -83,7 +83,7 @@ class QualiteController extends Controller
         $request->validate([
             'name' => 'string|required|max:255',
             'formated_name' => 'nullable|string|max:255',
-            'id' => 'required|integer|exists:documents,id',
+            'id' => 'required|integer',
             'content' => 'required|string|max:5000000|min:10|', new ValidMarkdown(),
             'excerpt' => 'string|nullable|max:255',
             'categories_id' => 'array|nullable',
