@@ -73,7 +73,7 @@ class CategoryController extends Controller
 
     public function getUserCategories()
     {
-        if (!$this->authService->isAuthenticated() || $this->authService->getCurrentUser()->roles->isEmpty()) {
+        if ($this->authService->getCurrentUser()->roles->isEmpty()) {
             return redirect()->route('login')->withErrors(['error' => 'Vous devez être connecté pour accéder à cette page.']);
         }
 
@@ -84,7 +84,7 @@ class CategoryController extends Controller
 
     public function createCategoryOnUserRoles()
     {
-        if (!$this->authService->isAuthenticated() || $this->authService->getCurrentUser()->roles->isEmpty()) {
+        if ($this->authService->getCurrentUser()->roles->isEmpty()) {
             return redirect()->route('login')->withErrors(['error' => 'Vous devez être connecté pour accéder à cette page.']);
         }
 

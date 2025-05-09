@@ -45,8 +45,4 @@ class AuthService
     {
         return Auth::user();
     }
-    public function isAuthenticated()
-    {
-        return Auth::check();
-    }
 }

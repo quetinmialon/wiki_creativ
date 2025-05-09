@@ -9,7 +9,7 @@ beforeEach(function () {
     Storage::fake('public');
 });
 
-it('uploads a valid image and returns url', function () {
+test('uploads a valid image and returns url', function () {
     $file = UploadedFile::fake()->image('photo.jpg', 600, 600)->size(500);
 
     $response = $this->postJson('/api/upload-image', [
@@ -27,14 +27,14 @@ it('uploads a valid image and returns url', function () {
     $this->assertEquals($url, $response->json('url'));
 });
 
-it('fails when no file provided', function () {
+test('fails when no file provided', function () {
     $response = $this->postJson('/api/upload-image', []);
 
     $response->assertStatus(422)
              ->assertJsonValidationErrors(['image']);
 });
 
-it('fails when file is not an image', function () {
+test('fails when file is not an image', function () {
     $file = UploadedFile::fake()->create('document.pdf', 100, 'application/pdf');
 
     $response = $this->postJson('/api/upload-image', [
@@ -45,7 +45,7 @@ it('fails when file is not an image', function () {
              ->assertJsonValidationErrors(['image']);
 });
 
-it('fails when image exceeds max size', function () {
+test('fails when image exceeds max size', function () {
     // 2049 KB > 2048 KB limit
     $file = UploadedFile::fake()->image('big.png')->size(3000);
 
@@ -57,7 +57,7 @@ it('fails when image exceeds max size', function () {
              ->assertJsonValidationErrors(['image']);
 });
 
-it('fails when image has invalid mime type', function () {
+test('fails when image has invalid mime type', function () {
     $file = UploadedFile::fake()->create('fake.txt', 100);
 
     $response = $this->postJson('/api/upload-image', [
