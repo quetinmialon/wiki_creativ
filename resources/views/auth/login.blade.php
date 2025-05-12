@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Se Connecter')
+
 @section('content')
 <div class="py-4 pt-8">
     <img src="{{ asset('images/logo1.png') }}" alt="Logo" class="h-36 mx-auto mb-4">
