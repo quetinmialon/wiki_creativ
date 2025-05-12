@@ -1,6 +1,6 @@
 <form method="POST" action="{{ route('documents.searchDocuments') }}" class="flex items-center p-4 bg-white shadow-md rounded-md">
     @csrf
-    <div class="w-full">
+    <div class="relative w-full">
         <input type="text" name="query" placeholder="Rechercher un document..."
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#126C83]"
             value="{{ old('query') }}" />
