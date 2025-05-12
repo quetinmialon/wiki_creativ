@@ -4,13 +4,15 @@ import "quill/dist/quill.snow.css";
 document.addEventListener("DOMContentLoaded", function () {
     const quill = new Quill("#editor", {
         theme: "snow",
-        modules: { toolbar: "#toolbar" },
-        toolbar: {
-            container: "#toolbar",
-            handlers: {
-                image: function () {
-                    uploadImage(quill);
-                }
+        modules: {
+            toolbar: {
+                container: "#toolbar",
+                handlers: {
+                    image: function () {
+                        uploadImage(quill);
+                    }
+                },
+                color : []
             }
         }
     });
