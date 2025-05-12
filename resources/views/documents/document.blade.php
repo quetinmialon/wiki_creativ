@@ -55,24 +55,25 @@
     </div>
 
     <h2 class="text-gray-700"> Contenu du document</h2>
-    <div class="mb-6 p-4 border-2 border-grey-200 rounded-lg">
+    <div class="border-2 border-grey-200 rounded-lg">
+        <div class="mb-6 p-4">
+            <p class="text-gray-600 whitespace-pre-line">{!! $document->content !!}</p>
+        </div>
 
-        <p class="text-gray-600 whitespace-pre-line">{!! $document->content !!}</p>
-    </div>
-
-    @if($document->formated_name)
-        <div class="flex justify-between items-center bg-[#126C83] text-white rounded-full px-6 py-4 text-sm w-full max-w-5xl mx-auto">
-            <p class="leading-snug">
-                Duplication strictement interdite. Conception et réalisation par le Groupe Créative.
-                Tous droits de représentation, reproduction, d’adaptation, d’exploitation, même partielle, strictement interdits.
-            </p>
-            <div class="text-right ml-4">
-                <div class="bg-white text-[#126C83] font-bold rounded-full px-4 py-1 mb-1 inline-block text-sm">
-                    {{ $document->formated_name }}
+        @if($document->formated_name)
+            <div class="flex justify-between items-center bg-[#126C83] text-white rounded-full px-6 py-4 text-sm w-4xl max-w-4xl m-4">
+                <p class="leading-snug">
+                    Duplication strictement interdite. Conception et réalisation par le Groupe Créative.
+                    Tous droits de représentation, reproduction, d’adaptation, d’exploitation, même partielle, strictement interdits.
+                </p>
+                <div class="text-right ml-4">
+                    <div class="bg-white text-[#126C83] font-bold rounded-full px-4 py-1 mb-1 inline-block text-sm">
+                        {{ $document->formated_name }}
+                    </div>
                 </div>
             </div>
-        </div>
-    @endif
+        @endif
+    </div>
 
     <div class="my-6">
         <h2 class="text-gray-700">Catégories :</h2>
