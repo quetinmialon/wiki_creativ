@@ -132,6 +132,7 @@ class DocumentController extends Controller
                 ->withInput()
                 ->withErrors(['categories_id' => "Veuillez sélectionner au moins une catégorie. Si aucune ne correspond, vous pouvez en créer une adaptée <a href='" . route('myCategories.create') . "' class='underline text-blue-500'>ici</a>."]);
         }
+        $request['updated_by']=$user->id;
 
         $this->documentService->updateDocument($document, $request->all());
 

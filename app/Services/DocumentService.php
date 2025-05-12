@@ -46,7 +46,7 @@ class DocumentService
         return $converter->convert($markdown);
     }
 
-    public function getAllCategoriesWithDocuments($limit = 6)
+    public function getAllCategoriesWithDocuments($limit = 3)
     {
         $user = Auth::user();
         if(!$user){
@@ -63,7 +63,7 @@ class DocumentService
                        ->get();
     }
 
-    public function getEveryDocuments($limit = 6)
+    public function getEveryDocuments($limit = 3)
     {
         return Category::with(['documents' => function ($query) use ($limit) {
             $query->where('formated_name', '!=', null)->limit($limit)->orderBy('formated_name', 'asc');
@@ -96,7 +96,7 @@ class DocumentService
         return $document;
     }
 
-    public function getDocumentsByCategory($categoryId, $perPage = 6)
+    public function getDocumentsByCategory($categoryId, $perPage = 10)
     {
         return Document::whereHas('categories', function ($query) use ($categoryId, $perPage) {
                 $query->where('formated_name', '!=', null)->where('categories.id', $categoryId);

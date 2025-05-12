@@ -1,22 +1,49 @@
 @extends('layouts.app')
 
 @section('content')
+
+<h1 class="text-xl text-[#126C83] text-center">Documents pour la catégorie : {{ $category->name }}</h1>
+
+<x-search-bar.document-search-bar/>
+
 <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-6">Documents pour la catégorie : {{ $category->name }}</h1>
+
 
     @if ($documents->isEmpty())
         <p class="text-gray-600">Aucun document trouvé pour cette catégorie.</p>
     @else
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="flex flex-col">
             @foreach ($documents as $document)
-                <div class="bg-white shadow-md rounded-md p-4 border border-gray-200">
-                    <h2 class="text-lg font-semibold text-blue-600 mb-2">{{ $document->name }}</h2>
-                    <p class="text-gray-700 mb-4">{{ $document->excerpt }}</p>
-                    <p class="text-sm text-gray-500 mb-4">Auteur : {{ $document->author->name }}</p>
-                    <a href="{{ route('documents.show', $document->id) }}"
-                       class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                       👀 Voir le document
-                    </a>
+                <div class="bg-white p-4 border-b border-gray-200">
+                    <div class="flex flex-row justify-between">
+                        <h2 class="text-lg font-semibold text-[#126C83] mb-2">{{ $document->name }}</h2>
+                        <p class="text-sm text-gray-500 mb-4">Rédigé le {{ $document->created_at->format('d/m/Y') }}</p>
+                    </div>
+                    <p class="text-gray-700 mb-4">Résumé : {{ $document->excerpt }}</p>
+
+                    <div class="flex flex-row justify-between">
+                        <p class="text-sm text-gray-500 mb-4">Écrit par {{ $document->author->name }}</p>
+
+                        <div class="flex flex-row px-2 gap-4">
+                            <a href="{{ route('documents.show', $document->id) }}">
+                                <img src="{{  asset('images/see.png') }}" alt="voir le document {{ $document->name }}" arya-label="voir le document {{ $document->name }}"/>
+                            </a>
+                            @can('manage-document',$document)
+
+                                <a href ="{{ route('documents.edit', $document->id) }}" alt="modifier le document {{ $document->name }}">
+                                    <img src="{{ asset('images/edit.png') }}"/>
+                                </a>
+
+                                <form action="{{ route('documents.destroy', $document->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer le document {{$document->name}} ?');" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" style="background: none; border: none; padding: 0;">
+                                        <img src="{{ asset('images/delete.png') }}" alt="supprimer le document {{$document->name}}" />
+                                    </button>
+                                </form>
+                            @endcan
+                        </div>
+                    </div>
                 </div>
             @endforeach
         </div>
@@ -26,7 +53,7 @@
     @endif
 
     <div class="mt-6">
-        <a href="{{ route('documents.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+        <a href="{{ route('documents.index') }}" class="text-[#126C83] px-4 hover:text-[#35A5A7] underline">
             Retour aux documents
         </a>
     </div>

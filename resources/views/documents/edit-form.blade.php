@@ -82,14 +82,13 @@
 
         <!-- Boutons -->
         <div class="flex justify-end space-x-3">
-            <button type="submit" class="px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
+            <button type="submit" class="px-4 py-2 text-sm text-white bg-[#35A5A7] rounded hover:bg-[#126C83]">
                 Enregistrer les modifications
             </button>
-            <a href="{{ route('documents.show', $document->id) }}" class="px-4 py-2 text-sm text-white bg-gray-500 rounded hover:bg-gray-600">
-                Annuler
+            <a href="{{ url()->previous() }}" class="px-4 py-2 text-sm text-white bg-[#35A5A7] rounded hover:bg-[#126C83]">
+                Retour
             </a>
         </div>
     </form>
 </div>
-
 @endsection
