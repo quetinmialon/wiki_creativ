@@ -1,7 +1,7 @@
 @props(['favorites'])
 
 <div class="container mx-auto">
-    <h1 class="text-2xl font-bold mb-6">Mes Favoris</h1>
+    <h1 class="text-2xl  mt-4 mb-6 text-[#126C83] text-center">Mes Favoris</h1>
 
     @if($favorites->isEmpty())
         <p class="text-gray-600">Vous n'avez encore aucun document en favoris.</p>
@@ -16,9 +16,20 @@
                             <p class="text-sm text-gray-600">{{ $favorite->document->excerpt }}</p>
                         </div>
                         <div class="flex gap-2">
-                            <a href="{{ route('documents.show', $favorite->document->id) }}"
-                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                                Voir le document
+                            @php
+                                $isFavorited = app(App\Services\FavoriteService::class)->isFavorited($favorite->document->id, Auth::id());
+                            @endphp
+                            <a
+                                class="hover:cursor-pointer"
+                                id="favorite-btn-{{ $favorite->document->id }}"
+                                onclick="toggleFavorite({{ $favorite->document->id }})">
+                                {!! $isFavorited
+                                    ? "<img src='" . asset('images/favorite.png') . "' alt='retirer des favoris'/>"
+                                    : "<img src='" . asset('images/notfavorite.png') . "' alt='ajouter aux favoris'/>"
+                                !!}
+                            </a>
+                            <a href="{{ route('documents.show', $favorite->document->id) }}">
+                                <img src="{{  asset('images/see.png') }}" alt="voir le document {{ $favorite->document->name }}" arya-label="voir le document {{ $favorite->document->name }}"/>
                             </a>
                         </div>
                     </li>
