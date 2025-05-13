@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mx-auto mt-10">
-    <h1 class="text-2xl font-bold mb-4">Modifier la catégorie</h1>
+    <h1 class="text-xl font-semibold mb-4 text-center text-[#126C83]">Modifier la catégorie</h1>
 
     <form action="{{ route('myCategories.update', $category->id) }}" method="POST" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         @csrf
@@ -26,7 +26,7 @@
         </div>
 
         <div class="flex items-center justify-between">
-            <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Modifier</button>
+            <button type="submit" class="bg-[#35A5A7] text-white px-4 py-2 rounded hover:bg-[#126C83]">Modifier</button>
         </div>
     </form>
 </div>

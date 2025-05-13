@@ -51,7 +51,7 @@
     <div class="flex flex-1">
         <!-- Sidebar -->
         <div class="w-64 bg-white border-r border-b border-t border-gray-200 p-6 space-y-6 fixed top-16 bottom-16 left-0">
-            <a href="{{ route('admin') }}"><div class="text-xl font-bold text-[#126C83] hover:text-[#35A5A7]">Admin Panel</div></a>
+            <a href="{{ route('admin') }}"><div class="text-xl font-bold text-[#126C83] hover:text-[#35A5A7]">Dashboard</div></a>
             <ul class="space-y-4">
                 <li>
                     <a href="{{ route('admin.documents.index') }}" class="block px-4 py-2 rounded {{ request()->routeIs('admin.documents.*','admin.documents') ? 'text-[#126C83]' : 'text-gray-800' }} hover:text-[#35A5A7]">
