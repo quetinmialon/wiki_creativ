@@ -39,7 +39,7 @@ class CredentialService
 
         // Récupérer les credentials partagés avec les rôles
         $sharedCredentials = Credential::whereIn('role_id', $roleIds)
-            ->with('role') // Charge les rôles associés pour éviter les requêtes supplémentaires
+            ->with('role')
             ->get();
 
         // Déchiffrement des mots de passe

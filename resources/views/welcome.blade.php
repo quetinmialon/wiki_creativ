@@ -19,7 +19,7 @@
                     Créer un nouveau document
                 </a>
                 <a href="{{ route('credentials.index') }}" class="text-[#126C83] underline hover:text-[#35A5A7]">
-                    Gestionnaire de mots de passes
+                    Gestionnaire de mot de passe
                 </a>
             </div>
         </div>

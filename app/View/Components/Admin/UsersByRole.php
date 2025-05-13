@@ -16,6 +16,7 @@ class UsersByRole extends Component
             ->where('name', 'not like', '%Admin %')
             ->whereNot('name', 'default')
             ->whereNot('name', 'superadmin')
+            ->whereNot('name','supervisor')
             ->get();
 
         $this->labels = $roles->map(fn($role) => $role->name)->toArray();

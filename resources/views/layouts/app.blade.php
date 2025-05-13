@@ -50,7 +50,7 @@
     </nav>
 
         <!-- Contenu principal -->
-        <div class="flex-1 m-6 mt-12 p-6">
+        <div class="flex-1 m-6 mt-12 py-6">
             @include('flash-messages')
             @include('errors')
             @yield('content')
