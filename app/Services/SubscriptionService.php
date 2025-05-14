@@ -137,6 +137,6 @@ class SubscriptionService
     }
 
     public function getPendingsUsersRequests(){
-        return UserRequest::where('status', 'pendings')->get();
+        return UserRequest::where('status', 'pending')->get();
     }
 }

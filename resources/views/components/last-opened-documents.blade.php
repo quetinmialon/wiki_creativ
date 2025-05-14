@@ -18,20 +18,6 @@
                             <a href="{{ route('documents.show', $log->document->id) }}">
                                 <img src="{{  asset('images/see.png') }}" alt="voir le document {{ $log->document->name }}" arya-label="voir le document {{ $log->document->name }}"/>
                             </a>
-                            @can('manage-document',$log->document)
-
-                                <a href ="{{ route('documents.edit', $log->document->id) }}" alt="modifier le document {{ $log->document->name }}">
-                                    <img src="{{ asset('images/edit.png') }}"/>
-                                </a>
-
-                                <form action="{{ route('documents.destroy', $log->document->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer le document {{$log->document->name}} ?');" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" style="background: none; border: none; padding: 0;">
-                                        <img src="{{ asset('images/delete.png') }}" alt="supprimer le document {{$log->document->name}}" />
-                                    </button>
-                                </form>
-                            @endcan
                         </div>
                     </li>
                 @else

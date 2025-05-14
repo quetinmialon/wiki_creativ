@@ -180,7 +180,7 @@ test('user requests view shows pending requests and roles', function () {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
-    UserRequest::factory()->create(['status' => 'pendings']);
+    UserRequest::factory()->create(['status' => 'pending']);
 
     $response = $this->actingAs($admin)->get('/admin/requests');
     $response->assertStatus(200)

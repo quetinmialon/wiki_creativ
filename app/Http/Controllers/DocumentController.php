@@ -48,7 +48,7 @@ class DocumentController extends Controller
     {
         $validate = $request->validate([
             'name' => 'string|required','max:255',
-            'content' => ['string', 'required', 'min:10', 'max:500000', new ValidMarkdown()],
+            'content' => ['string', 'required', 'min:10', 'max:500000',],
             'excerpt' => 'string|nullable','max:255',
             'categories_id' => 'array|nullable',
             'categories_id.*' => 'exists:categories,id',
@@ -175,7 +175,7 @@ class DocumentController extends Controller
     public function everyLogs()
     {
         $logs = $this->logService->getAllLogs();
-        return view('documents.all-logs', compact('logs'));
+        return view('documents.all-logs', ['logs' => $logs]);
     }
 
     public function userLogs($userId)

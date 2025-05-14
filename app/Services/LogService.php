@@ -37,9 +37,9 @@ class LogService
             'document_id' => $documentId,
         ]);
     }
-    public function getAllLogs()
+    public function getAllLogs($perPage = 100)
     {
-        return Log::all();
+        return Log::orderBy('created_at', 'desc')->paginate($perPage);
     }
     public function getUserLogs($userId)
     {

@@ -57,7 +57,7 @@
     <h2 class="text-gray-700"> Contenu du document</h2>
     <div class="border-2 border-grey-200 rounded-lg">
         <div class="mb-6 p-4">
-            <p class="text-gray-600 whitespace-pre-line">{!! $document->content !!}</p>
+            <article class="prose">{!! $document->content !!}</article>
         </div>
 
         @if($document->formated_name)

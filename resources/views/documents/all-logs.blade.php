@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Tous les logs</h1>
+    <h1 class="text-xl font-semibold text-center text-[#126C83] mb-4">Liste des ouvertures des documents</h1>
     <div class="bg-white shadow rounded-lg p-6">
         @if ($logs->isEmpty())
             <p class="text-gray-500">Aucun log enregistré.</p>
@@ -27,5 +27,8 @@
             </table>
         @endif
     </div>
+</div>
+<div class="mt-6">
+    {{ $logs->links() }}
 </div>
 @endsection

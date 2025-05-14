@@ -6,15 +6,15 @@ use App\Models\User;
 
 
 class UserService{
-    public function getAllUsersWithRoles()
+    public function getAllUsersWithRoles($perPage = 15)
     {
-        $user = User::with('roles')->get();
-        foreach ($user as $key => $u) {
-            if ($u->roles->contains('name', 'supervisor')) {
-                $user->forget($key);
-            }
-        }
-        return $user;
+        $users = User::with('roles')
+            ->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'supervisor');
+            })
+            ->paginate($perPage);
+
+        return $users;
     }
 
     public function getUserById($id)

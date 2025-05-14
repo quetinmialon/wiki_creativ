@@ -52,9 +52,7 @@ class DocumentService
         if(!$user){
             return [];
         }
-
         $roleIds = $user->roles->pluck('id');
-
         return Category::whereIn('role_id', $roleIds)
                        ->with(['documents' => function ($query) use ($limit) {
                             $query->where('formated_name','!=',null)->limit($limit)->orderBy('documents.created_at', 'desc');
@@ -80,13 +78,11 @@ class DocumentService
     public function createDocument(array $data)
     {
         $data['created_by'] = Auth::id();
-
         // Convertit le HTML en Markdown avant stockage
         $data['content'] = $this->convertHtmlToMarkdown($data['content']);
 
         // Nettoie le Markdown pour éviter les problèmes de sécurité
         $data['content'] = $this->sanitizeMarkdown($data['content']);
-
         $document = Document::create($data);
 
         if (!empty($data['categories_id'])) {
@@ -111,7 +107,6 @@ class DocumentService
 
     public function updateDocument(Document $document, array $data)
     {
-        // Convertit et nettoie le Markdown lors de la mise à jour
         if (isset($data['content'])) {
             $data['content'] = $this->convertHtmlToMarkdown($data['content']);
             $data['content'] = $this->sanitizeMarkdown($data['content']);

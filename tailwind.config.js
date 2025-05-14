@@ -12,9 +12,11 @@ export const safelist = [
     'ql-picker',
     'ql-picker-options',
     'ql-picker-label',
-    'ql-active'
+    'ql-active',
 ];
 export const theme = {
     extend: {},
 };
-export const plugins = [];
+export const plugins = [
+    require('@tailwindcss/typography'),
+];
