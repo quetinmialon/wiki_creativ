@@ -25,9 +25,16 @@
                         <p class="text-sm text-gray-500 mb-4">Écrit par {{ $document->author->name }}</p>
 
                         <div class="flex flex-row px-2 gap-4">
-                            <a href="{{ route('documents.show', $document->id) }}">
-                                <img src="{{  asset('images/see.png') }}" alt="voir le document {{ $document->name }}" arya-label="voir le document {{ $document->name }}"/>
-                            </a>
+                            @can('access-document',$document)
+                                <a href="{{ route('documents.show', $document->id) }}">
+                                    <img src="{{  asset('images/see.png') }}" alt="voir le document {{ $document->name }}" arya-label="voir le document {{ $document->name }}"/>
+                                </a>
+                            @endcan
+                            @cannot('access-document',$document)
+                                <a href="{{ route('permissions.requestForm', $document->id) }}">
+                                    <img src="{{  asset('images/lock.png') }}" alt="demander l'accès au document {{ $document->name }}" arya-label="demander l'accès au document {{ $document->name }}"/>
+                                </a>
+                            @endcannot
                             @can('manage-document',$document)
 
                                 <a href ="{{ route('documents.edit', $document->id) }}" alt="modifier le document {{ $document->name }}">

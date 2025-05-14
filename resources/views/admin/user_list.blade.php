@@ -24,6 +24,9 @@
                         <td class="px-6 py-3">
                             <div class="flex flex-wrap gap-2">
                                 @foreach ($user->roles as $role)
+                                    @if(collect(['supervisor', 'default'])->contains($role->name))
+                                        @continue
+                                    @endif
                                     <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg">
                                         {{ $role->name }}
                                     </span>

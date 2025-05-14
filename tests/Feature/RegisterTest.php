@@ -84,7 +84,7 @@ test('choose password with valid token', function () {
     $response = $this->get(route('register.complete', ['token' => 'valid_token']));
 
     $response->assertStatus(200);
-    $response->assertViewIs('user_form_password_step');
+    $response->assertViewIs('register.user_form_password_step');
     $response->assertViewHas('email', $invitation->email);
 });
 

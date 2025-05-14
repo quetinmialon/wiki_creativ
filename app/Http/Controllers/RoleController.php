@@ -18,7 +18,7 @@ class RoleController extends Controller
 
     public function create(): View
     {
-        return view('create-role-form');
+        return view('admin.create-role-form');
     }
 
     public function insert(Request $request): RedirectResponse
@@ -38,7 +38,7 @@ class RoleController extends Controller
     public function edit(Request $request): View
     {
         $role = $this->roleService->getRoleById($request->id);
-        return view('update-role-form', ['role' => $role]);
+        return view('admin.update-role-form', ['role' => $role]);
     }
 
     public function update(Request $request): RedirectResponse

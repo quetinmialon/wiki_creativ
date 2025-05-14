@@ -23,7 +23,7 @@
                             <form method="POST" action="{{ route('subscribe.process', $request->id) }}">
                                 @csrf
                                 <div class="flex flex-col gap-2">
-                                    <input type="hidden" name="role_ids[]" value="1" id="role_default">
+                                    <input type="hidden" name="role_ids[]" value="1" id="role_default" checked>
                                     <div class="flex flex-col gap-2">
                                         @foreach($roles as $role)
                                             @if($role->name == 'supervisor')

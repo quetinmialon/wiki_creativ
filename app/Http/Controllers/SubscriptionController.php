@@ -31,7 +31,7 @@ class SubscriptionController extends Controller
 
     public function subscribe(): View
     {
-        return view('user_form_first_step');
+        return view('register.user_form_first_step');
     }
 
     public function process($id, Request $request): RedirectResponse
@@ -69,7 +69,7 @@ class SubscriptionController extends Controller
             abort(404);
         }
 
-        return view('user_form_password_step', ['email' => $invitation->email, 'token' => $token]);
+        return view('register.user_form_password_step', ['email' => $invitation->email, 'token' => $token]);
     }
 
     public function createUserInvitationForm(): View

@@ -157,38 +157,12 @@ class DocumentController extends Controller
             ->with('success', 'Supprimé avec succès');
     }
 
-
-    public function logs($documentId)
-    {
-        $document = $this->logService->getDocumentLogs($documentId);
-
-        if (!$document) {
-            return redirect()->route('documents.index')->with('error', 'Document introuvable');
-        }
-
-        return view('documents.logs', [
-            'document' => $document,
-            'logs' => $document->logs
-        ]);
-    }
-
     public function everyLogs()
     {
         $logs = $this->logService->getAllLogs();
         return view('documents.all-logs', ['logs' => $logs]);
     }
 
-    public function userLogs($userId)
-    {
-        $user = $this->logService->getUserLogs($userId);
-        if (!$user) {
-            return redirect()->route('documents.index')->with('error', 'Utilisateur introuvable');
-        }
-        return view('documents.user-logs', [
-            'user' => $user,
-            'logs' => $user->logs
-        ]);
-    }
     public function getAllDocuments(){
         $categories = $this->documentService->getEveryDocuments();
         return view('documents.all-documents', compact('categories'));

@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <div class="max-w-md mx-auto bg-white shadow-md rounded-md p-6 mt-10">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">Modifier le Rôle</h2>
+    <h2 class="text-xl font-semibold text-center text-[#126C83] mb-4">Modifier le Rôle</h2>
 
     <form action="{{ route('roles.update', $role->id) }}" method="POST">
         @csrf
@@ -20,12 +20,13 @@
                 required
             >
         </div>
-
-        <button
-            type="submit"
-            class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-500 transition duration-200">
-            Mettre à jour
-        </button>
+        <div class="flex flex-row justify-center">
+            <button
+                type="submit"
+                class="bg-[#35A5A7] text-white font-bold py-2 px-4 rounded-md hover:bg-[#126C83] transition duration-200">
+                Mettre à jour
+            </button>
+        </div>
     </form>
 </div>
 @endsection
