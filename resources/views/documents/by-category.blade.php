@@ -60,7 +60,7 @@
     @endif
 
     <div class="mt-6">
-        <a href="{{ route('documents.index') }}" class="text-[#126C83] px-4 hover:text-[#35A5A7] underline">
+        <a href="{{ route('documents.index') }}" class="px-4 py-2 hover:text-white bg-white shadow-md rounded hover:bg-[#126C83] text-[#126C83]">
             Retour aux documents
         </a>
     </div>

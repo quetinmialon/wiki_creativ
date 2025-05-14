@@ -2,34 +2,58 @@
 
 @section('content')
 <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Documents à nomenclaturer</h1>
-    <button class="mb-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-        <a href="{{ route('qualite.documents') }}">Documents nomenclaturés</a>
-    </button>
-    @foreach($document as $doc)
-        <div class="bg-white shadow rounded p-4 mb-4">
-            <h2 class="text-lg font-semibold">{{ $doc->name ?? 'Document sans titre' }}</h2>
-            <p class="text-sm text-gray-600 mb-2">ID : {{ $doc->id }}</p>
-            <p class="mb-2">{{ Str::limit($doc->excerpt, 150) }}</p>
+    <h1 class="text-xl font-semibold text-center text-[#126C83] mb-6">Documents à nomenclaturer</h1>
 
-            <form method="POST" action="{{ route('qualite.addNormedName', $doc->id) }}" class="flex items-center gap-4">
-                @csrf
-                @method('PUT')
-                <input type="hidden" name="id" value="{{ $doc->id }}">
-                <input type="text" name="formated_name" placeholder="Nomenclature..." required
-                       class="border border-gray-300 rounded px-2 py-1 w-1/2">
-                <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                    Enregistrer
-                </button>
-                <a href="{{ route('qualite.edit', ['id' => $doc->id]) }}"
-                   class="text-sm text-blue-600 hover:underline">Consulter et modifier le document</a>
-            </form>
-        </div>
-    @endforeach
-
-    @if($document->isEmpty())
-        <p>Aucun document en attente de nomenclature.</p>
-    @endif
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded shadow">
+            <thead>
+                <tr class="bg-[#126C83] text-white">
+                    <th class="px-4 py-2 text-left">Titre</th>
+                    <th class="px-4 py-2 text-left">Résumé</th>
+                    <th class="px-4 py-2 text-left">Nomenclature</th>
+                    <th class="px-4 py-2 text-left">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($document as $doc)
+                    <tr class="border-t border-gray-200">
+                        <td class="px-4 py-2 font-semibold">{{ $doc->name ?? 'Document sans titre' }}</td>
+                        <td class="px-4 py-2">{{ Str::limit($doc->excerpt, 150) }}</td>
+                        <td class="px-4 py-2">
+                            <form method="POST" action="{{ route('qualite.addNormedName', $doc->id) }}" class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="id" value="{{ $doc->id }}">
+                                <input type="text" name="formated_name" placeholder="Nomenclature..." required
+                                       class="border border-gray-300 rounded px-2 py-1 w-full sm:w-40">
+                                <button type="submit" class="bg-[#35A5A7] text-white px-3 py-1 rounded hover:bg-[#126C83] text-sm">
+                                    Enregistrer
+                                </button>
+                            </form>
+                        </td>
+                        <td class="px-4 py-2">
+                            <a href="{{ route('qualite.edit', ['id' => $doc->id]) }}"
+                               class="text-sm text-[#126C83] underline hover:text-[#35A5A7]">
+                                Consulter / Modifier
+                            </a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="px-4 py-6 text-center text-gray-500">
+                            Aucun document en attente de nomenclature.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+    <div class="flex justify-end mt-4">
+        <a href="{{ route('qualite.documents') }}"
+            class="px-4 py-2 bg-[#35A5A7] text-white rounded hover:bg-[#126C83]">
+            Documents nomenclaturés
+        </a>
+    </div>
 </div>
-@endsection
 
+@endsection

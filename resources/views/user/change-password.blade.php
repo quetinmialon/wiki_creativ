@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-2xl mx-auto mt-10">
     <div class="bg-white shadow-lg rounded-2xl p-6">
-        <h1 class="text-2xl font-semibold mb-6">Changer le mot de passe</h1>
+        <h1 class="text-xl font-semibold text-center text-[#126C83] mb-6">Changer de mot de passe</h1>
 
         @if(session('error'))
             <div class="bg-red-100 text-red-700 p-3 rounded mb-4">
@@ -31,9 +31,9 @@
                 <input type="password" name="new_password_confirmation" class="w-full border rounded px-4 py-2">
             </div>
 
-            <div class="flex gap-3">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">Changer</button>
-                <a href="{{ route('profile.show') }}" class="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded shadow">Annuler</a>
+            <div class="flex gap-3 justify-center">
+                <button type="submit" class="bg-[#35A5A7] hover:bg-[#126C83] text-white px-4 py-2 rounded shadow">Confirmer</button>
+                <a href="{{ route('profile.show') }}" class="bg-white hover:bg-[#126C83] hover:text-white text-[#126C83] px-4 py-2 rounded shadow">Annuler</a>
             </div>
         </form>
     </div>

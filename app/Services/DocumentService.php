@@ -146,11 +146,11 @@ class DocumentService
     {
         return Document::where('formated_name', null)->count();
     }
-    public function getAllDocumentThatAreNormed()
+    public function getAllDocumentThatAreNormed($perPage = 15)
     {
         return Document::whereNotNull('formated_name')
                       ->orderBy('formated_name', 'asc')
-                      ->get();
+                      ->paginate($perPage);
     }
 
     public function addNormedNameToDocument(Document $document, ?string $formated_name)

@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">Mettre à jour un document et y ajouter une nomenclature</h1>
 
+<h1 class="text-2xl font-bold text-[#126C83] text-center mb-6">Mettre à jour un document et y ajouter une nomenclature</h1>
+
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
     <form action="{{ route('qualite.update',$document->id) }}" method="POST" class="space-y-6">
         @csrf
         @method('PUT')
@@ -39,23 +40,54 @@
         </div>
 
         <!-- Editeur WYSIWYG -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Contenu</label>
-            <div id="toolbar" class="mb-2">
+
+        <p>Document </p>
+        <div id="toolbar">
+            <span>
+                <select class="ql-font"></select>
+                <select class="ql-size"></select>
+            </span>
+            <span class="ql-formats">
                 <button class="ql-bold"></button>
                 <button class="ql-italic"></button>
                 <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+            </span>
+            <span class="ql-formats">
+                <select class="ql-color"></select>
+                <select class="ql-background"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-script" value="sub"></button>
+                <button class="ql-script" value="super"></button>
+            </span>
+            <span class="ql-formats">
                 <button class="ql-header" value="1"></button>
                 <button class="ql-header" value="2"></button>
+                <button class="ql-blockquote"></button>
+                <button class="ql-code-block"></button>
+            </span>
+            <span class="ql-formats">
                 <button class="ql-list" value="ordered"></button>
                 <button class="ql-list" value="bullet"></button>
-            </div>
-            <div id="editor" class="border rounded p-2 h-64 overflow-y-auto">{!! old('content', $document->content) !!}</div>
-            <input type="hidden" name="content" id="content" value="{{ old('content', $document->content) }}">
-            @error('content')
-                <p class="text-sm text-red-600">{{ $message }}</p>
-            @enderror
+                <button class="ql-indent" value="-1"></button>
+                <button class="ql-indent" value="+1"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-direction" value="rtl"></button>
+                <select class="ql-align"></select>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-link"></button>
+                <button class="ql-formula"></button>
+            </span>
         </div>
+        <div id="editor" class="border rounded p-2 h-64 overflow-y-auto">{!! old('content', $document->content) !!}</div>
+        <input type="hidden" name="content" id="content" value="{{ old('content', $document->content) }}">
+        @error('content')
+            <p class="text-sm text-red-600">{{ $message }}</p>
+        @enderror
+
         <div class="flex items-center mb-4">
             <label for="public" class="mr-2 text-sm font-medium text-gray-700">Document publique</label>
             <label class="relative inline-flex items-center cursor-pointer">
@@ -92,12 +124,12 @@
 
         <!-- Boutons -->
         <div class="flex justify-end gap-4">
-            <button type="submit" class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700">
+            <button type="submit" class="px-4 py-2 text-white bg-[#35A5A7] rounded hover:bg-[#126C83]">
                 Mettre à jour
             </button>
             <a href="{{ route('qualite.index') }}"
-               class="px-4 py-2 text-white bg-gray-500 rounded hover:bg-gray-600">
-                Annuler
+               class="px-4 py-2 hover:text-white bg-white shadow-md rounded hover:bg-[#126C83] text-[#126C83]">
+                Retour
             </a>
         </div>
     </form>

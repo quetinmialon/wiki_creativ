@@ -73,18 +73,6 @@ class PermissionController extends Controller
         return redirect()->route('admin.permissions.pendings')->with('success', 'Demande de permission supprimée avec succès.');
     }
 
-    public function userRequest($id)
-    {
-        $permissions = $this->permissionService->getUserPermissions($id);
-        return view('permission.user-request-list', compact('permissions'));
-    }
-
-    public function documentRequest($id)
-    {
-        $permissions = $this->permissionService->getDocumentPermissions($id);
-        return view('permission.document-request-list', compact('permissions'));
-    }
-
     public function searchPermission(Request $request)
     {
         $query = $request->input('query');

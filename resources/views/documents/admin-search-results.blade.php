@@ -38,7 +38,7 @@
         </div>
     @endforeach
 </div>
-<a href="{{ url()->previous() }}" class="px-4 py-2 text-sm text-white bg-[#35A5A7] rounded hover:bg-[#126C83]">
+<a href="{{ url()->previous() }}" class="px-4 py-2 hover:text-white bg-white shadow-md rounded hover:bg-[#126C83] text-[#126C83]">
     Retour
 </a>
 @endsection

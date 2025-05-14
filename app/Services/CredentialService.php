@@ -10,10 +10,6 @@ class CredentialService
 {
     public function storeCredential(array $data)
     {
-        if (!Auth::check()) {
-            return ['error' => 'vous devez être connecté pour ajouter des logs'];
-        }
-
         $data['user_id'] = Auth::id();
         $data['password'] = Crypt::encryptString($data['password']);
 
@@ -24,15 +20,11 @@ class CredentialService
 
     public function getUserRoles()
     {
-        return Auth::check() ? Auth::user()->roles : null;
+        return Auth::user();
     }
 
     public function getUserCredentials()
     {
-        if (!Auth::check()) {
-            return ['error' => 'vous devez être connecté pour voir vos logs'];
-        }
-
         $user = Auth::user();
         $credentials = Credential::where('user_id', $user->id)->get();
         $roleIds = $user->roles->pluck('id');
@@ -66,10 +58,6 @@ class CredentialService
 
     public function deleteCredential($id)
     {
-        if (!Auth::check()) {
-            return ['error' => 'vous devez être connecté pour supprimer des logs'];
-        }
-
         $credential = Credential::find($id);
 
         $credential->delete();
@@ -78,10 +66,6 @@ class CredentialService
 
     public function getCredentialForEdit($id)
     {
-        if (!Auth::check()) {
-            return ['error' => 'vous devez être connecté pour modifier des logs'];
-        }
-
         $credential = Credential::find($id);
 
         $credential->password = Crypt::decryptString($credential->password);
@@ -93,10 +77,6 @@ class CredentialService
 
     public function updateCredential($id, array $data)
     {
-        if (!Auth::check()) {
-            return ['error' => 'vous devez être connecté pour modifier des logs'];
-        }
-
         $data['password'] = Crypt::encryptString($data['password']);
         $credential = Credential::find($id);
 
