@@ -159,7 +159,15 @@ and
 ```terminal
 npm run build
 ```
+such as in developpement environment you'll have to run the database migration to create the structure of this last one.
+```terminal
+php artisan migrate
+```
 
+as if you were in developpment environment you'll have to create some cores entries in data, don't forget to set the superadmin and supervisor users in your .env file. 
+```terminal
+php artisan boot:all
+```
 you'll also need to get in touch with a SMTP service or server (mailgun for example)
 
 
