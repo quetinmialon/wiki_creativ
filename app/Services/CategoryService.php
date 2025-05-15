@@ -43,26 +43,4 @@ class CategoryService
     {
         return $user->roles->all();
     }
-
-    public function createWithUserRole(User $user, array $data): Category
-    {
-        if (!$user->roles->contains('id', $data['role_id'])) {
-            throw ValidationException::withMessages([
-                'role_id' => 'Vous ne pouvez pas créer une catégorie pour un rôle qui ne vous est pas attribué',
-            ]);
-        }
-
-        return $this->create($data);
-    }
-
-    public function updateWithUserRole(User $user, Category $category, array $data): bool
-    {
-        if (!$user->roles->contains('id', $data['role_id'])) {
-            throw ValidationException::withMessages([
-                'role_id' => 'Vous ne pouvez pas modifier cette catégorie avec ce rôle.',
-            ]);
-        }
-
-        return $this->update($category, $data);
-    }
 }

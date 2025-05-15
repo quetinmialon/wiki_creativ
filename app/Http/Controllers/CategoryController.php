@@ -73,10 +73,6 @@ class CategoryController extends Controller
 
     public function getUserCategories()
     {
-        if ($this->authService->getCurrentUser()->roles->isEmpty()) {
-            return redirect()->route('login')->withErrors(['error' => 'Vous devez être connecté pour accéder à cette page.']);
-        }
-
         $user = $this->authService->getCurrentUser();
         $categories = $this->categoryService->getUserCategories($user);
         return view('category.user-categories-list', compact('categories'));
@@ -84,10 +80,6 @@ class CategoryController extends Controller
 
     public function createCategoryOnUserRoles()
     {
-        if ($this->authService->getCurrentUser()->roles->isEmpty()) {
-            return redirect()->route('login')->withErrors(['error' => 'Vous devez être connecté pour accéder à cette page.']);
-        }
-
         $user = $this->authService->getCurrentUser();
         $roles = $this->categoryService->getRolesForUser($user);
         return view('category.users-create-category-form', compact('roles'));
@@ -101,7 +93,7 @@ class CategoryController extends Controller
             'role_id' => 'exists:roles,id|required',
         ]);
 
-        $this->categoryService->createWithUserRole($user, $data);
+        $this->categoryService->create($data);
         return redirect()->route('myCategories.myCategories');
     }
 
@@ -138,13 +130,12 @@ class CategoryController extends Controller
         if (!Gate::allows('manage-category', $category)) {
             abort(403);
         }
-
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'role_id' => 'exists:roles,id|required',
         ]);
 
-        $this->categoryService->updateWithUserRole($user, $category, $data);
+        $this->categoryService->update($category, $data);
         return redirect()->route('myCategories.myCategories');
     }
 }

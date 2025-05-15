@@ -3,16 +3,118 @@
 use App\Models\Category;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithFaker;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
+test('category index displays categories when user is superadmin', function(){
+    //arrange
+    $user = User::factory()->create();
+    $role = Role::factory()->create([
+        "name"=> "superadmin"
+    ]);
+    $user->roles()->attach($role);
+    $categories = Category::factory(5)->create();
+    //act
+    $this->actingAs($user);
+    $response = $this->get(route('categories.index'));
+
+    //assert
+    $response->assertStatus(200);
+    foreach ($categories as $category) {
+        $response->assertSee($category->name);
+    }
+});
+test('category index is not available on user that are not superadmin',function(){
+    //assert
+    $user = User::factory()->create();
+    $role = Role::factory()->create([
+        "name"=> "not superadmin"
+    ]);
+    $user->roles()->attach($role);
+    //act
+    $this->actingAs($user);
+    $response = $this->get(route('categories.index'));
+
+    //assert
+    $response->assertStatus(403);
+
+});
+
+test('create categorie only display if user is superadmin', function(){
+    //assert
+    $user = User::factory()->create();
+    $admin = User::factory()->create();
+    $adminRole = Role::factory()->create([
+        'name' => 'superadmin'
+    ]);
+    $role = Role::factory()->create([
+        "name"=> "not superadmin"
+    ]);
+    $user->roles()->attach($role);
+    $admin->roles()->attach($adminRole);
+    //act
+    $responseNormalUser = $this->actingAs($user)
+        ->get(route('categories.create'));
+    $responseAdmin = $this->actingAs($admin)
+        ->get(route('categories.create'));
+    //assert
+    $responseNormalUser->assertStatus(403);
+    $responseAdmin->assertStatus(200);
+});
+
+test('edit category display a form with the category only if user is superadmin', function(){
+    //arrange
+    $user = User::factory()->create();
+    $admin = User::factory()->create();
+    $adminRole = Role::factory()->create([
+        'name' => 'superadmin'
+    ]);
+    $role = Role::factory()->create([
+        "name"=> "not superadmin"
+    ]);
+    $user->roles()->attach($role);
+    $admin->roles()->attach($adminRole);
+
+    $category = Category::factory()->create([
+        'name'=>'test'
+    ]);
+    //act
+    $responseNormalUser = $this->actingAs($user)
+        ->get(route('categories.edit',$category->id ));
+    $responseAdmin = $this->actingAs($admin)
+        ->get(route('categories.edit',$category->id));
+
+    //assert
+    $responseAdmin->assertStatus(200)
+        ->assertSee($category->name);
+    $responseNormalUser->assertStatus(403);
+});
+
+test('superadmin can create category',function(){
+    //arrange
+    $user = User::factory()->create();
+    $role = Role::factory()->create([
+        "name"=> "superadmin"
+    ]);
+    $user->roles()->attach($role);
+    $expectedCategory = [
+        'name' => 'test',
+        'role_id' => $role->id
+    ];
+    //act
+    $this->actingAs($user);
+    $response = $this->post(route('categories.store'),$expectedCategory);
+    //assert
+    $response->assertStatus(302);
+    $this->assertDatabaseHas('categories', [
+        'name' => 'test',
+        'role_id' => $role->id
+    ]);
+});
+
 test('create category while user is superadmin', function () {
     $user = User::factory()->create();
-    $user = User::find($user->id);
-    // Ensure $user is an instance of User
-    $role = Role::factory() ->create([
+    $role = Role::factory()->create([
         "name"=> "superadmin"
     ]);
     $user->roles()->attach($role);
@@ -39,8 +141,6 @@ test('create category while user is superadmin', function () {
 
 test('update category when user is superadmin', function () {
     $user = User::factory()->create();
-    $user = User::find($user->id);
-    // Ensure $user is an instance of User
     $role = Role::factory()->create([
         "name"=> "superadmin"
     ]);
@@ -72,8 +172,6 @@ test('update category when user is superadmin', function () {
 
 test('delete category when user is superadmin', function () {
     $user = User::factory()->create();
-    $user = User::find($user->id);
-    // Ensure $user is an instance of User
     $role = Role::factory()->create([
         "name"=> "superadmin"
     ]);
@@ -99,8 +197,6 @@ test('delete category when user is superadmin', function () {
 
 test('create category on regular role', function () {
     $user = User::factory()->create();
-    $user = User::find($user->id);
-    // Ensure $user is an instance of User
     $role = Role::factory()->create([
         "name"=> "pédagogie"
     ]);
@@ -124,8 +220,6 @@ test('create category on regular role', function () {
 
 test('only admin can update categories', function () {
     $user = User::factory()->create();
-    $user = User::find($user->id);
-    // Ensure $user is an instance of User
     $role = Role::factory()->create([
         "name"=> "pédagogie"
     ]);
@@ -176,8 +270,6 @@ test('only admin can update categories', function () {
 });
 test('only admin can delete categories', function () {
     $user = User::factory()->create();
-    $user = User::find($user->id);
-    // Ensure $user is an instance of User
     $role = Role::factory()->create([
         "name"=> "pédagogie"
     ]);
@@ -215,3 +307,9 @@ test('only admin can delete categories', function () {
     ]);
     expect(Category::find($category->id))->toBeNull();
 });
+
+test('createCategoryOnUserRoles redirects guest to login', function () {
+    $response = $this->get(route('myCategories.create'));
+    $response->assertRedirect(route('login'));
+});
+
