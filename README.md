@@ -1,19 +1,19 @@
-### welcome on the wiki creative projet page
+# welcome on the wiki creative projet page
 
-## description
+# description
 
 this is a documentary tool management allowing users to consult, store and update document directly on a website, advanced plain text search has been added to ensure user can find document as fast as possible. the solution also embedded an avanced roles system to manage acess and edition on documents, also embedded a password manager that allow users to share some password to their role. 
 
-## installation 
+# installation 
 
-# requirement
+## requirement
 
  - php 8.2 or later
  - composer
  - mysql
  - node 20 or later
 
-# install and launch on developpment environment
+## install and launch on developpment environment
 
 after cloning the repo, create a copy of the .env.example file that you will name .env and fill the constant that needs it
 
@@ -83,7 +83,7 @@ and
 php artisan serve
 ```
 
-# install and launch on production environment (on a VPS with ubuntu, ssh connexion on it with sudo access)
+## install and launch on production environment (on a VPS with ubuntu, ssh connexion on it with sudo access)
 
 first ensure thath you have the requirement and also have nginx or appache on your vps by the following commands : 
 
