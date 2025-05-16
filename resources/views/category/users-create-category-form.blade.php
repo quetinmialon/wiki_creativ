@@ -18,6 +18,10 @@
                 <option value="">Sélectionnez un rôle</option>
                 @foreach($roles as $role)
                     @if(!str_contains($role->name, 'Admin '))
+                        @if($role->name == 'default')
+                            <option value="{{ $role->id }}"> public </option>
+                            @continue
+                        @endif
                         <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
                     @endif
                 @endforeach

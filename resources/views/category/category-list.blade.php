@@ -15,7 +15,7 @@
             @forelse($categories as $category)
                 <tr>
                     <td class="pl-8 pr-4 py-2">{{ $category->name }}</td>
-                    <td class="px4 py-2 text-center">{{$category->role->name}}</td>
+                    <td class="px4 py-2 text-center">{{$category->role->name == 'default' ? 'public' : $category->role->name }}</td>
                     <td class=" px-4 py-2 flex flex-row justify-around">
                         <a href="{{ route('documents.byCategory', ['id' => $category->id]) }}" class="text-[#126C83] underline hover:text-[#35A5A7]">accéder aux documents de la catégorie</a>
                         <div class="flex flex-row space-x-2">
