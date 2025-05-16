@@ -4,7 +4,7 @@
     <h1 class="text-2xl text-[#126C83] m-4 text-center">Derniers documents ouverts</h1>
 
     @if($logs->isEmpty())
-        <p>Aucun document récemment ouvert.</p>
+        <p class="p-2">Aucun document récemment ouvert.</p>
     @else
         <ul class="divide-y divide-gray-200 m-4">
             @foreach($logs as $log)
