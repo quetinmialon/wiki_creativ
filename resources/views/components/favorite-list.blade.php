@@ -28,9 +28,15 @@
                                     : "<img src='" . asset('images/notfavorite.png') . "' alt='ajouter aux favoris'/>"
                                 !!}
                             </a>
-                            <a href="{{ route('documents.show', $favorite->document->id) }}">
-                                <img src="{{  asset('images/see.png') }}" alt="voir le document {{ $favorite->document->name }}" arya-label="voir le document {{ $favorite->document->name }}"/>
-                            </a>
+                            @if(Gate::allows('view-document',$favorite->document)|| Gate::allows('access-document',$favorite->document))
+                                <a href="{{ route('documents.show', $favorite->document->id) }}">
+                                    <img src="{{  asset('images/see.png') }}" alt="voir le document {{ $favorite->document->name }}" arya-label="voir le document {{ $favorite->document->name }}"/>
+                                </a>
+                            @else
+                                <a href="{{ route('permissions.requestForm', $favorite->document->id) }}">
+                                    <img src="{{  asset('images/lock.png') }}" alt="demander l'accès au document {{ $favorite->document->name }}" arya-label="demander l'accès au document {{ $favorite->document->name }}"/>
+                                </a>
+                            @endif
                         </div>
                     </li>
                 @else
