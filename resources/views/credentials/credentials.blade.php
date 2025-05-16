@@ -72,12 +72,12 @@
                                 <td class="py-2 px-4">{{ $credential->role->name }}</td>
                                 <td class="py-2 px-4">
 
-                                    <span id="shared-password-{{ $credential->id }}" class="hidden bg-gray-200 px-2 py-1 rounded-md">{{ $credential->password }}</span>
-                                    @if(Gate::allows('manage-shared-credential', $credential))
                                     <div class="flex space-x-4 mt-2">
+                                        <span id="shared-password-{{ $credential->id }}" class="hidden bg-gray-200 px-2 py-1 rounded-md">{{ $credential->password }}</span>
                                         <button onclick="copySharedPassword({{ $credential->id }})" class="text-blue-500 hover:underline">
                                             <img src="{{ asset('images/copy.png') }}" alt="copier le mot de passe"/>
                                         </button>
+                                         @if(Gate::allows('manage-shared-credential', $credential))
                                         <a href="{{ route('credentials.edit', $credential->id) }}" class="text-blue-500 hover:underline">
                                             <img src="{{ asset('images/edit.png') }}" alt="modifier l'identifiant"/>
                                         </a>
@@ -89,8 +89,8 @@
                                                     <img src="{{ asset('images/delete.png') }}" alt="supprimer l'identifiant"/>
                                             </button>
                                         </form>
+                                        @endif
                                     </div>
-                                    @endif
                                 </td>
                             </tr>
                         @endforeach

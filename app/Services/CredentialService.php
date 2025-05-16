@@ -20,7 +20,7 @@ class CredentialService
 
     public function getUserRoles()
     {
-        return Auth::user();
+        return Auth::check() ? Auth::user()->roles : null;
     }
 
     public function getUserCredentials()

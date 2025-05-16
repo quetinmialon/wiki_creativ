@@ -18,7 +18,7 @@
                 <div class="rounded-md shadow-lg h-96 max-h-96 flex flex-col overflow-scroll">
                     <!-- Titre de la catégorie -->
                     <h2 class="text-lg text-white bg-[#126C83] mb-4 p-2 rounded-t-md text-center">
-                        Catégorie : {{ $category->name }}
+                        {{ $category->role->name}} : {{$category->name}}
                     </h2>
 
                     @if($category->documents->isEmpty())

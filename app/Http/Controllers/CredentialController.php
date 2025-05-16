@@ -38,7 +38,6 @@ class CredentialController extends Controller
         if (!$roles) {
             return redirect()->back()->with('error', 'vous devez être connecté pour ajouter des logs');
         }
-
         return view('credentials.create-credentials', ['roles' => $roles]);
     }
 

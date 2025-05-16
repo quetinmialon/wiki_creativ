@@ -17,7 +17,7 @@
                     @else
                     <div class=" rounded-md shadow-lg h-96 max-h-96 flex flex-col overflow-scroll">
                         <!-- Titre de la catégorie -->
-                        <h2 class="text-lg text-white bg-[#126C83] mb-4 p-2 rounded-t-md text-center">{{ $category->name }}</h2>
+                        <h2 class="text-lg text-white bg-[#126C83] mb-4 p-2 rounded-t-md text-center">{{ $category->role->name}} : {{$category->name}}</h2>
 
                         <ul class="flex flex-col gap-4 mb-4 px-4">
                             @foreach($category->documents as $document)

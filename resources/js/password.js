@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.copySharedPassword = function(id){
-        const sharedPasswordSpan = document.getElementById(`password-${id}`);
+        const sharedPasswordSpan = document.getElementById(`shared-password-${id}`);
         const sharedPassword = sharedPasswordSpan.textContent;
 
         navigator.clipboard.writeText(sharedPassword)
