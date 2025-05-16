@@ -12,11 +12,8 @@
             <p class="text-gray-500">Aucune catégorie trouvée.</p>
         @else
             @foreach($categories as $category)
-
-                <div class="mb-8 ">
-
                     @if($category->documents->isEmpty())
-
+                        @continue
                     @else
                     <div class=" rounded-md shadow-lg h-96 max-h-96 flex flex-col overflow-scroll">
                         <!-- Titre de la catégorie -->
@@ -44,7 +41,6 @@
                         </div>
                     </div>
                     @endif
-                </div>
             @endforeach
         @endif
     </div>
