@@ -15,9 +15,15 @@
                             <p class="text-sm text-gray-600">Ouvert le : {{ $log->created_at->format('d/m/Y à H:i') }}</p>
                         </div>
                         <div class="flex flex-row px-2 gap-4">
-                            <a href="{{ route('documents.show', $log->document->id) }}">
-                                <img src="{{  asset('images/see.png') }}" alt="voir le document {{ $log->document->name }}" arya-label="voir le document {{ $log->document->name }}"/>
-                            </a>
+                            @if(Gate::allows('view-document',$log->document)|| Gate::allows('access-document',$log->document))
+                                <a href="{{ route('documents.show', $log->document->id) }}">
+                                    <img src="{{  asset('images/see.png') }}" alt="voir le document {{ $log->document->name }}" arya-label="voir le document {{ $log->document->name }}"/>
+                                </a>
+                            @else
+                                <a href="{{ route('permissions.requestForm', $log->document->id) }}">
+                                    <img src="{{  asset('images/lock.png') }}" alt="demander l'accès au document {{ $log->document->name }}" arya-label="demander l'accès au document {{ $log->document->name }}"/>
+                                </a>
+                            @endif
                         </div>
                     </li>
                 @else

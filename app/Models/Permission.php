@@ -50,12 +50,12 @@ class Permission extends Model
 
     public function author()
     {
-        return $this->belongsTo(User::class,'author');
+        return $this->belongsTo(User::class);
     }
 
     public function handledBy()
     {
-        return $this->belongsTo(User::class,'handled_by');
+        return $this->belongsTo(User::class);
     }
 
     public function document()
