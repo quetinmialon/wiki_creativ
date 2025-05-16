@@ -16,7 +16,7 @@
                 <div class="mb-8">
 
                     @if($category->documents->isEmpty())
-
+                        @continue
                     @else
                     <div class=" rounded-md shadow-lg h-96 max-h-96 flex flex-col overflow-scroll ">
                         <!-- Titre de la catégorie -->

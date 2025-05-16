@@ -13,17 +13,15 @@
     @else
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         @foreach($categories as $category)
+            @if($category->documents->isEmpty())
+                @continue
+            @else
             <div class="mb-8">
-
                 <div class="rounded-md shadow-lg h-96 max-h-96 flex flex-col overflow-scroll">
                     <!-- Titre de la catégorie -->
                     <h2 class="text-lg text-white bg-[#126C83] mb-4 p-2 rounded-t-md text-center">
                         {{ $category->role->name}} : {{$category->name}}
                     </h2>
-
-                    @if($category->documents->isEmpty())
-                        <p class="text-gray-500 text-center pb-4">Aucun document pour cette catégorie.</p>
-                    @else
                         <ul class="flex flex-col gap-4 mb-4 px-4">
                             @foreach($category->documents as $document)
                                 <li class="flex flex-col gap-1 border-b-2 pb-2">
