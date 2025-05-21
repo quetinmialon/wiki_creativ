@@ -32,7 +32,7 @@
                                     <span class="px-3 py-1 bg-red-100 text-red-700 text-sm font-semibold rounded-lg">Refusée</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-3 text-gray-700">{{ App\Models\User::find($permission->author)->name}}</td>
+                            <td class="px-6 py-3 text-gray-700">{{ App\Models\User::find($permission->author)->name ?? 'utilisateur supprimé'}}</td>
                             <td class="px-6 py-3 flex flex-col space-y-2">
                                 @if($permission->status == 'pending')
                                     <form action="{{ route('admin.permissions.handle', $permission->id) }}" method="POST">
