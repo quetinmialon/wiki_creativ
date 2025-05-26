@@ -75,7 +75,7 @@ jobs:
           chmod 777 database/database.sqlite
 
       - name: Run tests
-        run: vendor/bin/pest --configuration phpunit.xml --v
+        run: vendor/bin/pest --configuration phpunit.xml --coverage-text 
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
