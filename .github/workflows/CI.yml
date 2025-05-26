@@ -16,3 +16,20 @@ jobs:
 
       - name: files list
         run: ls
+      - name: Add PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          extensions: mbstring, xml, curl, zip, bcmath, intl, ctype, pdo, pdo_mysql, fileinfo, tokenizer, json
+
+      - name: composer cache handler
+        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
+
+      - name: Cache manager
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.COMPOSER_CACHE_DIR }}
+          key: ${{ runner.os }}-php8.4-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php8.4-composer-
