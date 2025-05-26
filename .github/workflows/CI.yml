@@ -80,7 +80,7 @@ jobs:
           touch database/database.sqlite
           chmod 777 database/database.sqlite
 
-      - name: Run tests
+      - name: Run tests 
         run: vendor/bin/pest --configuration phpunit.xml --coverage-text
         env:
           DB_CONNECTION: sqlite
