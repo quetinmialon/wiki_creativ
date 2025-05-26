@@ -75,7 +75,7 @@ jobs:
           chmod 777 database/database.sqlite
 
       - name: Run tests
-        run: vendor/bin/pest --configuration phpunit.xml --coverage-text 
+        run: vendor/bin/pest --configuration phpunit.xml --coverage-text
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
@@ -84,6 +84,7 @@ jobs:
           SUPERADMIN_PASSWORD: password
           SUPERVISOR_MAIL: testa@testa.fra
           SUPERVISOR_PASSWORD: password
+          APP_KEY: base64:$(openssl rand -base64 32)
 
 
 
