@@ -68,6 +68,12 @@ jobs:
           php artisan route:clear
           php artisan event:clear
 
+      - name: remove db
+        run: |
+          rm database/database.sqlite || true
+          touch database/database.sqlite
+
+
       - name: Run tests
         run: vendor/bin/pest --configuration phpunit.xml
 
