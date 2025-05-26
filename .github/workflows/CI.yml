@@ -84,7 +84,7 @@ jobs:
           SUPERADMIN_PASSWORD: password
           SUPERVISOR_MAIL: testa@testa.fra
           SUPERVISOR_PASSWORD: password
-          APP_KEY: base64:$(openssl rand -base64 32)
+          APP_KEY: ${{ secrets.APP_KEY }}
 
 
 
