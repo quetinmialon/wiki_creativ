@@ -1,0 +1,18 @@
+name: Pipeline CI
+on :
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  initialisation:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: files list
+        run: ls
