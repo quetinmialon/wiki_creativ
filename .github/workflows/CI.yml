@@ -39,4 +39,12 @@ jobs:
       - name: Audit dependencies
         run: composer audit --ignore-severity=medium --format=json > /tmp/security-audit.json
 
+      - name: display security audit
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-audit-${{ github.run_id }}
+          path: /tmp/security-audit.json
+          retention-days: 30
+
 
