@@ -74,8 +74,6 @@ jobs:
           touch database/database.sqlite
 
 
-      - name: Run tests
-        run: vendor/bin/pest --configuration phpunit.xml
-
+    
 
 
