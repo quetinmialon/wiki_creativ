@@ -22,8 +22,8 @@
                             <option value="{{ $role->id }}"> public </option>
                             @continue
                         @endif
-                        <option value="{{ $role->id }}">{{ $role->name }}</option>
-                    @if($role->name == 'default')
+                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                    @endif
                 @endforeach
             </select>
             @error('role_id') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
