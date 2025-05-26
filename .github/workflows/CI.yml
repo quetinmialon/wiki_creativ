@@ -33,3 +33,10 @@ jobs:
           key: ${{ runner.os }}-php8.4-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php8.4-composer-
+      - name: composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Audit dependencies
+        run: composer audit --no dev --abandoned=report --ignore-severity=low --no-ansi --format=json > /tmp/security-audit.json
+
+
