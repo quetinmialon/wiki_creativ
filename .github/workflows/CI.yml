@@ -53,7 +53,12 @@ jobs:
         run: vendor/bin/rector process --dry-run --ansi
 
       - name: Run migrations
-        run: php artisan migrate --no-interaction
+        run: php artisan migrate --no-interaction --env=testing
+        env:
+          APP_ENV: testing
+          # Optionally, override other env vars if needed
+          # DB_CONNECTION: ...
+          # DB_DATABASE: ...
 
       - name: Run tests
         run: vendor/bin/pest --configuration phpunit.xml --coverage-text --coverage-clover=coverage.clover.xml
