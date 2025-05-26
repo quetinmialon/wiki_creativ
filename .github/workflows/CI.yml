@@ -12,7 +12,7 @@ jobs:
     continue-on-error: false
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: files list
         run: ls
@@ -27,7 +27,7 @@ jobs:
         run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
 
       - name: Cache manager
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ env.COMPOSER_CACHE_DIR }}
           key: ${{ runner.os }}-php8.4-composer-${{ hashFiles('**/composer.lock') }}
