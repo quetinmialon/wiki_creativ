@@ -69,7 +69,7 @@ jobs:
           php artisan event:clear
 
       - name: Run tests
-        run: vendor/bin/pest --configuration phpunit.xml --coverage-text --coverage-clover=coverage.clover.xml
+        run: vendor/bin/pest --configuration phpunit.xml
 
 
 
