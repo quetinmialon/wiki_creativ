@@ -56,9 +56,10 @@ jobs:
         run: php artisan migrate --env=testing
         env:
           APP_ENV: testing
-          # Optionally, override other env vars if needed
-          # DB_CONNECTION: ...
-          # DB_DATABASE: ...
+          SUPERADMIN_MAIL: test@test.fr
+          SUPERADMIN_PASSWORD: password
+          SUPERVISOR_MAIL: testa@testa.fra
+          SUPERVISOR_PASSWORD: password
 
       - name: Run tests
         run: vendor/bin/pest --configuration phpunit.xml --coverage-text --coverage-clover=coverage.clover.xml
