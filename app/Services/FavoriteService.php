@@ -20,8 +20,9 @@ class FavoriteService
 
         // Supprimer les favoris dont le document n'existe plus
         $favorites = $favorites->reject(function ($favorite) {
-            return is_null($favorite->document);
+            return !$favorite->relationLoaded('document') || $favorite->document === null;
         });
+
 
         return $favorites;
     }

@@ -94,7 +94,7 @@ class DocumentService
 
     public function getDocumentsByCategory($categoryId, $perPage = 10)
     {
-        return Document::whereHas('categories', function ($query) use ($categoryId, $perPage) {
+        return Document::whereHas('categories', function ($query) use ($categoryId) {
                 $query->where('formated_name', '!=', null)->where('categories.id', $categoryId);
          })
          ->orderBy('formated_name', 'asc')->paginate($perPage);

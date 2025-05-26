@@ -21,7 +21,7 @@ class SupervisorMiddleware
             return redirect()->route('login')->with('error', 'Veuillez vous connecter pour accéder à cette page.');
         }
         $roles = $user->roles()->pluck('name')->toArray();
-        if (!$user || !in_array('supervisor', $roles)) {
+        if (!in_array('supervisor', $roles)) {
             return redirect()->route('home')->with('error', 'accès non autorisé');
         }
         return $next($request);

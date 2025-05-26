@@ -28,15 +28,15 @@ class GenerateSuperadminAndSupervisor extends Command
         $users = [
             [
                 'name' => 'superadmin',
-                'email' => env('SUPERADMIN_MAIL'),
-                'password' => bcrypt(env('SUPERADMIN_PASSWORD')),
+                'email' => config('credential.superadmin_email'),
+                'password' => bcrypt(config('credential.superadmin_password')),
                 'role_id' => [2,1]
             ],
             [
                 'name' => 'supervisor',
-                'email' => env('SUPERVISOR_MAIL'),
-                'password' => bcrypt(env('SUPERVISOR_PASSWORD')),
-                'role_id' => [13] // ID du rôle supervisor
+                'email' => config('credential.supervisor_email'),
+                'password' => bcrypt(config('credential.supervisor_password')),
+                'role_id' => [13]
             ],
         ];
 

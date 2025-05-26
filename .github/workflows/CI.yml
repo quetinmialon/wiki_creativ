@@ -46,5 +46,7 @@ jobs:
           name: security-audit-${{ github.run_id }}
           path: /tmp/security-audit.json
           retention-days: 30
+      - name: Run phpstan
+        run: vendor/bin/phpstan analyse --memory-limit=2G --configuration=phpstan.neon
 
 

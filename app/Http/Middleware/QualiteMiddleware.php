@@ -28,7 +28,7 @@ class QualiteMiddleware
         ];
         $roles = $user->roles()->pluck('name')->toArray();
 
-        if (!$user || !array_intersect($roles, $autorizedRoles)) {
+        if (!array_intersect($roles, $autorizedRoles)) {
             return redirect()->route('home')->with('error','Vous n\'avez pas les droits pour accéder à cette page.');
         }
         return $next($request);
