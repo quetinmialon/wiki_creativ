@@ -39,6 +39,12 @@ jobs:
       - name: Audit dependencies
         run: composer audit --ignore-severity=medium --format=json > /tmp/security-audit.json
 
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build assets with Vite
+        run: npm run build
+
       - name: display security audit
         uses: actions/upload-artifact@v4
         if: always()
