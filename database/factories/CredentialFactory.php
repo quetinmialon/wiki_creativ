@@ -23,7 +23,7 @@ class CredentialFactory extends Factory
     {
         return [
             'destination' => fake()->url(),
-            'username' => fake()->safeEmail,
+            'username' => fake()->safeEmail(),
             'password' => Crypt::encryptString('password123'),
             'user_id' => User::factory()->create()->id,
         ];

@@ -51,7 +51,13 @@ jobs:
 
       - name: Run rector
         run: vendor/bin/rector process --dry-run --ansi
-
+      - name: Clear caches
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan view:clear
+          php artisan route:clear
+          php artisan event:clear
       - name: Run migrations
         run: php artisan migrate --env=testing --force
         env:
