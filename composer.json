@@ -26,7 +26,8 @@
         "nunomaduro/collision": "^8.1",
         "pestphp/pest": "^3.7",
         "pestphp/pest-plugin-drift": "^3.0",
-        "phpstan/phpstan": "^2.1"
+        "phpstan/phpstan": "^2.1",
+        "rector/rector": "^2.0"
     },
     "autoload": {
         "psr-4": {

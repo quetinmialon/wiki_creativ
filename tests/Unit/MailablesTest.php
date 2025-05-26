@@ -5,13 +5,13 @@ use App\Mail\RejectionMail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 
-beforeAll(function () {
-    Route::middleware([])->group(function () {
+beforeAll(function (): void {
+    Route::middleware([])->group(function (): void {
         Route::get('/register/{token}', fn () => 'ok')->name('register.complete');
     });
 });
 
-test('builds RegistrationLinkMail with correct subject and link in rendered output', function () {
+test('builds RegistrationLinkMail with correct subject and link in rendered output', function (): void {
     $token = 'abcdef123456';
     $mailable = new RegistrationLinkMail($token);
     $mailable->build();
@@ -25,7 +25,7 @@ test('builds RegistrationLinkMail with correct subject and link in rendered outp
         ->toContain($expectedUrl);
 });
 
-test('builds RejectionMail with default reason and contains it in rendered output', function () {
+test('builds RejectionMail with default reason and contains it in rendered output', function (): void {
     $mailable = new RejectionMail();
     $mailable->build();
     expect($mailable->subject)
@@ -37,7 +37,7 @@ test('builds RejectionMail with default reason and contains it in rendered outpu
         ->toContain($mailable->reason);
 });
 
-test('builds RejectionMail with custom reason and contains it in rendered output', function () {
+test('builds RejectionMail with custom reason and contains it in rendered output', function (): void {
     $custom = 'Motif spécifique du rejet.';
     $mailable = new RejectionMail($custom);
     $mailable->build();

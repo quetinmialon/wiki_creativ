@@ -6,14 +6,14 @@ use Illuminate\Support\Facades\Hash;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Création d'un utilisateur avec mot de passe connu
     $this->user = User::factory()->create([
         'password' => Hash::make('oldpassword'),
     ]);
 });
 
-test('redirects guests from profile routes to login', function () {
+test('redirects guests from profile routes to login', function (): void {
     $this->get('/profile')->assertRedirect(route('login'))
         ->assertSessionHas('error', 'Vous devez être connecté pour accéder à cette page.');
 
@@ -37,7 +37,7 @@ test('redirects guests from profile routes to login', function () {
       ->assertSessionHas('error', 'Vous devez être connecté pour accéder à cette page.');
 });
 
-test('shows profile and edit forms to authenticated users', function () {
+test('shows profile and edit forms to authenticated users', function (): void {
     $this->actingAs($this->user);
 
     $this->get('/profile')
@@ -51,7 +51,7 @@ test('shows profile and edit forms to authenticated users', function () {
         ->assertViewHas('user', fn($u) => $u->id === $this->user->id);
 });
 
-test('returns 404 when authenticated user has no record', function () {
+test('returns 404 when authenticated user has no record', function (): void {
     $this->actingAs($this->user);
     $this->user->delete(); // simule absence en base
 
@@ -59,7 +59,7 @@ test('returns 404 when authenticated user has no record', function () {
     $this->get('/profile/edit')->assertNotFound();
 });
 
-test('updates profile with valid data', function () {
+test('updates profile with valid data', function (): void {
     $this->actingAs($this->user);
 
     $this->put('/profile', [
@@ -75,7 +75,7 @@ test('updates profile with valid data', function () {
     ]);
 });
 
-test('fails update profile on validation errors', function () {
+test('fails update profile on validation errors', function (): void {
     $this->actingAs($this->user);
 
     // nom manquant
@@ -98,7 +98,7 @@ test('fails update profile on validation errors', function () {
     ])->assertSessionHasErrors('email');
 });
 
-test('shows change password form', function () {
+test('shows change password form', function (): void {
     $this->actingAs($this->user);
 
     $this->get('/profile/change-password')
@@ -106,7 +106,7 @@ test('shows change password form', function () {
         ->assertViewIs('user.change-password');
 });
 
-test('fails change password on validation', function () {
+test('fails change password on validation', function (): void {
     $this->actingAs($this->user);
 
     // champs manquants
@@ -120,7 +120,7 @@ test('fails change password on validation', function () {
     ])->assertSessionHasErrors('new_password');
 });
 
-test('fails change password when current is incorrect', function () {
+test('fails change password when current is incorrect', function (): void {
     $this->actingAs($this->user);
 
     $this->post('/profile/change-password', [
@@ -132,7 +132,7 @@ test('fails change password when current is incorrect', function () {
     ->assertSessionHas('error', 'Mot de passe actuel incorrect.');
 });
 
-test('changes password successfully', function () {
+test('changes password successfully', function (): void {
     $this->actingAs($this->user);
 
     $this->post('/profile/change-password', [

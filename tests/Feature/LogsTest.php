@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Event;
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 uses(\Illuminate\Foundation\Testing\WithFaker::class);
 
-test('add log dispatches event', function () {
+test('add log dispatches event', function (): void {
     Event::fake();
 
     $user = User::factory()->create();
@@ -30,7 +30,7 @@ test('add log dispatches event', function () {
     });
 });
 
-test('every logs displays all logs', function () {
+test('every logs displays all logs', function (): void {
     $user1 = User::factory()->create();
     $user2 = User::factory()->create();
 
@@ -53,7 +53,7 @@ test('every logs displays all logs', function () {
     $response->assertViewHas('logs', fn($logs) => $logs->contains($log1) && $logs->contains($log2));
 });
 
-test('last opened documents returns last five logs for user', function () {
+test('last opened documents returns last five logs for user', function (): void {
     $user = User::factory()->create();
     $user = User::find($user->id);
     // Ensure $user is an instance of User

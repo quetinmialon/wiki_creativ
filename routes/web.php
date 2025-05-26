@@ -22,7 +22,7 @@ use App\Http\Controllers\SupervisorController;
 //----------------------------------------------------------------/
 // --------------------------Guest routes -----------------------/
 //----------------------------------------------------------------/
-Route::middleware(GuestMiddleware::class)->group(function(){
+Route::middleware(GuestMiddleware::class)->group(function(): void{
     Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
     Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
     Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
@@ -38,7 +38,7 @@ Route::middleware(GuestMiddleware::class)->group(function(){
 //----------------------------------------------------------------/
 // --------------------------Authentified routes -----------------/
 //----------------------------------------------------------------/
-Route::middleware(AuthMiddleware::class)->group(function(){
+Route::middleware(AuthMiddleware::class)->group(function(): void{
     Route::get(uri: '/', action: function () {return view(view: 'welcome');})->name('home');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     //credentials mmanager routes
@@ -49,7 +49,7 @@ Route::middleware(AuthMiddleware::class)->group(function(){
     Route::put('/credentials/{id}', [CredentialController::class, 'update'])->name('credentials.update');
     Route::delete('/credentials/{id}', [CredentialController::class, 'destroy'])->name('credentials.destroy');
     // categories routes
-    Route::prefix('myCategories')->name('myCategories.')->group(function () {
+    Route::prefix('myCategories')->name('myCategories.')->group(function (): void {
         Route::get('/myCategories', [CategoryController::class,'getUserCategories'])->name('myCategories');
         Route::get('/createCategory', [CategoryController::class,'createCategoryOnUserRoles'])->name('create');
         Route::post('/createCategory', [CategoryController::class,'storeCategoryOnUserRoles'])->name('store');
@@ -61,7 +61,7 @@ Route::middleware(AuthMiddleware::class)->group(function(){
     //permissions routes
     Route::get('/permissions/request/{documentId}', [PermissionController::class, 'requestForm'])->name('permissions.requestForm');
     Route::post('/permissions/create', [PermissionController::class, 'createRequest'])->name('permissions.create');
-    Route::prefix('documents')->name('documents.')->group(function () {
+    Route::prefix('documents')->name('documents.')->group(function (): void {
         Route::get('/', [DocumentController::class, 'index'])->name('index'); // Liste des document
         Route::post('/', [DocumentController::class,'store'])->name('store'); // Création d'un document
         Route::get('/byCategory/{id}/', [DocumentController::class, 'byCategory'])->name('byCategory'); // Liste des documents par catégorie
@@ -72,7 +72,7 @@ Route::middleware(AuthMiddleware::class)->group(function(){
         Route::get('/allDocumentsInfo', [DocumentController::class, 'allDocumentsInfo'])->name('allDocumentsInfo');
         Route::post('/searchDocuments', [DocumentController::class, 'search'])->name('searchDocuments');
     });
-    Route::prefix('profile')->name('profile.')->group(function () {
+    Route::prefix('profile')->name('profile.')->group(function (): void {
         Route::get('/', [UserController::class, 'showProfile'])->name('show');
         Route::get('/edit', [UserController::class, 'editProfile'])->name('edit');
         Route::put('/', [UserController::class, 'updateProfile'])->name('update');
@@ -85,7 +85,7 @@ Route::middleware(AuthMiddleware::class)->group(function(){
 
 // -----------------------------------------admin routes ----------------------------------------/
 
-Route::middleware(AdminMiddleware::class)->group(function () {
+Route::middleware(AdminMiddleware::class)->group(function (): void {
     //INDEX AND USER REGISTRATION
     Route::get('/admin', [AdminController::class, 'index'])->name('admin');
     Route::get('/admin/register', [SubscriptionController::class,'createUserInvitationForm'])->name('admin.register');
@@ -131,7 +131,7 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/requests', [AdminController::class, 'UserRequests'])->name('admin.users-requests');
 });
 //supervisor routes
-Route::middleware(SupervisorMiddleware::class)->name('supervisor.')->group(function () {
+Route::middleware(SupervisorMiddleware::class)->name('supervisor.')->group(function (): void {
     Route::get('/supervisor', [SupervisorController::class, 'index'])->name('index');
     Route::post('/supervisor/promote/{userId}', [SupervisorController::class, 'promoteUserIntoSuperAdmin'])->name('promote');
     Route::post('/supervisor/revoke/{userId}', [SupervisorController::class, 'revokeUser'])->name('revoke');
@@ -144,7 +144,7 @@ Route::middleware(SupervisorMiddleware::class)->name('supervisor.')->group(funct
     Route::post('/supervisor/changePassword', [SupervisorController::class, 'changePassword'])->name('updatePassword');
 });
 //qualite routes
-Route::middleware(QualiteMiddleware::class)->name('qualite.')->group(function () {
+Route::middleware(QualiteMiddleware::class)->name('qualite.')->group(function (): void {
     Route::get('/qualite', [QualiteController::class, 'index'])->name('index');
     Route::get('/qualite/{id}/edit', [QualiteController::class, 'edit'])->name('edit');
     Route::put('/qualite/{id}', [QualiteController::class, 'update'])->name('update');

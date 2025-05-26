@@ -36,7 +36,7 @@ class AuthService
 
     public function resetPassword(array $credentials)
     {
-        return Password::reset($credentials, function ($user, $password) {
+        return Password::reset($credentials, function ($user, $password): void {
             $user->password = Hash::make($password);
             $user->save();
         });

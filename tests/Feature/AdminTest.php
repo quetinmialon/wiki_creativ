@@ -6,12 +6,12 @@ use App\Models\user\UserRequest;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-test('non authenticated user cannot access admin routes', function () {
+test('non authenticated user cannot access admin routes', function (): void {
     $response = $this->get('/admin');
     $response->assertStatus(401);
 });
 
-test('non superadmin user forbidden from admin', function () {
+test('non superadmin user forbidden from admin', function (): void {
     $user = User::factory()->create();
     $user->roles()->attach(1);
 
@@ -19,7 +19,7 @@ test('non superadmin user forbidden from admin', function () {
     $response->assertStatus(403);
 });
 
-test('superadmin can view admin index', function () {
+test('superadmin can view admin index', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -28,7 +28,7 @@ test('superadmin can view admin index', function () {
              ->assertViewIs('admin.admin_index');
 });
 
-test('user list displays only non supervisor users', function () {
+test('user list displays only non supervisor users', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -46,7 +46,7 @@ test('user list displays only non supervisor users', function () {
              });
 });
 
-test('edit users role form shows user and roles', function () {
+test('edit users role form shows user and roles', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -59,7 +59,7 @@ test('edit users role form shows user and roles', function () {
              ->assertViewHasAll(['user', 'roles']);
 });
 
-test('revoke nonexistent user redirects with error', function () {
+test('revoke nonexistent user redirects with error', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -68,7 +68,7 @@ test('revoke nonexistent user redirects with error', function () {
              ->assertSessionHas('error', "l'utilisateur n'exite pas en base de donnée");
 });
 
-test('cannot revoke superadmin user', function () {
+test('cannot revoke superadmin user', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -80,7 +80,7 @@ test('cannot revoke superadmin user', function () {
              ->assertSessionHas('error', "l'utilisateur que vous souhaitez supprimer est un superadmin, vous ne pouvez pas le supprimer");
 });
 
-test('cannot revoke supervisor user', function () {
+test('cannot revoke supervisor user', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -92,7 +92,7 @@ test('cannot revoke supervisor user', function () {
              ->assertSessionHas('error', "l'utilisateur que vous tentez de supprimer n'existe pas");
 });
 
-test('can revoke regular user', function () {
+test('can revoke regular user', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -105,7 +105,7 @@ test('can revoke regular user', function () {
     expect(User::find($user->id))->toBeNull();
 });
 
-test('update user role validation and errors', function () {
+test('update user role validation and errors', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -120,7 +120,7 @@ test('update user role validation and errors', function () {
     $response->assertSessionHasErrors();
 });
 
-test('cannot update superadmin role when not current user', function () {
+test('cannot update superadmin role when not current user', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -134,7 +134,7 @@ test('cannot update superadmin role when not current user', function () {
     $response->assertSessionHasErrors(['roles']);
 });
 
-test('cannot update supervisor user roles', function () {
+test('cannot update supervisor user roles', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -148,7 +148,7 @@ test('cannot update supervisor user roles', function () {
     $response->assertSessionHasErrors(['roles']);
 });
 
-test('can update user roles successfully', function () {
+test('can update user roles successfully', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -164,7 +164,7 @@ test('can update user roles successfully', function () {
     expect($user->fresh()->roles->contains('id', 4))->toBeTrue();
 });
 
-test('role list displays all roles', function () {
+test('role list displays all roles', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -176,7 +176,7 @@ test('role list displays all roles', function () {
              });
 });
 
-test('user requests view shows pending requests and roles', function () {
+test('user requests view shows pending requests and roles', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -188,7 +188,7 @@ test('user requests view shows pending requests and roles', function () {
              ->assertViewHasAll(['userRequests', 'roles']);
 });
 
-test('search user redirects when no results', function () {
+test('search user redirects when no results', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 
@@ -197,7 +197,7 @@ test('search user redirects when no results', function () {
              ->assertSessionHas('error', 'Aucun résultat trouvé');
 });
 
-test('search user displays results when found', function () {
+test('search user displays results when found', function (): void {
     $admin = User::factory()->create();
     $admin->roles()->attach(2);
 

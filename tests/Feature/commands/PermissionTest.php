@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Artisan;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-test('deletes denied permissions older than one month', function () {
+test('deletes denied permissions older than one month', function (): void {
     $oldDenied = Permission::factory()->create([
         'status' => 'denied',
         'created_at' => now()->subMonths(2),
@@ -16,7 +16,7 @@ test('deletes denied permissions older than one month', function () {
     expect(Permission::find($oldDenied->id))->toBeNull();
 });
 
-test('deletes expired permissions older than one month', function () {
+test('deletes expired permissions older than one month', function (): void {
     $oldExpired = Permission::factory()->create([
         'status' => 'expired',
         'created_at' => now()->subMonths(2),
@@ -27,7 +27,7 @@ test('deletes expired permissions older than one month', function () {
     expect(Permission::find($oldExpired->id))->toBeNull();
 });
 
-test('does not delete denied permissions created less than a month ago', function () {
+test('does not delete denied permissions created less than a month ago', function (): void {
     $recentDenied = Permission::factory()->create([
         'status' => 'denied',
         'created_at' => now()->subDays(10),
@@ -38,7 +38,7 @@ test('does not delete denied permissions created less than a month ago', functio
     expect(Permission::find($recentDenied->id))->not()->toBeNull();
 });
 
-test('does not delete approved permissions regardless of age', function () {
+test('does not delete approved permissions regardless of age', function (): void {
     $oldApproved = Permission::factory()->create([
         'status' => 'approved',
         'created_at' => now()->subMonths(3),
@@ -48,7 +48,7 @@ test('does not delete approved permissions regardless of age', function () {
 
     expect(Permission::find($oldApproved->id))->not()->toBeNull();
 });
-test('does not delete pending permissions regardless of age', function () {
+test('does not delete pending permissions regardless of age', function (): void {
     $oldPending = Permission::factory()->create([
         'status' => 'pending',
         'created_at' => now()->subMonths(3),
@@ -59,13 +59,13 @@ test('does not delete pending permissions regardless of age', function () {
     expect(Permission::find($oldPending->id))->not()->toBeNull();
 });
 
-test('displays a success message when finished', function () {
+test('displays a success message when finished', function (): void {
     Artisan::call('temp:deleting-expired-permissions');
 
     expect(Artisan::output())->toContain('Expired and denied permissions have been deleted successfully.');
 });
 
-test('updates status to expired for approved permissions wtesth expired_at in the past', function () {
+test('updates status to expired for approved permissions wtesth expired_at in the past', function (): void {
     $approved = Permission::factory()->create([
         'status' => 'approved',
         'expired_at' => now()->subDays(1),
@@ -76,7 +76,7 @@ test('updates status to expired for approved permissions wtesth expired_at in th
     expect(Permission::find($approved->id)->status)->toBe('expired');
 });
 
-test('does not change status of approved permissions wtesth expired_at in the future', function () {
+test('does not change status of approved permissions wtesth expired_at in the future', function (): void {
     $approvedFuture = Permission::factory()->create([
         'status' => 'approved',
         'expired_at' => now()->addDays(5),
@@ -87,7 +87,7 @@ test('does not change status of approved permissions wtesth expired_at in the fu
     expect(Permission::find($approvedFuture->id)->status)->toBe('approved');
 });
 
-test('does not change status of permissions that are not approved, regardless of expired_at', function () {
+test('does not change status of permissions that are not approved, regardless of expired_at', function (): void {
     $denied = Permission::factory()->create([
         'status' => 'denied',
         'expired_at' => now()->subDays(10),
@@ -104,7 +104,7 @@ test('does not change status of permissions that are not approved, regardless of
     expect(Permission::find($pending->id)->status)->toBe('pending');
 });
 
-test('displays a success message after updating permissions', function () {
+test('displays a success message after updating permissions', function (): void {
     Artisan::call('temp:update-expired-permissions');
 
     expect(Artisan::output())->toContain('Expired permissions have been updated successfully.');

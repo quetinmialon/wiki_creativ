@@ -5,7 +5,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Category;
 
-test('Document cant be seen by user if is not confirmed by qualite members', function () {
+test('Document cant be seen by user if is not confirmed by qualite members', function (): void {
     //arrange
     $user = User::factory()->create();
     $role = Role::factory() ->create([
@@ -26,7 +26,7 @@ test('Document cant be seen by user if is not confirmed by qualite members', fun
     $response->assertRedirect('documents');
 });
 
-test('document can be seen if qualité members validate it',function (){
+test('document can be seen if qualité members validate it',function (): void{
     //arrange
     $user = User::factory()->create();
     $user = User::find($user->id); // Ensure $user is an instance of User
@@ -48,7 +48,7 @@ test('document can be seen if qualité members validate it',function (){
     $response->assertViewHas('document', $document);
 });
 
-test('qualite member can set formated_name on document', function(){
+test('qualite member can set formated_name on document', function(): void{
     //arrange
     $user = User::factory()->create();
     $role = Role::factory()->create([
@@ -79,7 +79,7 @@ test('qualite member can set formated_name on document', function(){
     ]);
 });
 
-test('basic members cant add formated_name to document via qualite pages', function(){
+test('basic members cant add formated_name to document via qualite pages', function(): void{
     //arrange
     $user = User::factory()->create();
     $role = Role::factory()->create(
@@ -110,7 +110,7 @@ test('basic members cant add formated_name to document via qualite pages', funct
     ]);
 });
 
-test('qualite members can remove formated_name from document', function () {
+test('qualite members can remove formated_name from document', function (): void {
     //arrange
     $user = User::factory()->create();
     $role = Role::factory()->create([
@@ -141,7 +141,7 @@ test('qualite members can remove formated_name from document', function () {
     ]);
 });
 
-test('basic members cant remove formated_name from document', function(){
+test('basic members cant remove formated_name from document', function(): void{
     //arrange
     $user = User::factory()->create();
     $role = Role::factory()->create(
@@ -172,7 +172,7 @@ test('basic members cant remove formated_name from document', function(){
     ]);
 });
 
-test('qualite members can access not formated document list', function (){
+test('qualite members can access not formated document list', function (): void{
     $user = User::factory()->create();
     $role = Role::factory()->create([
         "name" => "qualité"
@@ -187,7 +187,7 @@ test('qualite members can access not formated document list', function (){
     $response->assertViewHas('document');
 });
 
-test('basic members cant access not formated document list', function(){
+test('basic members cant access not formated document list', function(): void{
     $user = User::factory()->create();
     $role = Role::factory()->create([
         "name" => "pédagogie"
@@ -201,12 +201,12 @@ test('basic members cant access not formated document list', function(){
     $response->assertRedirect(route('home'));
     $response->assertSessionHas('error');
 });
-test('redirects guests to login on index', function () {
+test('redirects guests to login on index', function (): void {
     $this->get(route('qualite.index'))
          ->assertRedirect(route('login'))
          ->assertSessionHas('error', 'Connectez vous pour acceder à cette page');
 });
-test('edit returns the edit view with document and roles', function () {
+test('edit returns the edit view with document and roles', function (): void {
     $user = User::factory()->create();
     $role = Role::where('name','qualité')->firstOrFail();
     $user->roles()->attach($role);
@@ -222,7 +222,7 @@ test('edit returns the edit view with document and roles', function () {
         ->assertViewHasAll(['document', 'roles']);
 });
 
-test('edit redirects if document does not exist', function () {
+test('edit redirects if document does not exist', function (): void {
     $user = User::factory()->create();
     $role = Role::where('name','qualité')->firstOrFail();
     $user->roles()->attach($role);
@@ -233,7 +233,7 @@ test('edit redirects if document does not exist', function () {
         ->assertSessionHas('error', 'Le document n\'existe pas en base de donnée');
 });
 
-test('update fails validation with missing required fields', function () {
+test('update fails validation with missing required fields', function (): void {
     $user = User::factory()->create();
     $role = Role::where('name','qualité')->firstOrFail();
     $user->roles()->attach($role);
@@ -243,7 +243,7 @@ test('update fails validation with missing required fields', function () {
         ->assertSessionHasErrors(['name', 'id', 'content']);
 });
 
-test('update fails if categories_id is empty', function () {
+test('update fails if categories_id is empty', function (): void {
     $user = User::factory()->create();
     $role = Role::where('name','qualité')->firstOrFail();
     $user->roles()->attach($role);
@@ -261,7 +261,7 @@ test('update fails if categories_id is empty', function () {
         ->assertSessionHasErrors('categories_id');
 });
 
-test('update redirects if document does not exist', function () {
+test('update redirects if document does not exist', function (): void {
     $user = User::factory()->create();
     $role = Role::where('name','qualité')->firstOrFail();
     $user->roles()->attach($role);
@@ -277,7 +277,7 @@ test('update redirects if document does not exist', function () {
         ->assertSessionHas('error', 'Le document n\'existe pas en base de donnée');
 });
 
-test('update succeeds with valid data', function () {
+test('update succeeds with valid data', function (): void {
     $user = User::factory()->create();
     $role = Role::where('name','qualité')->firstOrFail();
     $user->roles()->attach($role);
@@ -304,7 +304,7 @@ test('update succeeds with valid data', function () {
     ]);
 });
 
-test('documentList view returns list of normed documents', function () {
+test('documentList view returns list of normed documents', function (): void {
     $user = User::factory()->create();
     $role = Role::where('name','qualité')->firstOrFail();
     $user->roles()->attach($role);
@@ -318,7 +318,7 @@ test('documentList view returns list of normed documents', function () {
         ->assertViewHas('document');
 });
 
-test('qualité pages redirect if not auth', function()
+test('qualité pages redirect if not auth', function(): void
 {
     $this->get(route('qualite.index'))
         ->assertRedirect(route('login'));

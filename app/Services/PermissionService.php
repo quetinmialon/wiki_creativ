@@ -72,10 +72,10 @@ class PermissionService
     public function searchPermissions($query)
     {
         return Permission::with(['document', 'users'])
-            ->whereHas('document', function ($q) use ($query) {
+            ->whereHas('document', function ($q) use ($query): void {
                 $q->where('name', 'LIKE', "%{$query}%");
             })
-            ->orWhereHas('author', function ($q) use ($query) {
+            ->orWhereHas('author', function ($q) use ($query): void {
                 $q->where('name', 'LIKE', "%{$query}%");
             })
             ->orWhere('comment', 'LIKE', "%{$query}%")

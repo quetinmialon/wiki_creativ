@@ -3,7 +3,7 @@ use App\Services\DocumentService;
 use App\Models\Category;
 use App\Models\Document;
 
-test('Convert html to markdown actualy convert html string into markdown string', function () {
+test('Convert html to markdown actualy convert html string into markdown string', function (): void {
     //arrange
     $htmlText = '<h1>test balise html</h1>';
     $expectedText = '# test balise html';
@@ -16,7 +16,7 @@ test('Convert html to markdown actualy convert html string into markdown string'
     expect($convertedText)->toContain($expectedText);
 });
 
-test('Convert mardown to html actualy convert mardown string into html string', function (){
+test('Convert mardown to html actualy convert mardown string into html string', function (): void{
     //arrange
     $mardownText = '# test balise html';
     $htmlExpectedText = '<h1>test balise html</h1>';
@@ -29,7 +29,7 @@ test('Convert mardown to html actualy convert mardown string into html string', 
     expect($convertedText)->toContain($htmlExpectedText);
 });
 
-test('converts markdown to HTML and strips dangerous HTML', function () {
+test('converts markdown to HTML and strips dangerous HTML', function (): void {
     //arrange
     $service = new DocumentService();
     $markdownWithScript = "Paragraphe\n\n<script>alert('hack');</script>";

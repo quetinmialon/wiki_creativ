@@ -9,7 +9,7 @@ class UserService{
     public function getAllUsersWithRoles($perPage = 15)
     {
         $users = User::with('roles')
-            ->whereDoesntHave('roles', function ($query) {
+            ->whereDoesntHave('roles', function ($query): void {
                 $query->where('name', 'supervisor');
             })
             ->paginate($perPage);

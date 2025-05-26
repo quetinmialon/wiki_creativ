@@ -6,7 +6,7 @@ use App\Models\User;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-test('create role', function () {
+test('create role', function (): void {
     $data = [
         'name' => 'test',
     ];
@@ -29,7 +29,7 @@ test('create role', function () {
     $response->assertRedirect('/admin/roles');
 });
 
-test('create role also create admin role', function () {
+test('create role also create admin role', function (): void {
     $data = [
         'name' => 'test',
     ];
@@ -51,7 +51,7 @@ test('create role also create admin role', function () {
     ]);
 });
 
-test('update role', function () {
+test('update role', function (): void {
     //creating a role
     $role = Role::create(['name' => 'User']);
 
@@ -74,7 +74,7 @@ test('update role', function () {
     $response->assertRedirect('/admin/roles');
 });
 
-test('update role also update the admin associated one', function () {
+test('update role also update the admin associated one', function (): void {
     $data = [
         'name' => 'test',
     ];
@@ -117,7 +117,7 @@ test('update role also update the admin associated one', function () {
     ]);
 });
 
-test('delete role', function () {
+test('delete role', function (): void {
     // Create new role
     $role = Role::create(['name' => 'Editor']);
 
@@ -137,7 +137,7 @@ test('delete role', function () {
     $response->assertRedirect('/admin/roles');
 });
 
-test('list roles displays roles', function () {
+test('list roles displays roles', function (): void {
     // Creating some roles
     Role::create(['name' => 'test']);
     Role::create(['name' => 'User']);
@@ -156,7 +156,7 @@ test('list roles displays roles', function () {
     $response->assertSee('User');
 });
 
-test('roles list doesnt display admin roles', function () {
+test('roles list doesnt display admin roles', function (): void {
     // Creating some roles
     Role::create(['name' => 'test']);
     Role::create(['name' => 'Admin test']);
@@ -175,7 +175,7 @@ test('roles list doesnt display admin roles', function () {
     $response->assertDontSee('Admin test');
 });
 
-test('admin and default roles can not be deleted', function () {
+test('admin and default roles can not be deleted', function (): void {
     // Creating admin and default roles
     $role_admin = Role::create(['name' => 'superadmin']);
     $role_default = Role::create(['name' => 'default']);
@@ -207,7 +207,7 @@ test('admin and default roles can not be deleted', function () {
     $response_default->assertSessionHas('error');
 });
 
-test('cores roles cant be updated', function () {
+test('cores roles cant be updated', function (): void {
     // Creating admin and default roles
     $role_admin = Role::create(['name' => 'superadmin']);
 

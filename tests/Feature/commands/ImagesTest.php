@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Artisan;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->imageService = new ImageService();
     Storage::fake('public');
 });
 
-test('it gets images from storage', function () {
+test('it gets images from storage', function (): void {
     //arrange
     Storage::disk('public')->put('documents/images/test1.jpg', 'fake content');
     Storage::disk('public')->put('documents/images/test2.png', 'fake content');
@@ -26,7 +26,7 @@ test('it gets images from storage', function () {
     $this->assertStringContainsString('/storage/documents/images/test1.jpg', $images[0]);
 });
 
-test('it detects used images in documents', function () {
+test('it detects used images in documents', function (): void {
     $html = '<p>Image here: <img src="/storage/documents/images/test1.jpg" /></p>';
     Document::factory()->create(['content' => $html]);
 
@@ -35,7 +35,7 @@ test('it detects used images in documents', function () {
     expect($usedImages)->toContain('/storage/documents/images/test1.jpg');
 });
 
-test('it deletes unused images', function () {
+test('it deletes unused images', function (): void {
     //arrange
     Storage::disk('public')->put('documents/images/test1.jpg', 'fake content');
     Storage::disk('public')->put('documents/images/test2.jpg', 'fake content');
@@ -51,7 +51,7 @@ test('it deletes unused images', function () {
     Storage::disk('public')->assertMissing('documents/images/test2.jpg');
 });
 
-test('it does not delete used images', function () {
+test('it does not delete used images', function (): void {
     //arrange
     Storage::disk('public')->put('documents/images/used.jpg', 'fake content');
     Document::factory()->create([
@@ -65,7 +65,7 @@ test('it does not delete used images', function () {
     Storage::disk('public')->assertExists('documents/images/used.jpg');
 });
 
-test('command outputs start and end messages', function () {
+test('command outputs start and end messages', function (): void {
     // Arrange
     Storage::disk('public')->put('documents/images/unused.png', 'fake content');
 
@@ -80,7 +80,7 @@ test('command outputs start and end messages', function () {
     $this->assertStringContainsString('Nettoyage terminé !', $display);
 });
 
-test('command deletes unused images', function () {
+test('command deletes unused images', function (): void {
     // Arrange
     Storage::disk('public')->put('documents/images/unused.png', 'fake content');
     Storage::disk('public')->put('documents/images/used.png', 'fake content');

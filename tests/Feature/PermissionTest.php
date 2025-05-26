@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-test('displays permissions list', function () {
+test('displays permissions list', function (): void {
     $user = User::factory()->create();
     $user->roles()->attach(Role::factory()->create(['name' => 'superadmin']));
     $user = User::find($user->id);
@@ -20,7 +20,7 @@ test('displays permissions list', function () {
         ->assertViewIs('permission.permission-list');
 });
 
-test('displays pending permissions', function () {
+test('displays pending permissions', function (): void {
     $user = User::factory()->create();
     $user->roles()->attach(Role::factory()->create(['name' => 'superadmin']));
     $user = User::find($user->id);
@@ -43,7 +43,7 @@ test('displays pending permissions', function () {
         ->assertViewIs('permission.pending-permission-list');
 });
 
-test('creates a new permission request', function () {
+test('creates a new permission request', function (): void {
     $user = User::factory()->create();
     $user = User::find($user->id);
     // Ensure $user is an instance of User
@@ -64,7 +64,7 @@ test('creates a new permission request', function () {
     ]);
 });
 
-test('handles a permission request', function () {
+test('handles a permission request', function (): void {
     $user = User::factory()->create();
     $user->roles()->attach(Role::factory()->create(['name' => 'superadmin']));
     $user = User::find($user->id);
@@ -89,7 +89,7 @@ test('handles a permission request', function () {
     ]);
 });
 
-test('deletes a permission request', function () {
+test('deletes a permission request', function (): void {
     $user = User::factory()->create();
     $user->roles()->attach(Role::factory()->create(['name' => 'superadmin']));
     $user = User::find($user->id);

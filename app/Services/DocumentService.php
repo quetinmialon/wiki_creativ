@@ -54,7 +54,7 @@ class DocumentService
         }
         $roleIds = $user->roles->pluck('id');
         return Category::whereIn('role_id', $roleIds)
-                       ->with(['documents' => function ($query) use ($limit) {
+                       ->with(['documents' => function ($query) use ($limit): void {
                             $query->where('formated_name','!=',null)->limit($limit)->orderBy('documents.created_at', 'desc');
                         }])
                        ->distinct()
@@ -63,14 +63,14 @@ class DocumentService
 
     public function getEveryDocuments($limit = 3)
     {
-        return Category::with(['documents' => function ($query) use ($limit) {
+        return Category::with(['documents' => function ($query) use ($limit): void {
             $query->where('formated_name', '!=', null)->limit($limit)->orderBy('formated_name', 'asc');
         }])->orderBy('name', 'asc')->get();
     }
 
     public function getEveryDocumentswithoutPagination()
     {
-        return Category::with(['documents' => function ($query) {
+        return Category::with(['documents' => function ($query): void {
             $query->where('formated_name', '!=', null)->orderBy('formated_name', 'asc');
         }])->orderBy('name', 'asc')->get();
     }
@@ -94,7 +94,7 @@ class DocumentService
 
     public function getDocumentsByCategory($categoryId, $perPage = 10)
     {
-        return Document::whereHas('categories', function ($query) use ($categoryId) {
+        return Document::whereHas('categories', function ($query) use ($categoryId): void {
                 $query->where('formated_name', '!=', null)->where('categories.id', $categoryId);
          })
          ->orderBy('formated_name', 'asc')->paginate($perPage);
@@ -127,10 +127,10 @@ class DocumentService
         return Document::where('name', 'LIKE', "%{$query}%")
                        ->orWhere('content', 'LIKE', "%{$query}%")
                        ->orWhere('excerpt', 'LIKE', "%{$query}%")
-                       ->orWhereHas('author', function ($q) use ($query) {
+                       ->orWhereHas('author', function ($q) use ($query): void {
                            $q->where('name', 'LIKE', "%{$query}%");
                        })
-                       ->orWhereHas('categories', function ($q) use ($query) {
+                       ->orWhereHas('categories', function ($q) use ($query): void {
                            $q->where('name', 'LIKE', "%{$query}%");
                        })
                        ->orWhere('formated_name', 'LIKE', "%{$query}%")

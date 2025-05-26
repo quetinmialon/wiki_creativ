@@ -6,7 +6,7 @@ use App\Models\User;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-test('category index displays categories when user is superadmin', function(){
+test('category index displays categories when user is superadmin', function(): void{
     //arrange
     $user = User::factory()->create();
     $role = Role::factory()->create([
@@ -24,7 +24,7 @@ test('category index displays categories when user is superadmin', function(){
         $response->assertSee($category->name);
     }
 });
-test('category index is not available on user that are not superadmin',function(){
+test('category index is not available on user that are not superadmin',function(): void{
     //assert
     $user = User::factory()->create();
     $role = Role::factory()->create([
@@ -40,7 +40,7 @@ test('category index is not available on user that are not superadmin',function(
 
 });
 
-test('create categorie only display if user is superadmin', function(){
+test('create categorie only display if user is superadmin', function(): void{
     //assert
     $user = User::factory()->create();
     $admin = User::factory()->create();
@@ -62,7 +62,7 @@ test('create categorie only display if user is superadmin', function(){
     $responseAdmin->assertStatus(200);
 });
 
-test('edit category display a form with the category only if user is superadmin', function(){
+test('edit category display a form with the category only if user is superadmin', function(): void{
     //arrange
     $user = User::factory()->create();
     $admin = User::factory()->create();
@@ -90,7 +90,7 @@ test('edit category display a form with the category only if user is superadmin'
     $responseNormalUser->assertStatus(403);
 });
 
-test('superadmin can create category',function(){
+test('superadmin can create category',function(): void{
     //arrange
     $user = User::factory()->create();
     $role = Role::factory()->create([
@@ -112,7 +112,7 @@ test('superadmin can create category',function(){
     ]);
 });
 
-test('create category while user is superadmin', function () {
+test('create category while user is superadmin', function (): void {
     $user = User::factory()->create();
     $role = Role::factory()->create([
         "name"=> "superadmin"
@@ -139,7 +139,7 @@ test('create category while user is superadmin', function () {
     ]);
 });
 
-test('update category when user is superadmin', function () {
+test('update category when user is superadmin', function (): void {
     $user = User::factory()->create();
     $role = Role::factory()->create([
         "name"=> "superadmin"
@@ -170,7 +170,7 @@ test('update category when user is superadmin', function () {
     ]);
 });
 
-test('delete category when user is superadmin', function () {
+test('delete category when user is superadmin', function (): void {
     $user = User::factory()->create();
     $role = Role::factory()->create([
         "name"=> "superadmin"
@@ -195,7 +195,7 @@ test('delete category when user is superadmin', function () {
     expect(Category::find($category->id))->toBeNull();
 });
 
-test('create category on regular role', function () {
+test('create category on regular role', function (): void {
     $user = User::factory()->create();
     $role = Role::factory()->create([
         "name"=> "pédagogie"
@@ -218,7 +218,7 @@ test('create category on regular role', function () {
     expect($category->name)->toEqual('Test Category');
 });
 
-test('only admin can update categories', function () {
+test('only admin can update categories', function (): void {
     $user = User::factory()->create();
     $role = Role::factory()->create([
         "name"=> "pédagogie"
@@ -268,7 +268,7 @@ test('only admin can update categories', function () {
         'role_id' => $AdminRole->id,
     ]);
 });
-test('only admin can delete categories', function () {
+test('only admin can delete categories', function (): void {
     $user = User::factory()->create();
     $role = Role::factory()->create([
         "name"=> "pédagogie"
@@ -308,7 +308,7 @@ test('only admin can delete categories', function () {
     expect(Category::find($category->id))->toBeNull();
 });
 
-test('createCategoryOnUserRoles redirects guest to login', function () {
+test('createCategoryOnUserRoles redirects guest to login', function (): void {
     $response = $this->get(route('myCategories.create'));
     $response->assertRedirect(route('login'));
 });

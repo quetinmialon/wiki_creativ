@@ -9,7 +9,7 @@ use App\Models\User;
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 uses(\Illuminate\Foundation\Testing\WithFaker::class);
 
-test('index displays categories and documents', function () {
+test('index displays categories and documents', function (): void {
     // Arrange
     $user = User::create([
         "name"=> "John Doe",
@@ -45,7 +45,7 @@ test('index displays categories and documents', function () {
     });
 });
 
-test('create displays form with roles', function () {
+test('create displays form with roles', function (): void {
     // Arrange
     $user = User::create([
         "name"=> "John Doe",
@@ -63,7 +63,7 @@ test('create displays form with roles', function () {
     $response->assertViewHas('roles');
 });
 
-test('store creates new document', function () {
+test('store creates new document', function (): void {
     // Arrange
     $user = User::create([
         "name"=> "John Doe",
@@ -93,7 +93,7 @@ test('store creates new document', function () {
     ]);
 });
 
-test('show displays document when user is author', function () {
+test('show displays document when user is author', function (): void {
     $user = User::create([
         "name"=> "John Doe",
         'email' => 'john.doe@example.com',
@@ -122,7 +122,7 @@ test('show displays document when user is author', function () {
     $response->assertViewHas('document', $document);
 });
 
-test('show displays document when user got proper role', function () {
+test('show displays document when user got proper role', function (): void {
     $user = User::create([
         "name"=> "John Doe",
         'email' => 'john.doe@example.com',
@@ -157,7 +157,7 @@ test('show displays document when user got proper role', function () {
     $response->assertStatus(200);
     $response->assertViewHas('document', $document);
 });
-test('document can be see with a permission', function () {
+test('document can be see with a permission', function (): void {
     //arrange
     $user = User::factory()->create();
     $user = User::find($user->id);
@@ -194,7 +194,7 @@ test('document can be see with a permission', function () {
     $response->assertViewHas('document', $document);
 });
 
-test('document can be updated by superadmin', function () {
+test('document can be updated by superadmin', function (): void {
     $user = User::factory()->create();
     $user = User::find($user->id);
     // Ensure $user is an instance of User
@@ -218,7 +218,7 @@ test('document can be updated by superadmin', function () {
     $response->assertRedirect(route('documents.show', $document->id));
     $this->assertDatabaseHas('documents', ['name' => 'Updated Document']);
 });
-test('document can be soft deleted by superadmin', function () {
+test('document can be soft deleted by superadmin', function (): void {
     $user = User::factory()->create();
     $user = User::find($user->id);
     // Ensure $user is an instance of User
@@ -237,7 +237,7 @@ test('document can be soft deleted by superadmin', function () {
     $response->assertRedirect(route('documents.index'));
     $this->assertSoftDeleted('documents', ['name' => 'Document 1']);
 });
-test('admin roles can update document', function () {
+test('admin roles can update document', function (): void {
     $user = User::factory()->create();
     $user = User::find($user->id);
     // Ensure $user is an instance of User
@@ -286,7 +286,7 @@ test('admin roles can update document', function () {
     $this->assertDatabaseMissing('documents', ['name' => 'Document 1']);
 });
 
-test('admin roles can delete document', function () {
+test('admin roles can delete document', function (): void {
     $user = User::factory()->create();
     $user = User::find($user->id);
     // Ensure $user is an instance of User

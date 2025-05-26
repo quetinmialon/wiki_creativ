@@ -6,13 +6,13 @@ use Illuminate\Support\Facades\Hash;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-test('redirects guests to login on index', function () {
+test('redirects guests to login on index', function (): void {
     $this->get('/supervisor')
          ->assertRedirect(route('login'))
          ->assertSessionHas('error', 'Veuillez vous connecter pour accéder à cette page.');
 });
 
-test('blocks non-supervisor users on index', function () {
+test('blocks non-supervisor users on index', function (): void {
     $user = User::factory()->create();
     $this->actingAs($user);
 
@@ -21,7 +21,7 @@ test('blocks non-supervisor users on index', function () {
          ->assertSessionHas('error', 'accès non autorisé');
 });
 
-test('shows index with non-supervisor users', function () {
+test('shows index with non-supervisor users', function (): void {
     // Création et attachement du superviseur
     $supervisor = User::factory()->create();
     $supervisor->roles()->attach(13); // supervisor
@@ -40,7 +40,7 @@ test('shows index with non-supervisor users', function () {
          });
 });
 
-test('promotes a user to superadmin', function () {
+test('promotes a user to superadmin', function (): void {
     $supervisor = User::factory()->create();
     $supervisor->roles()->attach(13);
 
@@ -63,7 +63,7 @@ test('promotes a user to superadmin', function () {
     );
 });
 
-test('revokes superadmin role from a user', function () {
+test('revokes superadmin role from a user', function (): void {
     $supervisor = User::factory()->create();
     $supervisor->roles()->attach(13);
 
@@ -86,7 +86,7 @@ test('revokes superadmin role from a user', function () {
     );
 });
 
-test('soft-deletes a user', function () {
+test('soft-deletes a user', function (): void {
     $supervisor = User::factory()->create();
     $supervisor->roles()->attach(13);
 
@@ -105,7 +105,7 @@ test('soft-deletes a user', function () {
     $this->assertSoftDeleted('users', ['id' => $user->id]);
 });
 
-test('lists revoked users', function () {
+test('lists revoked users', function (): void {
     $supervisor = User::factory()->create();
     $supervisor->roles()->attach(13);
 
@@ -126,7 +126,7 @@ test('lists revoked users', function () {
          });
 });
 
-test('restores a revoked user', function () {
+test('restores a revoked user', function (): void {
     $supervisor = User::factory()->create();
     $supervisor->roles()->attach(13);
 
@@ -149,7 +149,7 @@ test('restores a revoked user', function () {
     ]);
 });
 
-test('sends superadmin invitation', function () {
+test('sends superadmin invitation', function (): void {
     $supervisor = User::factory()->create();
     $supervisor->roles()->attach(13);
 
@@ -171,7 +171,7 @@ test('sends superadmin invitation', function () {
          ->assertSessionHas('success', 'Invitation envoyée avec succès.');
 });
 
-test('shows change-password form', function () {
+test('shows change-password form', function (): void {
     $supervisor = User::factory()->create();
     $supervisor->roles()->attach(13);
 
@@ -182,7 +182,7 @@ test('shows change-password form', function () {
          ->assertViewIs('supervisor.change_password');
 });
 
-test('validates change-password payload', function () {
+test('validates change-password payload', function (): void {
     $supervisor = User::factory()->create();
     $supervisor->roles()->attach(13);
 
@@ -196,7 +196,7 @@ test('validates change-password payload', function () {
          ->assertSessionHasErrors(['password']);
 });
 
-test('changes supervisor password successfully', function () {
+test('changes supervisor password successfully', function (): void {
     $supervisor = User::factory()->create();
     $supervisor->roles()->attach(13);
 

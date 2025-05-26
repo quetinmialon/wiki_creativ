@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\Mail;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-test('create user request', function () {
+test('create user request', function (): void {
     $data = ['name' => 'John Doe', 'email' => 'john.doe@example.com'];
     $this->post(route('subscribe.store'), $data);
 
     $this->assertDatabaseHas('user_requests', $data);
 });
 
-test('send user invitation', function () {
+test('send user invitation', function (): void {
     Mail::fake();
 
     $userRequest = UserRequest::factory()->create(['status' => 'pending']);
@@ -44,7 +44,7 @@ test('send user invitation', function () {
     Mail::assertSent(RegistrationLinkMail::class, fn($mail) => $mail->hasTo($userRequest->email));
 });
 
-test('send rejection mail', function () {
+test('send rejection mail', function (): void {
     Mail::fake();
 
     $userRequest = UserRequest::factory()->create(['status' => 'pending']);
@@ -60,7 +60,7 @@ test('send rejection mail', function () {
     Mail::assertSent(RejectionMail::class, fn($mail) => $mail->hasTo($userRequest->email));
 });
 
-test('complete registration success', function () {
+test('complete registration success', function (): void {
     $userRequest = UserRequest::factory()->create(['email' => 'jane.doe@example.com', 'status' => 'accepted']);
     $invitation = UserInvitation::factory()->create(['email' => $userRequest->email, 'token' => 'test_token']);
 
@@ -74,12 +74,12 @@ test('complete registration success', function () {
     $this->assertDatabaseMissing('user_invitations', ['email' => $invitation->email]);
 });
 
-test('choose password with invalid token', function () {
+test('choose password with invalid token', function (): void {
     $response = $this->get(route('register.finalization', ['token' => 'invalid_token']));
     $response->assertStatus(405);
 });
 
-test('choose password with valid token', function () {
+test('choose password with valid token', function (): void {
     $invitation = UserInvitation::factory()->create(['email' => 'jane.doe@example.com', 'token' => 'valid_token']);
     $response = $this->get(route('register.complete', ['token' => 'valid_token']));
 
@@ -88,7 +88,7 @@ test('choose password with valid token', function () {
     $response->assertViewHas('email', $invitation->email);
 });
 
-test('roles are associated to user invitation', function () {
+test('roles are associated to user invitation', function (): void {
     Mail::fake();
 
     $request = UserRequest::factory()->create(['email' => 'jane.doe@example.com']);
@@ -112,7 +112,7 @@ test('roles are associated to user invitation', function () {
     expect($invitation->roles->pluck('name')->contains($roles->first()->name))->toBeTrue();
 });
 
-test('invitation roles transfer to user roles when user created', function () {
+test('invitation roles transfer to user roles when user created', function (): void {
     Mail::fake();
 
     $request = UserRequest::factory()->create(['email' => 'jane.doe@example.com']);

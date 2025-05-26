@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Crypt;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-test('store credential', function () {
+test('store credential', function (): void {
     $user = User::create([
         'name' => 'John Doe',
         'email' => 'john.doe@example.com',
@@ -38,7 +38,7 @@ test('store credential', function () {
     expect(Crypt::decryptString($credential->password))->toEqual('password123');
 });
 
-test('store requires authentication', function () {
+test('store requires authentication', function (): void {
     $this->post(route('credentials.store'), [
         'destination' => 'example.com',
         'username' => 'testuser',
@@ -47,7 +47,7 @@ test('store requires authentication', function () {
         ->assertRedirect();
 });
 
-test('index shows user credentials and shared ones', function () {
+test('index shows user credentials and shared ones', function (): void {
     $user = User::create([
         'name' => 'John Doe',
         'email' => 'john.doe@example.com',
@@ -81,7 +81,7 @@ test('index shows user credentials and shared ones', function () {
         ->assertSee($sharedCredential->destination);
 });
 
-test('edit shows edit form', function () {
+test('edit shows edit form', function (): void {
     $user = User::create([
         'name' => 'John Doe',
         'email' => 'john.doe@example.com',
@@ -102,7 +102,7 @@ test('edit shows edit form', function () {
         ->assertSee($credential->destination);
 });
 
-test('edit prevents unauthorized access', function () {
+test('edit prevents unauthorized access', function (): void {
     $user = User::create([
         'name' => 'John Doe',
         'email' => 'john.doe@example.com',
@@ -127,7 +127,7 @@ test('edit prevents unauthorized access', function () {
         ->assertSessionHas('error', 'vous ne pouvez pas modifier ce log');
 });
 
-test('update credential', function () {
+test('update credential', function (): void {
     $user = User::create([
         'name' => 'John Doe',
         'email' => 'john.doe@example.com',
@@ -156,7 +156,7 @@ test('update credential', function () {
     expect(Crypt::decryptString($credential->password))->toEqual('newpassword123');
 });
 
-test('destroy credential', function () {
+test('destroy credential', function (): void {
     $user = User::create([
         'name' => 'John Doe',
         'email' => 'john.doe@example.com',
@@ -178,7 +178,7 @@ test('destroy credential', function () {
     $this->assertDatabaseMissing('credentials', ['id' => $credential->id]);
 });
 
-test('destroy prevents unauthorized access', function () {
+test('destroy prevents unauthorized access', function (): void {
     $user = User::create([
         'name' => 'John Doe',
         'email' => 'john.doe@example.com',
@@ -206,7 +206,7 @@ test('destroy prevents unauthorized access', function () {
     $this->assertDatabaseHas('credentials', ['id' => $credential->id]);
 });
 
-test('personnal credentials arent display to others users', function () {
+test('personnal credentials arent display to others users', function (): void {
     $user = User::factory()->create();
     $otherUser = User::factory()->create();
     $role = Role::factory()->create(['name' => 'pédagogie']);
@@ -228,7 +228,7 @@ test('personnal credentials arent display to others users', function () {
         ->assertSee($sharedCredential->destination)
         ->assertDontSee($credential->destination);
 });
-test('shared credentials are displayed to users with the proper role', function () {
+test('shared credentials are displayed to users with the proper role', function (): void {
     $user = User::factory()->create();
     $otherUser = User::factory()->create();
     $thirdUser = User::factory()->create();

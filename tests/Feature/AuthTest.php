@@ -8,13 +8,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 
-test('displays the login form to guests', function () {
+test('displays the login form to guests', function (): void {
     $this->get(route('login'))
          ->assertStatus(200)
          ->assertViewIs('auth.login');
 });
 
-test('allows user with valid credentials to login and redirect to home', function () {
+test('allows user with valid credentials to login and redirect to home', function (): void {
     $user = User::factory()->create(['password' => bcrypt('password123')]);
 
     $response = $this->post(route('login'), [
@@ -26,7 +26,7 @@ test('allows user with valid credentials to login and redirect to home', functio
     $this->assertAuthenticatedAs($user);
 });
 
-it('redirects supervisor users to /supervisor after login', function () {
+it('redirects supervisor users to /supervisor after login', function (): void {
     $supervisorRole = Role::where('name', 'supervisor')->first();
     $user = User::factory()->create(['password' => bcrypt('password123')]);
     $user->roles()->attach($supervisorRole->id);
@@ -40,7 +40,7 @@ it('redirects supervisor users to /supervisor after login', function () {
     $this->assertAuthenticatedAs($user);
 });
 
-test('send error on login failure', function () {
+test('send error on login failure', function (): void {
 
     $response = $this->post(route('login'), [
         'email' => 'nonexistent@example.com',
@@ -50,7 +50,7 @@ test('send error on login failure', function () {
     $response->assertSessionHasErrors();
 });
 
-test('logs out an authenticated user and redirects to login', function () {
+test('logs out an authenticated user and redirects to login', function (): void {
     $user = User::factory()->create();
     $this->actingAs($user)->post('/logout')
          ->assertRedirect(route('login'))
@@ -58,13 +58,13 @@ test('logs out an authenticated user and redirects to login', function () {
     $this->assertGuest();
 });
 
-test('displays forgot password form to guests', function () {
+test('displays forgot password form to guests', function (): void {
     $this->get(route('password.request'))
          ->assertStatus(200)
          ->assertViewIs('auth.forgot-password');
 });
 
-test('sends reset link when email exists', function () {
+test('sends reset link when email exists', function (): void {
     Password::shouldReceive('sendResetLink')
             ->once()
             ->with(['email' => 'user@example.com'])
@@ -77,7 +77,7 @@ test('sends reset link when email exists', function () {
     ));
 });
 
-test('returns error when reset link sending fails', function () {
+test('returns error when reset link sending fails', function (): void {
     Password::shouldReceive('sendResetLink')
             ->once()
             ->andReturn('error_code');
@@ -87,7 +87,7 @@ test('returns error when reset link sending fails', function () {
     $response->assertSessionHasErrors(['email']);
 });
 
-test('shows reset password form with token and email', function () {
+test('shows reset password form with token and email', function (): void {
     $token = 'dummy-token';
 
     $response = $this->get(route('password.reset', ['token' => $token, 'email' => 'user@example.com']));
@@ -97,7 +97,7 @@ test('shows reset password form with token and email', function () {
              ->assertViewHasAll(['token', 'email']);
 });
 
-test('resets password successfully and redirects to login', function () {
+test('resets password successfully and redirects to login', function (): void {
     Password::shouldReceive('reset')
             ->once()
             ->with(
@@ -124,7 +124,7 @@ test('resets password successfully and redirects to login', function () {
              ->assertSessionHas('status', 'Password reset successful.');
 });
 
-test('returns error when reset token invalid', function () {
+test('returns error when reset token invalid', function (): void {
     Password::shouldReceive('reset')
             ->once()
             ->andReturn('invalid_token');
@@ -139,7 +139,7 @@ test('returns error when reset token invalid', function () {
     $response->assertSessionHasErrors(['email']);
 });
 
-test('redirects guests away from protected routes using GuestMiddleware when logged in', function () {
+test('redirects guests away from protected routes using GuestMiddleware when logged in', function (): void {
     $user = User::factory()->create();
     $this->actingAs($user)
          ->get(route('login'))
@@ -147,11 +147,11 @@ test('redirects guests away from protected routes using GuestMiddleware when log
          ->assertSessionHas('error');
 });
 
-test('allows guests to access login when not authenticated', function () {
+test('allows guests to access login when not authenticated', function (): void {
     $this->get(route('login'))->assertStatus(200);
 });
 
-test('redirects unauthenticated users from protected routes using AuthMiddleware', function () {
+test('redirects unauthenticated users from protected routes using AuthMiddleware', function (): void {
     // Assume a protected route named 'home' with AuthMiddleware
     $this->get(route('home'))
          ->assertRedirect(route('login'))
