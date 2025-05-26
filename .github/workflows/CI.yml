@@ -49,4 +49,11 @@ jobs:
       - name: Run phpstan
         run: vendor/bin/phpstan analyse --memory-limit=2G --configuration=phpstan.dist.neon
 
+      - name: Run rector
+        run: vendor/bin/rector process --dry-run --ansi --no-progress
+
+      - name: Run tests
+        run: vendor/bin/phpunit --configuration phpunit.xml --coverage-text --coverage-clover=coverage.clover.xml
+        
+
 
