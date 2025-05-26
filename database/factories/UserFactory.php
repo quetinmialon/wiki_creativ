@@ -23,7 +23,7 @@ class UserFactory extends Factory
     {
         return [
             'name'  => fake()->name(),
-            'email'=> fake()->unique()->safeEmail,
+            'email'=> fake()->unique()->safeEmail(),
             'password' => hash('sha256','password'), // password is 'password'
         ];
     }
