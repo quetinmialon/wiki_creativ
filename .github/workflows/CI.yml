@@ -51,13 +51,7 @@ jobs:
 
       - name: Run rector
         run: vendor/bin/rector process --dry-run --ansi
-      - name: Clear caches
-        run: |
-          php artisan config:clear
-          php artisan cache:clear
-          php artisan view:clear
-          php artisan route:clear
-          php artisan event:clear
+
       - name: Run migrations
         run: php artisan migrate --env=testing --force
         env:
@@ -66,6 +60,13 @@ jobs:
           SUPERADMIN_PASSWORD: password
           SUPERVISOR_MAIL: testa@testa.fra
           SUPERVISOR_PASSWORD: password
+      - name: Clear caches
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan view:clear
+          php artisan route:clear
+          php artisan event:clear
 
       - name: Run tests
         run: vendor/bin/pest --configuration phpunit.xml --coverage-text --coverage-clover=coverage.clover.xml
