@@ -75,11 +75,15 @@ jobs:
           chmod 777 database/database.sqlite
 
       - name: Run tests
-        run: vendor/bin/pest --configuration phpunit.xml
+        run: vendor/bin/pest --configuration phpunit.xml --v
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
           APP_ENV: testing
+          SUPERADMIN_MAIL: test@test.fr
+          SUPERADMIN_PASSWORD: password
+          SUPERVISOR_MAIL: testa@testa.fra
+          SUPERVISOR_PASSWORD: password
 
 
 
