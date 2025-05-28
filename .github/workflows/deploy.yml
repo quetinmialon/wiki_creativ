@@ -19,5 +19,5 @@ jobs:
             echo "SSH connection successful"
             echo "Deploying application..."
             cd /var/www/testCICD/wiki_creativ
-            git pull origin main"
+            git pull origin main
 
