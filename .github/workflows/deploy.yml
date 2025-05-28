@@ -1,0 +1,22 @@
+name : CD - Deploy to production
+on :
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy :
+    runs-on: ubuntu-latest
+    steps:
+      - name: test ssh
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "SSH connection successful"
+            echo "Deploying application..."
+
+     
