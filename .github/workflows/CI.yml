@@ -1,0 +1,99 @@
+name: Pipeline CI
+on :
+  push:
+    branches:
+      - developp
+  pull_request:
+    branches:
+      - pre-prod
+jobs:
+  initialisation:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: files list
+        run: ls
+      - name: Add PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          extensions: mbstring, xml, curl, zip, bcmath, intl, ctype, pdo, pdo_mysql, fileinfo, tokenizer, json
+
+      - name: composer cache handler
+        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
+
+      - name: Cache manager
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COMPOSER_CACHE_DIR }}
+          key: ${{ runner.os }}-php8.4-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php8.4-composer-
+      - name: composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Audit dependencies
+        run: composer audit --ignore-severity=medium --format=json > /tmp/security-audit.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build assets with Vite
+        run: npm run build
+
+      - name: display security audit
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-audit-${{ github.run_id }}
+          path: /tmp/security-audit.json
+          retention-days: 30
+      - name: Run phpstan
+        run: vendor/bin/phpstan analyse --memory-limit=2G --configuration=phpstan.dist.neon
+
+      - name: Run rector
+        run: vendor/bin/rector process --dry-run --ansi
+
+      - name: Run migrations
+        run: php artisan migrate --env=testing --force
+        env:
+          APP_ENV: testing
+          SUPERADMIN_MAIL: test@test.fr
+          SUPERADMIN_PASSWORD: password
+          SUPERVISOR_MAIL: testa@testa.fra
+          SUPERVISOR_PASSWORD: password
+      - name: Clear caches
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan view:clear
+          php artisan route:clear
+          php artisan event:clear
+
+      - name: remove db
+        run: |
+          rm database/database.sqlite || true
+          touch database/database.sqlite
+          chmod 777 database/database.sqlite
+
+      - name: Run tests
+        run: vendor/bin/pest --configuration phpunit.xml --coverage-text
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+          APP_ENV: testing
+          SUPERADMIN_MAIL: test@test.fr
+          SUPERADMIN_PASSWORD: password
+          SUPERVISOR_MAIL: testa@testa.fra
+          SUPERVISOR_PASSWORD: password
+          APP_KEY: ${{ secrets.APP_KEY }}
+
+
+
+
+
+
