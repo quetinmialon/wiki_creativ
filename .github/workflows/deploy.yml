@@ -18,7 +18,7 @@ jobs:
           script: |
             echo "SSH connection successful"
             echo "Deploying application..."
-            cd /var/www/test
+            cd /var/www/wiki_creativ
             php artisan down
             git pull origin production
           run: |
