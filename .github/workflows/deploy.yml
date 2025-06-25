@@ -18,6 +18,19 @@ jobs:
           script: |
             echo "SSH connection successful"
             echo "Deploying application..."
-            cd /var/www/testCICD/wiki_creativ
+            cd /var/www/test
+            php artisan down
             git pull origin production
+          run: |
+            php artisan migrate --force
+            php artisan optimize:clear
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan view:clear
+            php artisan route:clear
+            php artisan event:clear
+            php artisan up
+            echo "Deployment completed successfully"
+
+
 
