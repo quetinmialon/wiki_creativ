@@ -51,7 +51,6 @@ jobs:
         with:
           name: security-audit-${{ github.run_id }}
           path: /tmp/security-audit.json
-          retention-days: 30
       - name: Run phpstan
         run: vendor/bin/phpstan analyse --memory-limit=2G --configuration=phpstan.dist.neon
 
@@ -80,8 +79,15 @@ jobs:
           touch database/database.sqlite
           chmod 777 database/database.sqlite
 
-      - name: Run tests 
-        run: vendor/bin/pest --configuration phpunit.xml --coverage-text
+      - name: Run tests and check coverage
+        id: pest
+        run: |
+          vendor/bin/pest --configuration phpunit.xml --coverage-text > coverage.txt
+          COVERAGE=$(awk '/Lines:/ {print $4}' coverage.txt | sed 's/%//')
+          echo "Coverage is $COVERAGE%"
+          if [ "$(echo "$COVERAGE < 80" | bc)" -eq 1 ]; then echo "Code coverage ($COVERAGE%) is below 80%." && exit 1;
+          fi
+          cat coverage.txt
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite

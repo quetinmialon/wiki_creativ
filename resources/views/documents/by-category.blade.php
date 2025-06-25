@@ -25,13 +25,15 @@
                         <p class="text-sm text-gray-500 mb-4">Écrit par {{ $document->author->name }}</p>
 
                         <div class="flex flex-row px-2 gap-4">
-                            @if(Gate::allows('view-document',$document)|| Gate::allows('access-document',$document))
+                            @if(Gate::allows('view-document',$document)
+                                || Gate::allows('access-document',$document))
                                 <a href="{{ route('documents.show', $document->id) }}">
-                                    <img src="{{  asset('images/see.png') }}" alt="voir le document {{ $document->name }}" arya-label="voir le document {{ $document->name }}"/>
+                                    <img src="{{  asset('images/see.png') }}" alt="voir le document {{ $document->name }}"
+                                    aria-label="voir le document {{ $document->name }}"/>
                                 </a>
                             @else
                                 <a href="{{ route('permissions.requestForm', $document->id) }}">
-                                    <img src="{{  asset('images/lock.png') }}" alt="demander l'accès au document {{ $document->name }}" arya-label="demander l'accès au document {{ $document->name }}"/>
+                                    <img src="{{  asset('images/lock.png') }}" alt="demander l'accès au document {{ $document->name }}" aria-label="demander l'accès au document {{ $document->name }}"/>
                                 </a>
                             @endif
                             @can('manage-document',$document)
