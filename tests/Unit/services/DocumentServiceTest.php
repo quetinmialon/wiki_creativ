@@ -1,7 +1,5 @@
 <?php
 use App\Services\DocumentService;
-use App\Models\Category;
-use App\Models\Document;
 
 test('Convert html to markdown actualy convert html string into markdown string', function (): void {
     //arrange

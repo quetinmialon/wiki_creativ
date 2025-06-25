@@ -24,7 +24,11 @@ class SubscriptionController extends Controller
             'email' => 'required|email',
         ]);
 
-        $this->subscriptionService->createUserRequest($request->only(['name', 'email']));
+        $response = $this->subscriptionService->createUserRequest($request->only(['name', 'email']));
+
+        if ($response  === false) {
+            return redirect()->back()->withErrors(['email' => 'Une demande avec cet email existe déjà ou un utilisateur est déjà enregistré avec cet email.']);
+        }
 
         return redirect()->route('login')->with('success', 'Votre demande a été envoyée.');
     }
@@ -42,7 +46,10 @@ class SubscriptionController extends Controller
             'role_ids.*' => 'exists:roles,id',
         ]);
 
-        $this->subscriptionService->processUserRequest($id, $request->action, $request->role_ids ?? []);
+        $response = $this->subscriptionService->processUserRequest($id, $request->action, $request->role_ids ?? []);
+        if ($response === false) {
+            return redirect()->back()->withErrors(['email' => 'Une invitation avec cet email existe déjà.']);
+        }
 
         return redirect()->back()->with('success', 'La demande a été traitée.');
     }
@@ -87,8 +94,24 @@ class SubscriptionController extends Controller
             'role_ids.*' => 'exists:roles,id',
         ]);
 
-        $this->subscriptionService->createUserInvitation($request->only(['name', 'email', 'role_ids']));
-
+        $response = $this->subscriptionService->createUserInvitation($request->only(['name', 'email', 'role_ids']));
+        if ($response === false) {
+            return redirect()->back()->withErrors(['email' => 'Une invitation avec cet email existe déjà.']);
+        }
         return redirect()->route('admin')->with('success', 'Utilisateur créé avec succès.');
+    }
+
+    public function getAcceptedRequests(): View
+    {
+        $requests = $this->subscriptionService->getAcceptedUsersRequests();
+        return view('admin.admin_accepted_requests', ['userRequests' => $requests]);
+    }
+    public function resendMail($email): RedirectResponse
+    {
+        $response = $this->subscriptionService->resendMail($email);
+        if ($response === false) {
+            return redirect()->back()->withErrors('Une erreur est survenue lors de l\'envoi de l\'email. Veuillez réessayer plus tard.');
+        }
+        return redirect()->back()->with('success', 'Email de réinvitation envoyé avec succès.');
     }
 }

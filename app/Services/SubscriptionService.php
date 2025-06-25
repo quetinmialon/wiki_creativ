@@ -11,10 +11,17 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
+use function Laravel\Prompts\error;
+
 class SubscriptionService
 {
     public function createUserRequest(array $data)
     {
+        UserRequest::where('email', $data['email'])->delete(); // Remove any existing request with the same email
+        if ( UserInvitation::where('email', $data['email'])->exists()|| User::where('email', $data['email'])->exists()) {
+            return false;
+        }
+
         return UserRequest::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -24,7 +31,11 @@ class SubscriptionService
 
     public function processUserRequest($id, string $action, array $roleIds = [])
     {
-        $userRequest = UserRequest::findOrFail($id);
+        $userRequest = UserRequest::findOrFail($id);;
+        if(UserInvitation::where('email', $userRequest->email)()->exists()  || User::where('email', $userRequest->email)->exists())
+        {
+            return false;
+        }
 
         if ($action === 'accept') {
             $userRequest->update(['status' => 'accepted']);
@@ -47,7 +58,6 @@ class SubscriptionService
             $userRequest->update(['status' => 'rejected']);
             Mail::to($userRequest->email)->send(new RejectionMail());
         }
-
         return true;
     }
 
@@ -80,9 +90,18 @@ class SubscriptionService
         return UserInvitation::where('token', $token)->first();
     }
 
+    public function getInvitationByEmail(string $email)
+    {
+        return UserInvitation::where('email', $email)->first();
+    }
+
     public function createUserInvitation(array $data)
     {
         $token = Str::random(60);
+
+        if (UserInvitation::where('email', $data['email'])->exists()|| User::where('email', $data['email'])->exists()) {
+            return false;
+        }
 
         $userInvitation = UserInvitation::create([
             'email' => $data['email'],
@@ -112,6 +131,10 @@ class SubscriptionService
     {
         $token = Str::random(60);
 
+         if (UserInvitation::where('email', $data['email'])->exists()|| User::where('email', $data['email'])->exists()) {
+            return false;
+        }
+
         $userInvitation = UserInvitation::create([
             'email' => $data['email'],
             'token' => $token,
@@ -138,5 +161,21 @@ class SubscriptionService
 
     public function getPendingsUsersRequests(){
         return UserRequest::where('status', 'pending')->get();
+    }
+
+    public function getAcceptedUsersRequests(){
+        $userRequests = UserRequest::where('status', 'accepted')->get();
+        return UserInvitation::whereIn('email', $userRequests->pluck('email'))->get();
+    }
+
+    public function resendMail(string $email): bool
+    {
+        $invitation = UserInvitation::where('email', $email)->first();
+        if (!$invitation) {
+            return false;
+        }
+
+        Mail::to($email)->send(new RegistrationLinkMail($invitation->token));
+        return true;
     }
 }

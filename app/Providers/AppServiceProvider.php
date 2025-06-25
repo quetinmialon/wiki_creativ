@@ -85,6 +85,14 @@ class AppServiceProvider extends ServiceProvider
                 ->exists();
             return $permission;
         });
+        Gate::define('view-document',function(User $user, Document $document){
+            $userRoles = $user->roles->pluck('name')->toArray();
+            $categoriesRoles = $document->categories->pluck('role.name')->toArray();
+            return in_array('superadmin', $userRoles)
+                || count(array_intersect($categoriesRoles, $userRoles)) > 0
+                || Auth::user()->id === $document->created_by;
+        });
+        
         Gate::define('has-role', function (User $user, string $role) {
             return $user->roles->contains('name', $role) || $user->roles->contains('name', "$role admin");
         });
@@ -117,11 +125,7 @@ class AppServiceProvider extends ServiceProvider
             }
             return false;
         });
-        Gate::define('view-document',function(User $user, Document $document){
-            $userRoles = $user->roles->pluck('name')->toArray();
-            $categoriesRoles = $document->categories->pluck('role.name')->toArray();
-            return in_array('superadmin', $userRoles) || count(array_intersect($categoriesRoles, $userRoles)) > 0  || Auth::user()->id === $document->created_by;
-        });
+
         Gate::define('manage-shared-credential', function (User $user, Credential $credential) {
             $userRoles = $user->roles->pluck('name')->toArray();
             $credentialRoles = $credential->role->pluck('name')->toArray();

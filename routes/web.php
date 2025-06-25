@@ -111,7 +111,7 @@ Route::middleware(AdminMiddleware::class)->group(function (): void {
     Route::get('/logs', [DocumentController::class, 'everyLogs'])->name('everyLogs');// récrupération de tout les logs d'ouvertures
     // Route::get('/logs/{document}/logs', [DocumentController::class, 'logs'])->name('logs'); // Affichage des logs d'ouverture du document
     // Route::get('/logs/{user}/userLogs', [DocumentController::class, 'userLogs'])->name('userLogs');
-    
+
     //documents
     Route::get('/admin/documents', [DocumentController::class, 'getAllDocuments'])->name('admin.documents.index');
     //users
@@ -129,6 +129,8 @@ Route::middleware(AdminMiddleware::class)->group(function (): void {
     Route::get(uri: '/admin/roles/create',action: [RoleController::class,'create'])->name(name: 'roles.create');
     //usersRequests
     Route::get('/admin/requests', [AdminController::class, 'UserRequests'])->name('admin.users-requests');
+    Route::get('/admin/waiting/requests', [SubscriptionController::class, 'getAcceptedRequests'])->name('admin.waiting-requests');
+    Route::post('/admin/requests/resendMail/{id}', [SubscriptionController::class, 'resendMail'])->name('admin.requests.resendMail');
 });
 //supervisor routes
 Route::middleware(SupervisorMiddleware::class)->name('supervisor.')->group(function (): void {

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Events\DocumentOpened;
 use App\Models\Category;
+use App\Http\Requests\DocumentFormValidation;
 
 
 class DocumentController extends Controller
@@ -44,23 +45,15 @@ class DocumentController extends Controller
         return view('documents.create-form', compact('roles'));
     }
 
-    public function store(Request $request)
+    public function store(DocumentFormValidation $request)
     {
-        $validate = $request->validate([
-            'name' => 'string|required','max:255',
-            'content' => ['string', 'required', 'min:10', 'max:500000',],
-            'excerpt' => 'string|nullable','max:255',
-            'categories_id' => 'array|nullable',
-            'categories_id.*' => 'exists:categories,id',
-        ]);
+        $validate = $request->validated();
         if (empty($request->categories_id)) {
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['categories_id' => "Veuillez sélectionner au moins une catégorie. Si aucune ne correspond, vous pouvez en créer une adaptée <a href='" . route('myCategories.create') . "' class='underline text-blue-500'>ici</a>."]);
         }
-
         $this->documentService->createDocument($validate);
-
         return redirect()->route('documents.index')->with('success', 'Créé avec succès');
     }
 
@@ -85,12 +78,11 @@ class DocumentController extends Controller
         {
             return redirect()->route('documents.index')->with('error', 'Document non disponnible');
         }
-        $userId = Auth::user()->id; // Récupère l'utilisateur connecté
         if (!Gate::allows('view-document', $document) && !Gate::allows('access-document', $document)) {
             abort(403);
         }
+        $userId = Auth::user()->id;
         event(new DocumentOpened($document->id, $userId));
-
         return view('documents.document', compact('document'));
     }
 
@@ -120,11 +112,7 @@ class DocumentController extends Controller
             abort(403);
         }
         $request->validate([
-            'name' => 'string|required',
-            'content' => ['string', 'required', 'min:10', 'max:500000', new ValidMarkdown()],
-            'excerpt' => 'string',
-            'categories_id' => 'array|required',
-            'categories_id.*' => 'exists:categories,id|min:1',
+            DocumentFormValidation::class,
         ]);
         if (empty($request->categories_id)) {
             return redirect()->back()
