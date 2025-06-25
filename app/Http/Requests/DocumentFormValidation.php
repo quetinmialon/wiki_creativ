@@ -23,9 +23,9 @@ class DocumentFormValidation extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['string|nullable','max:255'],
+            'name' => ['string','nullable','max:255'],
             'content' => ['string', 'required', 'min:10', 'max:500000',new ValidMarkdown()],
-            'excerpt' => ['string|nullable','max:255'],
+            'excerpt' => ['string','nullable','max:255'],
             'categories_id' => 'array|nullable',
             'categories_id.*' => 'exists:categories,id',
         ];
