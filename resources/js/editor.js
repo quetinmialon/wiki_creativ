@@ -27,16 +27,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     //handle paste image event
     quill.root.addEventListener("paste", async (event) => {
-        const clipboardData = event.clipboardData || window.clipboardData;
+        const clipboardData = event.clipboardData || window.Clipboard;
         if (clipboardData) {
             const items = clipboardData.items;
             for (const item of items) {
                 if (item.type.startsWith("image/")) {
                     const file = item.getAsFile();
                     if (file) {
-                        const range = quill.getSelection();
                         const reader = new FileReader();
-
                         reader.onload = function (e) {
                             const base64Image = e.target.result;
                             uploadPastedImage(file, base64Image, quill);
@@ -75,7 +73,7 @@ async function uploadPastedImage(file, base64Image, quill) {
                 }
             });
 
-            // update inner html properly
+            // update hidden input with the new content
             document.getElementById("content").value = quill.root.innerHTML;
         }
     } catch (error) {
