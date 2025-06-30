@@ -78,5 +78,11 @@
             Ajouter un utilisateur
         </a>
     </div>
+        </div>
+        <div class="mt-8 flex justify-center">
+        <a class="underline text-[#126C83] px-4 py-2 rounded " href="{{ route('admin.waiting-requests') }}">
+            Demandes acceptées en attente de validation utilisateur
+        </a>
+    </div>
 </div>
 @endsection

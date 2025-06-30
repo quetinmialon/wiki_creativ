@@ -18,6 +18,18 @@ class DocumentService
         $this->markdownConverter = new CommonMarkConverter();
         $this->htmlConverter = new HtmlConverter(['header_style' => 'atx']);
     }
+    public function createDocument(array $data)
+    {
+        $data['created_by'] = Auth::id();
+        $data['content'] = $this->convertHtmlToMarkdown($data['content']);
+        //clean content to take off potential script tags or other dangerous HTML to prevent XSS attacks
+        $data['content'] = $this->sanitizeMarkdown($data['content']);
+        $document = Document::create($data);
+        if (!empty($data['categories_id'])) {
+            $document->categories()->attach($data['categories_id']);
+        }
+        return $document;
+    }
 
     /**
      * Convertit du HTML en Markdown avant stockage
@@ -73,23 +85,6 @@ class DocumentService
         return Category::with(['documents' => function ($query): void {
             $query->where('formated_name', '!=', null)->orderBy('formated_name', 'asc');
         }])->orderBy('name', 'asc')->get();
-    }
-
-    public function createDocument(array $data)
-    {
-        $data['created_by'] = Auth::id();
-        // Convertit le HTML en Markdown avant stockage
-        $data['content'] = $this->convertHtmlToMarkdown($data['content']);
-
-        // Nettoie le Markdown pour éviter les problèmes de sécurité
-        $data['content'] = $this->sanitizeMarkdown($data['content']);
-        $document = Document::create($data);
-
-        if (!empty($data['categories_id'])) {
-            $document->categories()->attach($data['categories_id']);
-        }
-
-        return $document;
     }
 
     public function getDocumentsByCategory($categoryId, $perPage = 10)

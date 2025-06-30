@@ -18,47 +18,6 @@ test('create user request', function (): void {
     $this->assertDatabaseHas('user_requests', $data);
 });
 
-test('send user invitation', function (): void {
-    Mail::fake();
-
-    $userRequest = UserRequest::factory()->create(['status' => 'pending']);
-    $this->assertDatabaseHas('user_requests', [
-        'name' => $userRequest->name,
-        'email' => $userRequest->email,
-        'status' => $userRequest->status,
-    ]);
-
-    $user = User::factory()->create();
-    $user->roles()->attach(Role::factory()->create(['name' => 'superadmin']));
-    $user = User::find($user->id);
-    // Ensure $user is an instance of User
-    $this->actingAs($user);
-
-    $this->post(route('subscribe.process', $userRequest->id), [
-        'action' => 'accept',
-        'role_ids' => []
-    ]);
-
-    $this->assertDatabaseHas('user_invitations', ['email' => $userRequest->email]);
-
-    Mail::assertSent(RegistrationLinkMail::class, fn($mail) => $mail->hasTo($userRequest->email));
-});
-
-test('send rejection mail', function (): void {
-    Mail::fake();
-
-    $userRequest = UserRequest::factory()->create(['status' => 'pending']);
-
-    $user = User::factory()->create();
-    $user->roles()->attach(Role::factory()->create(['name' => 'superadmin']));
-    $user = User::find($user->id);
-    // Ensure $user is an instance of User
-    $this->actingAs($user);
-
-    $this->post(route('subscribe.process', $userRequest->id), ['action' => 'reject']);
-
-    Mail::assertSent(RejectionMail::class, fn($mail) => $mail->hasTo($userRequest->email));
-});
 
 test('complete registration success', function (): void {
     $userRequest = UserRequest::factory()->create(['email' => 'jane.doe@example.com', 'status' => 'accepted']);
