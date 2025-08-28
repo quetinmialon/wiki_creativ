@@ -99,3 +99,62 @@ test('invitation roles transfer to user roles when user created', function (): v
 
     expect($user->roles->pluck('name')->contains($roles->first()->name))->toBeTrue();
 });
+
+
+test('subscribe view is returned successfully', function (): void {
+    $response = $this->get(route('subscribe'));
+
+    $response->assertStatus(200);
+    $response->assertViewIs('register.user_form_first_step');
+});
+
+
+test('admin create user invitation form returns view with roles', function (): void {
+    $roles = Role::factory()->count(2)->create();
+    $admin = User::factory()->create();
+    $adminRole = Role::factory()->create(['name' => 'superadmin']);
+    $admin->roles()->attach($adminRole);
+    $this->actingAs($admin);
+    $response = $this->get(route('admin.register'));
+
+    $response->assertStatus(200);
+    $response->assertViewIs('admin.admin_create_user_invitation');
+    $response->assertViewHas('roles');
+});
+
+test('admin can create a user invitation', function (): void {
+    Mail::fake();
+    $roles = Role::factory()->count(2)->create();
+    $admin = User::factory()->create();
+    $adminRole = Role::factory()->create(['name' => 'superadmin']);
+    $admin->roles()->attach($adminRole);
+    $this->actingAs($admin);
+
+    $response = $this->post(route('admin.create-user'), [
+        'name' => 'Test User',
+        'email' => 'newuser@example.com',
+        'role_ids' => $roles->pluck('id')->toArray(),
+    ]);
+
+    $response->assertRedirect(route('admin'));
+    $response->assertSessionHas('success');
+    $this->assertDatabaseHas('user_invitations', ['email' => 'newuser@example.com']);
+});
+
+test('create user invitation fails if email exists in users', function (): void {
+    User::factory()->create(['email' => 'exists@example.com']);
+    $roles = Role::factory()->count(1)->create();
+
+    $admin = User::factory()->create();
+    $adminRole = Role::factory()->create(['name' => 'superadmin']);
+    $admin->roles()->attach($adminRole);
+    $this->actingAs($admin);
+
+    $response = $this->post(route('admin.create-user'), [
+        'name' => 'Dup',
+        'email' => 'exists@example.com',
+        'role_ids' => $roles->pluck('id')->toArray(),
+    ]);
+
+    $response->assertSessionHasErrors(['email']);
+});

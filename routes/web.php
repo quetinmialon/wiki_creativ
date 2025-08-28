@@ -109,9 +109,6 @@ Route::middleware(AdminMiddleware::class)->group(function (): void {
     Route::post('/admin/permissions/search', [PermissionController::class, 'searchPermission'])->name('admin.permissions.search');
     //opened logs route
     Route::get('/logs', [DocumentController::class, 'everyLogs'])->name('everyLogs');// récrupération de tout les logs d'ouvertures
-    // Route::get('/logs/{document}/logs', [DocumentController::class, 'logs'])->name('logs'); // Affichage des logs d'ouverture du document
-    // Route::get('/logs/{user}/userLogs', [DocumentController::class, 'userLogs'])->name('userLogs');
-
     //documents
     Route::get('/admin/documents', [DocumentController::class, 'getAllDocuments'])->name('admin.documents.index');
     //users

@@ -32,7 +32,7 @@ class SubscriptionService
     public function processUserRequest($id, string $action, array $roleIds = [])
     {
         $userRequest = UserRequest::findOrFail($id);;
-        if(UserInvitation::where('email', $userRequest->email)()->exists()  || User::where('email', $userRequest->email)->exists())
+        if(UserInvitation::where('email', $userRequest->email)->exists()  || User::where('email', $userRequest->email)->exists())
         {
             return false;
         }
@@ -51,7 +51,7 @@ class SubscriptionService
             if(!in_array(1, $roleIds))
             {
                 $userInvitation->roles()->attach(1);
-            } // Attach the "user" role (ID 1)
+            } // Attach the "default user" role (ID 1)
             Mail::to($userRequest->email)->send(new RegistrationLinkMail($token));
 
         } else {

@@ -22,7 +22,7 @@ class CredentialService
     {
         return Auth::check() ? Auth::user()->roles : null;
     }
-
+ 
     public function getUserCredentials()
     {
         $user = Auth::user();
@@ -67,7 +67,6 @@ class CredentialService
     public function getCredentialForEdit($id)
     {
         $credential = Credential::find($id);
-
         $credential->password = Crypt::decryptString($credential->password);
         return [
             'credential' => $credential,
