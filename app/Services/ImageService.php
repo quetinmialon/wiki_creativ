@@ -42,9 +42,7 @@ class ImageService
         $usedImages = $this->getUsedImages();
 
         foreach ($allImages as $imageUrl) {
-            // Convertir l'URL en chemin relatif pour Storage
             $filePath = str_replace(Storage::url(''), '', $imageUrl);
-
             if (!in_array($imageUrl, $usedImages)) {
                 Storage::disk('public')->delete($filePath);
             }

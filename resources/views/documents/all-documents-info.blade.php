@@ -28,11 +28,11 @@
                                     <div class="flex justify-between items-center">
                                         <h4 class="text-md text-gray-900">{{ $document->name }}</h4>
                                         @if (
-                                            in_array($category->role->name, Auth::user()->roles->pluck('name')->toArray())
+                                           Gate::allows('view-document', $document)
                                             || Gate::allows('access-document', $document)
                                         )
                                             <a href="{{ route('documents.show', $document->id) }}">
-                                                <img src="{{ asset('images/see.png') }}" alt="voir le document {{ $document->name }}" arya-label="voir le document {{ $document->name }}"/>
+                                                <img src="{{ asset('images/see.png')}}" alt="voir le document {{ $document->name }}" arya-label="voir le document {{ $document->name }}"/>
                                             </a>
                                         @else
                                             <a href="{{ route('permissions.requestForm', $document->id) }}">

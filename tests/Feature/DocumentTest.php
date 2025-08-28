@@ -122,6 +122,25 @@ test('show displays document when user is author', function (): void {
     $response->assertViewHas('document', $document);
 });
 
+test('user without role is redirected when accessing document', function (): void {
+    $user = User::factory()->create();
+    $author = User::factory()->create();
+    $role = Role::create(['name'=> 'pédagogie']);
+    $author->roles()->attach($role);
+
+    $document = Document::create([
+        'name' => 'Document 1',
+        'content' => 'Content 1',
+        'excerpt' => 'Excerpt 1',
+        'created_by' => $author->id,
+        'formated_name' => 'test_name'
+    ]);
+
+    $this->actingAs($user);
+    $response = $this->get(route('documents.show', $document->id));
+    $response->assertStatus(403);
+});
+
 test('show displays document when user got proper role', function (): void {
     $user = User::create([
         "name"=> "John Doe",
@@ -161,7 +180,6 @@ test('document can be see with a permission', function (): void {
     //arrange
     $user = User::factory()->create();
     $user = User::find($user->id);
-    // Ensure $user is an instance of User
     $author = User::factory()->create();
     $role = Role::create(['name'=> 'pédagogie']);
     $author->roles()->attach($role);
@@ -172,24 +190,21 @@ test('document can be see with a permission', function (): void {
         'created_by' => $author->id,
         'formated_name' => 'test_name'
     ]);
+    //acting as unauthorized user
     $unauthorizedUser = User::factory()->create();
     $unauthorizedUser = User::find($unauthorizedUser->id);
-    // Ensure $unauthorizedUser is an instance of User
     $this->actingAs($unauthorizedUser);
     $response = $this->get(route('documents.show', $document->id));
     $response->assertStatus(403);
+    //arrange and acting as authorized user
     Permission::factory()->create([
         'document_id' => $document->id,
         'expired_at' => now()->addDays(7),
         'status' => 'approved',
         'author' => $user->id,
     ]);
-
-    //act
     $this->actingAs($user);
     $response = $this->get(route('documents.show', $document->id));
-
-    //assert
     $response->assertStatus(200);
     $response->assertViewHas('document', $document);
 });
