@@ -101,7 +101,7 @@ test('invitation roles transfer to user roles when user created', function (): v
 });
 
 
-test('subscribe view is returned successfully', function () {
+test('subscribe view is returned successfully', function (): void {
     $response = $this->get(route('subscribe'));
 
     $response->assertStatus(200);
@@ -109,7 +109,7 @@ test('subscribe view is returned successfully', function () {
 });
 
 
-test('admin create user invitation form returns view with roles', function () {
+test('admin create user invitation form returns view with roles', function (): void {
     $roles = Role::factory()->count(2)->create();
     $admin = User::factory()->create();
     $adminRole = Role::factory()->create(['name' => 'superadmin']);
@@ -122,7 +122,7 @@ test('admin create user invitation form returns view with roles', function () {
     $response->assertViewHas('roles');
 });
 
-test('admin can create a user invitation', function () {
+test('admin can create a user invitation', function (): void {
     Mail::fake();
     $roles = Role::factory()->count(2)->create();
     $admin = User::factory()->create();
@@ -141,7 +141,7 @@ test('admin can create a user invitation', function () {
     $this->assertDatabaseHas('user_invitations', ['email' => 'newuser@example.com']);
 });
 
-test('create user invitation fails if email exists in users', function () {
+test('create user invitation fails if email exists in users', function (): void {
     User::factory()->create(['email' => 'exists@example.com']);
     $roles = Role::factory()->count(1)->create();
 

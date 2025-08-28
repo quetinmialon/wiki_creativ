@@ -13,11 +13,11 @@ use App\Mail\RejectionMail;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     Mail::fake();
 });
 
-it('handles full subscription request flow from user request to account creation', function () {
+it('handles full subscription request flow from user request to account creation', function (): void {
     // User ask for subscription
     $postData = ['name' => 'Alice Dupont', 'email' => 'alice@example.com'];
     $this->post(route('subscribe.store'), $postData)->assertRedirect(route('login'));
@@ -65,7 +65,7 @@ it('handles full subscription request flow from user request to account creation
     $this->expect($user->roles)->toHaveCount(3); // 2 roles from invitation + 1 default user role
 });
 
-it('handle full document creation and publication with a category creation from form to display on proper user', function(){
+it('handle full document creation and publication with a category creation from form to display on proper user', function(): void{
     // arrange actors
     $authorisedUser = User::factory()->create();
     $author = User::factory()->create();
