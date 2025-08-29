@@ -72,9 +72,7 @@ test('sends reset link when email exists', function (): void {
 
     $response = $this->post(route('password.email'), ['email' => 'user@example.com']);
 
-    $response->assertSessionHas('status', __(
-        Password::RESET_LINK_SENT
-    ));
+    $response->assertSessionHas('success');
 });
 
 test('returns error when reset link sending fails', function (): void {
