@@ -9,6 +9,11 @@ use Illuminate\Validation\ValidationException;
 
 class CategoryService
 {
+    private function protectPublicCategory(Category $category){
+        if ($category->id == 1){
+            abort(403, 'cette catégorie est protégée');
+        }
+    }
     public function getAll(): Collection
     {
         return Category::all();
@@ -26,11 +31,13 @@ class CategoryService
 
     public function update(Category $category, array $data): bool
     {
+        $this->protectPublicCategory($category);
         return $category->update($data);
     }
 
     public function delete(Category $category): bool
     {
+        $this->protectPublicCategory($category);
         return $category->delete();
     }
 
