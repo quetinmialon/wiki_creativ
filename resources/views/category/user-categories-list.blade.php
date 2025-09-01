@@ -19,7 +19,7 @@
                     <td class=" px-4 py-2 flex flex-row justify-around">
                         <a href="{{ route('documents.byCategory', ['id' => $category->id]) }}" class="text-[#126C83] underline hover:text-[#35A5A7]">accéder aux documents de la catégorie</a>
 
-                        @if(Gate::allows('manage-category', $category))
+                        @if(Gate::allows('manage-category', $category)&& $category->id != 1)
                         <div class="flex flex-row space-x-2">
                             <a href="{{ route('myCategories.edit', $category->id) }}">
                                 <img src="{{ asset('images/edit.png') }}" alt="modifier la catégorie"/>
