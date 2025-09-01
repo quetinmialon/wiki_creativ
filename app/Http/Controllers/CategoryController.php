@@ -89,7 +89,7 @@ class CategoryController extends Controller
     {
         $user = $this->authService->getCurrentUser();
         $data = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:categories,name,' . $request->id,
             'role_id' => 'exists:roles,id|required',
         ]);
 
@@ -131,7 +131,7 @@ class CategoryController extends Controller
             abort(403);
         }
         $data = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'role_id' => 'exists:roles,id|required',
         ]);
 
